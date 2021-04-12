@@ -46,7 +46,7 @@
     "remotes": [
         {
             "name": "pi",
-            "address": "10.237.115.64:8080"
+            "address": "pi64a.local:8080"
         }
     ]
 }
