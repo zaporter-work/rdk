@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"go.viam.com/robotcore/api"
+	"go.viam.com/robotcore/artifact"
 	pb "go.viam.com/robotcore/proto/api/v1"
 	"go.viam.com/robotcore/rimage"
 	"go.viam.com/robotcore/rimage/imagesource"
@@ -621,7 +622,7 @@ func main() {
 				if atomic.LoadInt32(&wantPicture) != 0 {
 					tm := time.Now().Unix()
 
-					fn := fmt.Sprintf("data/board-%d.both.gz", tm)
+					fn := artifact.MustNewPath(fmt.Sprintf("samples/chess/board-%d.both.gz", tm))
 					logger.Debugf("saving image %s", fn)
 					if err := annotatedImageHolder.Img.WriteTo(fn); err != nil {
 						panic(err)

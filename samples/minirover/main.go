@@ -14,6 +14,7 @@ import (
 	"github.com/edaniels/gostream"
 
 	"go.viam.com/robotcore/api"
+	"go.viam.com/robotcore/artifact"
 	"go.viam.com/robotcore/board"
 	"go.viam.com/robotcore/lidar"
 	"go.viam.com/robotcore/rimage"
@@ -233,7 +234,7 @@ func (r *Rover) Ready(theRobot api.Robot) error {
 						depthErr = true
 						return
 					}
-					err = pc.WriteTo(fmt.Sprintf("data/rover-centering-%d.both.gz", time.Now().Unix()))
+					err = pc.WriteTo(artifact.MustNewPath(fmt.Sprintf("samples/minirover/rover-centering-%d.both.gz", time.Now().Unix())))
 					if err != nil {
 						logger.Debugf("error writing %s", err)
 					}
