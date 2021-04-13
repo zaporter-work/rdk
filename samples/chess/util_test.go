@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"go.viam.com/robotcore/artifact"
 	"go.viam.com/robotcore/rimage"
 	"go.viam.com/robotcore/vision/chess"
 
@@ -19,7 +20,7 @@ import (
 func TestInit(t *testing.T) {
 	state := boardStateGuesser{}
 
-	fns, err := filepath.Glob("data/init/board-*.png")
+	fns, err := filepath.Glob(artifact.MustPath("samples/chess/init/board-*.png"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +92,8 @@ func TestOneMove(t *testing.T) {
 	logger := golog.NewTestLogger(t)
 	state := boardStateGuesser{}
 
-	fns, err := filepath.Glob("data/e2e4/board-*.png")
+	e2e4Path := artifact.MustPath("samples/chess/e2e4")
+	fns, err := filepath.Glob(e2e4Path + "/board-*.png")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,7 +140,7 @@ func TestOneMove(t *testing.T) {
 }
 
 func TestWristDepth1(t *testing.T) {
-	dm, err := rimage.ParseDepthMap("data/wristdepth1.dat.gz")
+	dm, err := rimage.ParseDepthMap(artifact.MustPath("samples/chess/wristdepth1.dat.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}
