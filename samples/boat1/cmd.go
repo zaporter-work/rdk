@@ -160,25 +160,30 @@ func (b *Boat) StartRC() {
 	}()
 }
 
-func addDepth(longitude, latitude, depth float64, extra interface{}) error {
-	doc := map[string]interface{}{
-		"longitude": longitude,
-		"latitude":  latitude,
-		"depth":     depth,
-		"extra":     extra,
+type SavedDetph struct {
+	Longitude float64
+	Latitude  float64
+	Depth     float64
+	Extra     interface{}
+}
+
+func storeAll(docs []SavedDetph) error {
+	for _, doc := range docs {
+		data, err := json.Marshal(doc)
+		if err != nil {
+			return err
+		}
+
+		_, err = http.Post(
+			"https://us-east-1.aws.webhooks.mongodb-realm.com/api/client/v2.0/app/boat1-lwcji/service/http1/incoming_webhook/depthRecord",
+			"application/json",
+			bytes.NewReader(data))
+		if err != nil {
+			return err
+		}
 	}
 
-	data, err := json.Marshal(doc)
-	if err != nil {
-		return err
-	}
-
-	_, err = http.Post(
-		"https://us-east-1.aws.webhooks.mongodb-realm.com/api/client/v2.0/app/boat1-lwcji/service/http1/incoming_webhook/depthRecord",
-		"application/json",
-		bytes.NewReader(data))
-
-	return err
+	return nil
 }
 
 var currentLocation nmea.GLL
@@ -210,6 +215,8 @@ func trackGPS() {
 	}
 }
 
+var toStore []SavedDetph
+
 func doRecordDepth(depthSensor sensor.Device) error {
 	if currentLocation.Longitude == 0 {
 		return fmt.Errorf("currentLocation is 0")
@@ -228,12 +235,20 @@ func doRecordDepth(depthSensor sensor.Device) error {
 	confidence := m["confidence"].(float64)
 	depth := m["distance"].(float64)
 
-	if confidence < 50 {
+	if confidence < 90 {
 		golog.Global.Debugf("confidence too low, skipping confidence: %v depth: %v", confidence, depth)
 		return nil
 	}
 
-	return addDepth(currentLocation.Longitude, currentLocation.Latitude, depth, m)
+	d := SavedDetph{currentLocation.Longitude, currentLocation.Latitude, depth, m}
+
+	toStore = append(toStore, d)
+
+	err = storeAll(toStore)
+	if err == nil {
+		toStore = []SavedDetph{}
+	}
+	return err
 }
 
 func recordDepthThread(depthSensor sensor.Device) {
