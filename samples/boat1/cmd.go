@@ -321,7 +321,7 @@ func realMain() error {
 	}
 	boat.StartRC()
 
-	myRobot.AddBase(boat, api.Component{Name: "boatbot"})
+	myRobot.AddBase(boat, api.ComponentConfig{Name: "boatbot"})
 
 	go trackGPS()
 	go recordDepthThread(myRobot.SensorByName("depth1"))

@@ -535,7 +535,7 @@ func main() {
 	initialPositionOk := false
 
 	annotatedImageHolder := &imagesource.StaticSource{}
-	myRobot.AddCamera(annotatedImageHolder, api.Component{})
+	myRobot.AddCamera(annotatedImageHolder, api.ComponentConfig{})
 
 	go func() {
 		for {
