@@ -25,6 +25,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	golog.Global.Debugf("out dir: %q", outDir)
 }
 
 /* TODO(erh): put back
