@@ -266,7 +266,7 @@ func recordDepthThread(depthSensor sensor.Device) {
 	}
 }
 
-func NewBoat(robot *robot.Robot) (*Boat, error) {
+func NewBoat(robot api.Robot) (*Boat, error) {
 	b := &Boat{}
 	b.theBoard = robot.BoardByName("local")
 	if b.theBoard == nil {
@@ -321,7 +321,7 @@ func realMain() error {
 	}
 	boat.StartRC()
 
-	myRobot.AddBase(boat, api.Component{Name: "boatbot"})
+	myRobot.AddBase(boat, api.ComponentConfig{Name: "boatbot"})
 
 	go trackGPS()
 	go recordDepthThread(myRobot.SensorByName("depth1"))

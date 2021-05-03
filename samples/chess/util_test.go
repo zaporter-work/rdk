@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image"
+	"io/ioutil"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -15,6 +16,17 @@ import (
 	"github.com/edaniels/golog"
 	"github.com/tonyOreglia/glee/pkg/position"
 )
+
+var outDir string
+
+func init() {
+	var err error
+	outDir, err = ioutil.TempDir("", "samples_chess")
+	if err != nil {
+		panic(err)
+	}
+	golog.Global.Debugf("out dir: %q", outDir)
+}
 
 /* TODO(erh): put back
 func TestInit(t *testing.T) {
@@ -42,7 +54,7 @@ func TestInit(t *testing.T) {
 
 		pcs, err := state.game.GetSquaresWithPieces(board)
 		if err != nil {
-			err2 := board.WriteDebugImages("out/foo")
+			err2 := board.WriteDebugImages(fmt.Sprintf("%s/init_foo", outDir))
 			if err2 != nil {
 				panic(err2)
 			}
@@ -51,7 +63,7 @@ func TestInit(t *testing.T) {
 		fmt.Printf("\t%s\n", pcs)
 		if len(pcs) != 32 {
 			temp := board.Annotate()
-			tempfn := fmt.Sprintf("out/init-%d.png", idx)
+			tempfn := fmt.Sprintf(outDir + "/init-%d.png", idx)
 
 			utils.WriteImageToFile(tempfn, temp)
 			fmt.Printf("\t annotated -> %s\n", tempfn)
@@ -113,7 +125,7 @@ func TestOneMove(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		board.WriteDebugImages(fmt.Sprintf("out/onemove-%d", idx))
+		board.WriteDebugImages(fmt.Sprintf("%s/%d", outDir, idx))
 	}
 
 	bb, err := state.GetBitBoard()
