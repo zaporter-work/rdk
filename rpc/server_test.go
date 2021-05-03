@@ -42,6 +42,9 @@ func TestServer(t *testing.T) {
 	// standard grpc
 	conn, err := grpc.DialContext(context.Background(), httpListener.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
 	test.That(t, err, test.ShouldBeNil)
+	defer func() {
+		test.That(t, conn.Close(), test.ShouldBeNil)
+	}()
 	client := pb.NewEchoServiceClient(conn)
 
 	echoResp, err := client.Echo(context.Background(), &pb.EchoRequest{Message: "hello"})
@@ -69,6 +72,7 @@ func TestServer(t *testing.T) {
 	es.fail = true
 	httpResp1, err = http.Post(httpURL, "application/grpc-web-text", strings.NewReader(grpcWebReq))
 	test.That(t, err, test.ShouldBeNil)
+	defer httpResp1.Body.Close()
 	test.That(t, httpResp1.StatusCode, test.ShouldEqual, 200)
 	es.fail = false
 	rd, err = ioutil.ReadAll(httpResp1.Body)
@@ -91,6 +95,7 @@ func TestServer(t *testing.T) {
 	es.fail = true
 	httpResp2, err = http.Post(httpURL, "application/json", strings.NewReader(`{"message": "world"}`))
 	test.That(t, err, test.ShouldBeNil)
+	defer httpResp2.Body.Close()
 	test.That(t, httpResp2.StatusCode, test.ShouldEqual, 500)
 	es.fail = false
 

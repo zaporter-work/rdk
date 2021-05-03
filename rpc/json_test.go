@@ -35,6 +35,9 @@ func TestCallClientMethodLineJSON(t *testing.T) {
 	conn, err := grpc.DialContext(context.Background(), httpListener.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
 	test.That(t, err, test.ShouldBeNil)
 	client := pb.NewEchoServiceClient(conn)
+	defer func() {
+		test.That(t, conn.Close(), test.ShouldBeNil)
+	}()
 
 	resp, err := CallClientMethodLineJSON(context.Background(), client, nil)
 	test.That(t, err, test.ShouldBeNil)

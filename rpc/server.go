@@ -37,13 +37,14 @@ type Server interface {
 }
 
 type simpleServer struct {
-	mu                 sync.Mutex
-	grpcListener       net.Listener
-	grpcServer         *grpc.Server
-	grpcWebServer      *grpcweb.WrappedGrpcServer
-	grpcGatewayHandler *runtime.ServeMux
-	httpServer         *http.Server
-	secure             bool
+	mu                   sync.Mutex
+	grpcListener         net.Listener
+	grpcServer           *grpc.Server
+	grpcWebServer        *grpcweb.WrappedGrpcServer
+	grpcGatewayHandler   *runtime.ServeMux
+	httpServer           *http.Server
+	serviceServerCancels []func()
+	secure               bool
 }
 
 var JSONPB = &runtime.JSONPb{
@@ -171,6 +172,9 @@ func (ss *simpleServer) Serve(listener net.Listener) (err error) {
 
 func (ss *simpleServer) Stop() error {
 	defer ss.grpcServer.Stop()
+	for _, cancel := range ss.serviceServerCancels {
+		cancel()
+	}
 	return ss.httpServer.Shutdown(context.Background())
 }
 
@@ -184,6 +188,8 @@ func (ss *simpleServer) RegisterServiceServer(
 ) error {
 	ss.mu.Lock()
 	defer ss.mu.Unlock()
+	stopCtx, stopCancel := context.WithCancel(ctx)
+	ss.serviceServerCancels = append(ss.serviceServerCancels, stopCancel)
 	ss.grpcServer.RegisterService(svcDesc, svcServer)
 	if len(svcHandlers) != 0 {
 		addr := ss.grpcListener.Addr().String()
@@ -192,7 +198,7 @@ func (ss *simpleServer) RegisterServiceServer(
 			opts = append(opts, grpc.WithInsecure())
 		}
 		for _, h := range svcHandlers {
-			if err := h(ctx, ss.grpcGatewayHandler, addr, opts); err != nil {
+			if err := h(stopCtx, ss.grpcGatewayHandler, addr, opts); err != nil {
 				return err
 			}
 		}
