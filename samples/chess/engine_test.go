@@ -3,18 +3,14 @@ package main
 import (
 	"testing"
 
+	"github.com/edaniels/test"
 	"github.com/tonyOreglia/glee/pkg/position"
 )
 
 func TestEngine1(t *testing.T) {
 	p, err := position.NewPositionFen("r1bqkbnr/pppppppp/2n5/4P3/8/8/PPPP1PPP/RNBQKBNR b KQkq - 2 1")
-	if err != nil {
-		t.Fatal(err)
-	}
+	test.That(t, err, test.ShouldBeNil)
 
 	_, m := searchForNextMove(p)
-
-	if m.String() == "c7c6" {
-		t.Errorf("this is not a legal move")
-	}
+	test.That(t, m.String(), test.ShouldNotEqual, "c7c6")
 }
