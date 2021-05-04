@@ -5,13 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"image"
-	"log"
 	"time"
-
-	"github.com/erh/egoutil"
-
-	"github.com/edaniels/golog"
-	"github.com/edaniels/gostream"
 
 	"go.viam.com/robotcore/api"
 	"go.viam.com/robotcore/artifact"
@@ -21,14 +15,17 @@ import (
 	"go.viam.com/robotcore/robot"
 	"go.viam.com/robotcore/robot/actions"
 	"go.viam.com/robotcore/robot/web"
+	"go.viam.com/robotcore/utils"
 	"go.viam.com/robotcore/vision/segmentation"
 
 	_ "go.viam.com/robotcore/board/detector"
 	_ "go.viam.com/robotcore/rimage/imagesource"
 
-	"go.uber.org/multierr"
-
+	"github.com/edaniels/golog"
+	"github.com/edaniels/gostream"
+	"github.com/erh/egoutil"
 	"go.opencensus.io/trace"
+	"go.uber.org/multierr"
 )
 
 const (
@@ -39,17 +36,16 @@ const (
 var logger = golog.NewDevelopmentLogger("minirover")
 
 func init() {
-	actions.RegisterAction("dock", func(r api.Robot) {
-		err := dock(r)
+	actions.RegisterAction("dock", func(ctx context.Context, r api.Robot) {
+		err := dock(ctx, r)
 		if err != nil {
 			logger.Errorf("error docking: %s", err)
 		}
 	})
 }
 
-func dock(r api.Robot) error {
+func dock(ctx context.Context, r api.Robot) error {
 	logger.Info("docking started")
-	ctx := context.Background()
 
 	cam := r.CameraByName("back")
 	if cam == nil {
@@ -68,7 +64,7 @@ func dock(r api.Robot) error {
 
 	for tries := 0; tries < 5; tries++ {
 
-		ms, err := theLidar.Scan(context.Background(), lidar.ScanOptions{})
+		ms, err := theLidar.Scan(ctx, lidar.ScanOptions{})
 		if err != nil {
 			return err
 		}
@@ -195,20 +191,20 @@ type Rover struct {
 	pan, tilt board.Servo
 }
 
-func (r *Rover) neckCenter() error {
-	return r.neckPosition(PanCenter, TiltCenter)
+func (r *Rover) neckCenter(ctx context.Context) error {
+	return r.neckPosition(ctx, PanCenter, TiltCenter)
 }
 
-func (r *Rover) neckOffset(left int) error {
-	return r.neckPosition(uint8(PanCenter+(left*-30)), uint8(TiltCenter-20))
+func (r *Rover) neckOffset(ctx context.Context, left int) error {
+	return r.neckPosition(ctx, uint8(PanCenter+(left*-30)), uint8(TiltCenter-20))
 }
 
-func (r *Rover) neckPosition(pan, tilt uint8) error {
+func (r *Rover) neckPosition(ctx context.Context, pan, tilt uint8) error {
 	logger.Debugf("neckPosition to %v %v", pan, tilt)
-	return multierr.Combine(r.pan.Move(context.TODO(), pan), r.tilt.Move(context.TODO(), tilt))
+	return multierr.Combine(r.pan.Move(ctx, pan), r.tilt.Move(ctx, tilt))
 }
 
-func (r *Rover) Ready(theRobot api.Robot) error {
+func (r *Rover) Ready(ctx context.Context, theRobot api.Robot) error {
 	logger.Debugf("minirover2 Ready called")
 	cam := theRobot.CameraByName("front")
 	if cam == nil {
@@ -217,12 +213,14 @@ func (r *Rover) Ready(theRobot api.Robot) error {
 
 	// doing this in a goroutine so i can see camera and servo data in web ui, but probably not right long term
 	if false {
-		go func() {
+		utils.PanicCapturingGo(func() {
 			for {
-				time.Sleep(time.Second)
+				if !utils.SelectContextOrWait(ctx, time.Second) {
+					return
+				}
 				var depthErr bool
 				func() {
-					img, release, err := cam.Next(context.Background())
+					img, release, err := cam.Next(ctx)
 					if err != nil {
 						logger.Debugf("error from camera %s", err)
 						return
@@ -243,44 +241,50 @@ func (r *Rover) Ready(theRobot api.Robot) error {
 					return
 				}
 			}
-		}()
+		})
 	}
 
 	return nil
 }
 
-func NewRover(r api.Robot, theBoard board.Board) (*Rover, error) {
+func NewRover(ctx context.Context, r api.Robot, theBoard board.Board) (*Rover, error) {
 	rover := &Rover{theBoard: theBoard}
 	rover.pan = theBoard.Servo("pan")
 	rover.tilt = theBoard.Servo("tilt")
 
 	if false {
-		go func() {
+		utils.PanicCapturingGo(func() {
 			for {
-				time.Sleep(1500 * time.Millisecond)
-				err := rover.neckCenter()
+				if !utils.SelectContextOrWait(ctx, 1500*time.Millisecond) {
+					return
+				}
+				err := rover.neckCenter(ctx)
 				if err != nil {
 					panic(err)
 				}
 
-				time.Sleep(1500 * time.Millisecond)
+				if !utils.SelectContextOrWait(ctx, 1500*time.Millisecond) {
+					return
+				}
 
-				err = rover.neckOffset(-1)
+				err = rover.neckOffset(ctx, -1)
 				if err != nil {
 					panic(err)
 				}
 
-				time.Sleep(1500 * time.Millisecond)
+				if !utils.SelectContextOrWait(ctx, 1500*time.Millisecond) {
+					return
+				}
 
-				err = rover.neckOffset(1)
+				err = rover.neckOffset(ctx, 1)
 				if err != nil {
 					panic(err)
 				}
 
 			}
-		}()
+		})
 	} else {
-		err := rover.neckCenter()
+		err := rover.neckCenter(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -288,11 +292,13 @@ func NewRover(r api.Robot, theBoard board.Board) (*Rover, error) {
 
 	theLidar := r.LidarDeviceByName("lidarBase")
 	if false && theLidar != nil {
-		go func() {
+		utils.PanicCapturingGo(func() {
 			for {
-				time.Sleep(time.Second)
+				if !utils.SelectContextOrWait(ctx, time.Second) {
+					return
+				}
 
-				ms, err := theLidar.Scan(context.Background(), lidar.ScanOptions{})
+				ms, err := theLidar.Scan(ctx, lidar.ScanOptions{})
 				if err != nil {
 					logger.Infof("theLidar scan failed: %s", err)
 					continue
@@ -300,7 +306,7 @@ func NewRover(r api.Robot, theBoard board.Board) (*Rover, error) {
 
 				logger.Debugf("fowrad distance %#v", ms[0])
 			}
-		}()
+		})
 	}
 
 	logger.Debug("rover ready")
@@ -309,13 +315,10 @@ func NewRover(r api.Robot, theBoard board.Board) (*Rover, error) {
 }
 
 func main() {
-	err := realMain()
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ContextualMain(mainWithArgs, logger)
 }
 
-func realMain() error {
+func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err error) {
 	flag.Parse()
 
 	exp := egoutil.NewNiceLoggingSpanExporter()
@@ -327,17 +330,17 @@ func realMain() error {
 		return err
 	}
 
-	myRobot, err := robot.NewRobot(context.Background(), cfg, logger)
+	myRobot, err := robot.NewRobot(ctx, cfg, logger)
 	if err != nil {
 		return err
 	}
 	defer myRobot.Close()
 
-	rover, err := NewRover(myRobot, myRobot.BoardByName("local"))
+	rover, err := NewRover(ctx, myRobot, myRobot.BoardByName("local"))
 	if err != nil {
 		return err
 	}
-	err = rover.Ready(myRobot)
+	err = rover.Ready(ctx, myRobot)
 	if err != nil {
 		return err
 	}
@@ -345,5 +348,5 @@ func realMain() error {
 	options := web.NewOptions()
 	options.AutoTile = false
 	options.Pprof = true
-	return web.RunWeb(context.Background(), myRobot, options, logger)
+	return web.RunWeb(ctx, myRobot, options, logger)
 }

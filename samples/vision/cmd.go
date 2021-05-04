@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"go.viam.com/robotcore/rimage"
+	"go.viam.com/robotcore/utils"
 	"go.viam.com/robotcore/vision/segmentation"
 
 	"github.com/disintegration/imaging"
@@ -123,13 +124,15 @@ func view(img *rimage.Image) error {
 	c := make(chan os.Signal, 2)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
-	go func() {
-		time.Sleep(2 * time.Second)
+	utils.PanicCapturingGo(func() {
+		if !utils.SelectContextOrWait(cancelCtx, 2*time.Second) {
+			return
+		}
 		gostream.StreamSource(
 			cancelCtx,
 			gostream.ImageSourceFunc(func(ctx context.Context) (image.Image, func(), error) { return imgs[0], func() {}, nil }),
 			remoteView)
-	}()
+	})
 
 	<-c
 	cancelFunc()

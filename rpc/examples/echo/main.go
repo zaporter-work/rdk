@@ -83,7 +83,7 @@ func runServer(ctx context.Context, port int, logger golog.Logger) (err error) {
 		MaxHeaderBytes: 1 << 20,
 		Handler:        h2c.NewHandler(mux, h2s),
 	}
-	go func() {
+	utils.PanicCapturingGo(func() {
 		<-ctx.Done()
 		defer func() {
 			if err := rpcServer.Stop(); err != nil {
@@ -93,12 +93,12 @@ func runServer(ctx context.Context, port int, logger golog.Logger) (err error) {
 		if err := httpServer.Shutdown(context.Background()); err != nil {
 			panic(err)
 		}
-	}()
-	go func() {
+	})
+	utils.PanicCapturingGo(func() {
 		if err := rpcServer.Start(); err != nil {
 			panic(err)
 		}
-	}()
+	})
 	utils.ContextMainReadyFunc(ctx)()
 
 	logger.Infow("serving", "url", fmt.Sprintf("http://%s", listener.Addr().String()))

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"image"
@@ -12,6 +13,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"go.uber.org/multierr"
 	"go.viam.com/robotcore/api"
 	"go.viam.com/robotcore/artifact"
 	pb "go.viam.com/robotcore/proto/api/v1"
@@ -60,14 +62,14 @@ func getCoord(chess string) pos {
 	return pos{Center.x + (x * BoardWidth), Center.y + (y * BoardWidth)} // HARD CODED
 }
 
-func moveTo(myArm api.Arm, chess string, heightMod float64) error {
+func moveTo(ctx context.Context, myArm api.Arm, chess string, heightMod float64) error {
 	// first make sure in safe position
-	where, err := myArm.CurrentPosition(context.TODO())
+	where, err := myArm.CurrentPosition(ctx)
 	if err != nil {
 		return err
 	}
 	where.Z = SafeMoveHeight + heightMod
-	err = myArm.MoveToPosition(context.TODO(), where)
+	err = myArm.MoveToPosition(ctx, where)
 	if err != nil {
 		return err
 	}
@@ -83,10 +85,10 @@ func moveTo(myArm api.Arm, chess string, heightMod float64) error {
 		where.X = f.x
 		where.Y = f.y
 	}
-	return myArm.MoveToPosition(context.TODO(), where)
+	return myArm.MoveToPosition(ctx, where)
 }
 
-func movePiece(boardState boardStateGuesser, robot api.Robot, myArm api.Arm, myGripper api.Gripper, from, to string) error {
+func movePiece(ctx context.Context, boardState boardStateGuesser, robot api.Robot, myArm api.Arm, myGripper api.Gripper, from, to string) error {
 
 	if to[0] != '-' {
 		toHeight, err := boardState.game.GetPieceHeight(boardState.NewestBoard(), to)
@@ -95,20 +97,20 @@ func movePiece(boardState boardStateGuesser, robot api.Robot, myArm api.Arm, myG
 		}
 		if toHeight > 0 {
 			logger.Debugf("moving piece from %s to %s but occupied, going to capture", from, to)
-			err = movePiece(boardState, robot, myArm, myGripper, to, "-")
+			err = movePiece(ctx, boardState, robot, myArm, myGripper, to, "-")
 			if err != nil {
 				return err
 			}
 		}
 	}
 
-	err := moveTo(myArm, from, 0)
+	err := moveTo(ctx, myArm, from, 0)
 	if err != nil {
 		return err
 	}
 
 	// open before going down
-	err = myGripper.Open(context.TODO())
+	err = myGripper.Open(ctx)
 	if err != nil {
 		return err
 	}
@@ -119,16 +121,16 @@ func movePiece(boardState boardStateGuesser, robot api.Robot, myArm api.Arm, myG
 	}
 
 	height := boardState.NewestBoard().SquareCenterHeight(from, 35) // TODO(erh): change to something more intelligent
-	where, err := myArm.CurrentPosition(context.TODO())
+	where, err := myArm.CurrentPosition(ctx)
 	if err != nil {
 		return err
 	}
 	where.Z = BoardHeight + (height / 1000) + .01
-	myArm.MoveToPosition(context.TODO(), where)
+	myArm.MoveToPosition(ctx, where)
 
 	// grab piece
 	for {
-		grabbedSomething, err := myGripper.Grab(context.TODO())
+		grabbedSomething, err := myGripper.Grab(ctx)
 		if err != nil {
 			return err
 		}
@@ -137,12 +139,12 @@ func movePiece(boardState boardStateGuesser, robot api.Robot, myArm api.Arm, myG
 			// got the piece
 			break
 		}
-		err = myGripper.Open(context.TODO())
+		err = myGripper.Open(ctx)
 		if err != nil {
 			return err
 		}
 		logger.Debug("no piece")
-		where, err = myArm.CurrentPosition(context.TODO())
+		where, err = myArm.CurrentPosition(ctx)
 		if err != nil {
 			return err
 		}
@@ -150,63 +152,65 @@ func movePiece(boardState boardStateGuesser, robot api.Robot, myArm api.Arm, myG
 		if where.Z <= BoardHeight {
 			return fmt.Errorf("no piece")
 		}
-		myArm.MoveToPosition(context.TODO(), where)
+		myArm.MoveToPosition(ctx, where)
 	}
 
 	saveZ := where.Z // save the height to bring the piece down to
 
 	if to == "-throw" {
 
-		err = moveOutOfWay(myArm)
+		err = moveOutOfWay(ctx, myArm)
 		if err != nil {
 			return err
 		}
 
-		go func() {
-			time.Sleep(200 * time.Millisecond)
-			myGripper.Open(context.TODO())
-		}()
-		err = myArm.JointMoveDelta(context.TODO(), 4, -1)
+		utils.PanicCapturingGo(func() {
+			if !utils.SelectContextOrWait(ctx, 200*time.Millisecond) {
+				return
+			}
+			myGripper.Open(ctx)
+		})
+		err = myArm.JointMoveDelta(ctx, 4, -1)
 		if err != nil {
 			return err
 		}
 
-		return initArm(myArm) // this is to get joint position right
+		return initArm(ctx, myArm) // this is to get joint position right
 	}
 
-	err = moveTo(myArm, to, .1)
+	err = moveTo(ctx, myArm, to, .1)
 	if err != nil {
 		return err
 	}
 
 	// drop piece
-	where, err = myArm.CurrentPosition(context.TODO())
+	where, err = myArm.CurrentPosition(ctx)
 	if err != nil {
 		return err
 	}
 
 	where.Z = saveZ
-	myArm.MoveToPosition(context.TODO(), where)
+	myArm.MoveToPosition(ctx, where)
 
-	myGripper.Open(context.TODO())
+	myGripper.Open(ctx)
 
 	if to != "-" {
-		where, err = myArm.CurrentPosition(context.TODO())
+		where, err = myArm.CurrentPosition(ctx)
 		if err != nil {
 			return err
 		}
 		where.Z = SafeMoveHeight
-		myArm.MoveToPosition(context.TODO(), where)
+		myArm.MoveToPosition(ctx, where)
 
-		moveOutOfWay(myArm)
+		moveOutOfWay(ctx, myArm)
 	}
 	return nil
 }
 
-func moveOutOfWay(myArm api.Arm) error {
+func moveOutOfWay(ctx context.Context, myArm api.Arm) error {
 	foo := getCoord("a1")
 
-	where, err := myArm.CurrentPosition(context.TODO())
+	where, err := myArm.CurrentPosition(ctx)
 	if err != nil {
 		return err
 	}
@@ -214,12 +218,12 @@ func moveOutOfWay(myArm api.Arm) error {
 	where.Y = foo.y
 	where.Z = SafeMoveHeight + .3 // HARD CODED
 
-	return myArm.MoveToPosition(context.TODO(), where)
+	return myArm.MoveToPosition(ctx, where)
 }
 
-func initArm(myArm api.Arm) error {
+func initArm(ctx context.Context, myArm api.Arm) error {
 	foo := getCoord("a1")
-	err := myArm.MoveToPosition(context.TODO(), &pb.ArmPosition{
+	err := myArm.MoveToPosition(ctx, &pb.ArmPosition{
 		X:  foo.x,
 		Y:  foo.y,
 		Z:  SafeMoveHeight,
@@ -232,7 +236,7 @@ func initArm(myArm api.Arm) error {
 		return err
 	}
 
-	return moveOutOfWay(myArm)
+	return moveOutOfWay(ctx, myArm)
 }
 
 func searchForNextMove(p *position.Position) (*position.Position, *moves.Move) {
@@ -267,7 +271,9 @@ func getWristPicCorners(ctx context.Context, wristCam gostream.ImageSource, debu
 	imageSize.Y = imgBounds.Max.Y
 
 	// wait, cause this camera sucks
-	time.Sleep(500 * time.Millisecond)
+	if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
+		return nil, imageSize, ctx.Err()
+	}
 	img, release, err = wristCam.Next(ctx)
 	if err != nil {
 		return nil, imageSize, err
@@ -297,7 +303,7 @@ func getWristPicCorners(ctx context.Context, wristCam gostream.ImageSource, debu
 func lookForBoardAdjust(ctx context.Context, myArm api.Arm, wristCam gostream.ImageSource, corners []image.Point, imageSize image.Point) error {
 	debugNumber := 100
 	for {
-		where, err := myArm.CurrentPosition(context.TODO())
+		where, err := myArm.CurrentPosition(ctx)
 		if err != nil {
 			return err
 		}
@@ -326,7 +332,7 @@ func lookForBoardAdjust(ctx context.Context, myArm api.Arm, wristCam gostream.Im
 
 		where.X += xMove
 		where.Y += yMove
-		err = myArm.MoveToPosition(context.TODO(), where)
+		err = myArm.MoveToPosition(ctx, where)
 		if err != nil {
 			return err
 		}
@@ -350,7 +356,7 @@ func lookForBoard(ctx context.Context, myArm api.Arm, myRobot api.Robot) error {
 
 	for foo := -1.0; foo <= 1.0; foo += 2 {
 		// HARD CODED
-		where, err := myArm.CurrentPosition(context.TODO())
+		where, err := myArm.CurrentPosition(ctx)
 		if err != nil {
 			return err
 		}
@@ -360,14 +366,14 @@ func lookForBoard(ctx context.Context, myArm api.Arm, myRobot api.Robot) error {
 		where.RX = -2.600206
 		where.RY = -0.007839
 		where.RZ = -0.061827
-		err = myArm.MoveToPosition(context.TODO(), where)
+		err = myArm.MoveToPosition(ctx, where)
 		if err != nil {
 			return err
 		}
 
 		d := .1
 		for i := 0.0; i < 1.6; i = i + d {
-			err = myArm.JointMoveDelta(context.TODO(), 0, foo*d)
+			err = myArm.JointMoveDelta(ctx, 0, foo*d)
 			if err != nil {
 				return err
 			}
@@ -389,7 +395,10 @@ func lookForBoard(ctx context.Context, myArm api.Arm, myRobot api.Robot) error {
 }
 
 func adjustArmInsideSquare(ctx context.Context, robot api.Robot) error {
-	time.Sleep(500 * time.Millisecond) // wait for camera to focus
+	// wait for camera to focus
+	if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
+		return ctx.Err()
+	}
 
 	cam := robot.CameraByName("gripperCam")
 	if cam == nil {
@@ -399,7 +408,7 @@ func adjustArmInsideSquare(ctx context.Context, robot api.Robot) error {
 	arm := robot.ArmByName("pieceArm")
 
 	for {
-		where, err := arm.CurrentPosition(context.TODO())
+		where, err := arm.CurrentPosition(ctx)
 		if err != nil {
 			return err
 		}
@@ -444,17 +453,24 @@ func adjustArmInsideSquare(ctx context.Context, robot api.Robot) error {
 
 		fmt.Printf("\t moving to %0.3f,%0.3f\n", where.X, where.Y)
 
-		err = arm.MoveToPosition(context.TODO(), where)
+		err = arm.MoveToPosition(ctx, where)
 		if err != nil {
 			return err
 		}
 
-		time.Sleep(500 * time.Millisecond) // wait for camera to focus
+		// wait for camera to focus
+		if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
+			return ctx.Err()
+		}
 	}
 
 }
 
 func main() {
+	utils.ContextualMain(mainWithArgs, logger)
+}
+
+func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err error) {
 	cpuprofile := flag.String("cpuprofile", "", "write cpu profile to file")
 
 	flag.Parse()
@@ -464,7 +480,7 @@ func main() {
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
 		if err != nil {
-			logger.Fatal(err)
+			return err
 		}
 		pprof.StartCPUProfile(f)
 		defer pprof.StopCPUProfile()
@@ -472,59 +488,56 @@ func main() {
 
 	cfg, err := api.ReadConfig(cfgFile)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	myRobot, err := robot.NewRobot(context.Background(), cfg, logger)
+	myRobot, err := robot.NewRobot(ctx, cfg, logger)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer func() {
-		if err := myRobot.Close(); err != nil {
-			panic(err)
-		}
+		err = multierr.Combine(myRobot.Close())
 	}()
 
 	myArm := myRobot.ArmByName("pieceArm")
 	if myArm == nil {
-		logger.Fatal("need an arm called pieceArm")
+		return errors.New("need an arm called pieceArm")
 	}
 
 	myGripper := myRobot.GripperByName("grippie")
 	if myGripper == nil {
-		logger.Fatal("need a gripper called gripped")
+		return errors.New("need a gripper called gripped")
 	}
 
 	webcam := myRobot.CameraByName("cameraOver")
 	if webcam == nil {
-		panic("can't find cameraOver camera")
+		return errors.New("can't find cameraOver camera")
 	}
 
 	if false { // TODO(erh): put this back once we have a wrist camera again
-		err = lookForBoard(context.Background(), myArm, myRobot)
+		err = lookForBoard(ctx, myArm, myRobot)
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
 
-	err = initArm(myArm)
+	err = initArm(ctx, myArm)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	if false {
 		fmt.Printf("ELIOT HACK\n")
 
-		err := moveTo(myArm, "c3", 0)
+		err = moveTo(ctx, myArm, "c3", 0)
 		if err == nil {
-			time.Sleep(500 * time.Millisecond) // wait for camera to focus
-			err = adjustArmInsideSquare(context.Background(), myRobot)
+			// wait for camera to focus
+			if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
+				return
+			}
+			err = adjustArmInsideSquare(ctx, myRobot)
 		}
 
-		if err != nil {
-			fmt.Printf("err: %s\n", err)
-		}
-		os.Exit(-1)
 		return
 	}
 
@@ -537,9 +550,9 @@ func main() {
 	annotatedImageHolder := &imagesource.StaticSource{}
 	myRobot.AddCamera(annotatedImageHolder, api.ComponentConfig{})
 
-	go func() {
+	utils.PanicCapturingGo(func() {
 		for {
-			img, release, err := webcam.Next(context.Background())
+			img, release, err := webcam.Next(ctx)
 			func() {
 				defer release()
 				if err != nil {
@@ -603,7 +616,7 @@ func main() {
 
 								currentPosition, m = searchForNextMove(currentPosition)
 								logger.Debugf("computer will make move: %s", m)
-								err = movePiece(boardState, myRobot, myArm, myGripper, m.String()[0:2], m.String()[2:])
+								err = movePiece(ctx, boardState, myRobot, myArm, myGripper, m.String()[0:2], m.String()[2:])
 								if err != nil {
 									panic(err)
 								}
@@ -632,11 +645,7 @@ func main() {
 				}
 			}()
 		}
-	}()
+	})
 
-	err = web.RunWeb(context.Background(), myRobot, web.NewOptions(), logger)
-	if err != nil {
-		panic(err)
-	}
-
+	return web.RunWeb(ctx, myRobot, web.NewOptions(), logger)
 }

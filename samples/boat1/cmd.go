@@ -10,9 +10,8 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"sync"
 	"time"
-
-	_ "go.viam.com/robotcore/board/detector"
 
 	"go.viam.com/robotcore/api"
 	"go.viam.com/robotcore/board"
@@ -21,6 +20,9 @@ import (
 	"go.viam.com/robotcore/robot/web"
 	"go.viam.com/robotcore/sensor"
 	"go.viam.com/robotcore/serial"
+	"go.viam.com/robotcore/utils"
+
+	_ "go.viam.com/robotcore/board/detector"
 
 	"github.com/adrianmo/go-nmea"
 	"github.com/edaniels/golog"
@@ -40,6 +42,7 @@ type Boat struct {
 
 	throttle, direction, mode, aSwitch board.DigitalInterrupt
 	rightVertical, rightHorizontal     board.DigitalInterrupt
+	activeBackgroundWorkers            sync.WaitGroup
 }
 
 func (b *Boat) MoveStraight(ctx context.Context, distanceMillis int, millisPerSec float64, block bool) (int, error) {
@@ -77,14 +80,17 @@ func (b *Boat) Stop(ctx context.Context) error {
 }
 
 func (b *Boat) Close() error {
+	defer b.activeBackgroundWorkers.Wait()
 	return b.Stop(context.Background())
 }
 
-func (b *Boat) StartRC() {
-	go func() {
+func (b *Boat) StartRC(ctx context.Context) {
+	b.activeBackgroundWorkers.Add(1)
+	utils.ManagedGo(func() {
 		for {
-
-			time.Sleep(10 * time.Millisecond)
+			if !utils.SelectContextOrWait(ctx, 10*time.Millisecond) {
+				return
+			}
 
 			mode := b.mode.Value()
 			if mode == 0 {
@@ -144,11 +150,11 @@ func (b *Boat) StartRC() {
 			var err error
 
 			if port < 8 && starboard < 8 {
-				err = b.Stop(context.Background())
+				err = b.Stop(ctx)
 			} else {
 				err = multierr.Combine(
-					b.starboard.GoFor(context.TODO(), starboardDirection, starboard, 0),
-					b.port.GoFor(context.TODO(), portDirection, port, 0),
+					b.starboard.GoFor(ctx, starboardDirection, starboard, 0),
+					b.port.GoFor(ctx, portDirection, port, 0),
 				)
 			}
 
@@ -157,7 +163,7 @@ func (b *Boat) StartRC() {
 			}
 
 		}
-	}()
+	}, b.activeBackgroundWorkers.Done)
 }
 
 type SavedDetph struct {
@@ -217,12 +223,12 @@ func trackGPS() {
 
 var toStore []SavedDetph
 
-func doRecordDepth(depthSensor sensor.Device) error {
+func doRecordDepth(ctx context.Context, depthSensor sensor.Device) error {
 	if currentLocation.Longitude == 0 {
 		return fmt.Errorf("currentLocation is 0")
 	}
 
-	readings, err := depthSensor.Readings(context.Background())
+	readings, err := depthSensor.Readings(ctx)
 	if err != nil {
 		return err
 	}
@@ -251,15 +257,17 @@ func doRecordDepth(depthSensor sensor.Device) error {
 	return err
 }
 
-func recordDepthThread(depthSensor sensor.Device) {
+func recordDepthWorker(ctx context.Context, depthSensor sensor.Device) {
 	if depthSensor == nil {
 		golog.Global.Fatalf("depthSensor cannot be nil")
 	}
 
 	for {
-		time.Sleep(5 * time.Second)
+		if !utils.SelectContextOrWait(ctx, 5*time.Second) {
+			return
+		}
 
-		err := doRecordDepth(depthSensor)
+		err := doRecordDepth(ctx, depthSensor)
 		if err != nil {
 			golog.Global.Debugf("erorr recording depth %s", err)
 		}
@@ -295,13 +303,10 @@ func NewBoat(robot api.Robot) (*Boat, error) {
 }
 
 func main() {
-	err := realMain()
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ContextualMain(mainWithArgs, logger)
 }
 
-func realMain() error {
+func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err error) {
 	flag.Parse()
 
 	cfg, err := api.ReadConfig(flag.Arg(0))
@@ -309,7 +314,7 @@ func realMain() error {
 		return err
 	}
 
-	myRobot, err := robot.NewRobot(context.Background(), cfg, logger)
+	myRobot, err := robot.NewRobot(ctx, cfg, logger)
 	if err != nil {
 		return err
 	}
@@ -319,12 +324,20 @@ func realMain() error {
 	if err != nil {
 		return err
 	}
-	boat.StartRC()
+	defer boat.Close()
+	boat.StartRC(ctx)
 
 	myRobot.AddBase(boat, api.ComponentConfig{Name: "boatbot"})
 
-	go trackGPS()
-	go recordDepthThread(myRobot.SensorByName("depth1"))
+	var activeBackgroundWorkers sync.WaitGroup
+	activeBackgroundWorkers.Add(2)
+	defer activeBackgroundWorkers.Wait()
+	utils.ManagedGo(func() {
+		trackGPS()
+	}, activeBackgroundWorkers.Done)
+	utils.ManagedGo(func() {
+		recordDepthWorker(ctx, myRobot.SensorByName("depth1"))
+	}, activeBackgroundWorkers.Done)
 
-	return web.RunWeb(context.Background(), myRobot, web.NewOptions(), logger)
+	return web.RunWeb(ctx, myRobot, web.NewOptions(), logger)
 }

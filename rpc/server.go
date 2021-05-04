@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"go.viam.com/robotcore/utils"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"go.uber.org/multierr"
@@ -44,6 +46,7 @@ type simpleServer struct {
 	grpcGatewayHandler   *runtime.ServeMux
 	httpServer           *http.Server
 	serviceServerCancels []func()
+	serviceServers       []interface{}
 	secure               bool
 }
 
@@ -156,13 +159,13 @@ func (ss *simpleServer) Serve(listener net.Listener) (err error) {
 	ss.httpServer.Addr = listener.Addr().String()
 	ss.httpServer.Handler = handler
 	var errMu sync.Mutex
-	go func() {
+	utils.ManagedGo(func() {
 		if serveErr := ss.httpServer.Serve(listener); serveErr != http.ErrServerClosed {
 			errMu.Lock()
 			err = multierr.Combine(err, serveErr)
 			errMu.Unlock()
 		}
-	}()
+	}, nil)
 	serveErr := ss.Start()
 	errMu.Lock()
 	err = multierr.Combine(err, serveErr)
@@ -170,10 +173,13 @@ func (ss *simpleServer) Serve(listener net.Listener) (err error) {
 	return
 }
 
-func (ss *simpleServer) Stop() error {
+func (ss *simpleServer) Stop() (err error) {
 	defer ss.grpcServer.Stop()
 	for _, cancel := range ss.serviceServerCancels {
 		cancel()
+	}
+	for _, srv := range ss.serviceServers {
+		err = multierr.Combine(err, utils.TryClose(srv))
 	}
 	return ss.httpServer.Shutdown(context.Background())
 }
@@ -190,6 +196,7 @@ func (ss *simpleServer) RegisterServiceServer(
 	defer ss.mu.Unlock()
 	stopCtx, stopCancel := context.WithCancel(ctx)
 	ss.serviceServerCancels = append(ss.serviceServerCancels, stopCancel)
+	ss.serviceServers = append(ss.serviceServers, svcServer)
 	ss.grpcServer.RegisterService(svcDesc, svcServer)
 	if len(svcHandlers) != 0 {
 		addr := ss.grpcListener.Addr().String()
