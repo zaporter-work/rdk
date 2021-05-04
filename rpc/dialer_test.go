@@ -8,7 +8,7 @@ import (
 	pb "go.viam.com/robotcore/proto/rpc/examples/echo/v1"
 	"google.golang.org/grpc"
 
-	"github.com/edaniels/test"
+	"go.viam.com/test"
 )
 
 func TestCachedDialer(t *testing.T) {

@@ -13,7 +13,7 @@ import (
 
 	pb "go.viam.com/robotcore/proto/rpc/examples/echo/v1"
 
-	"github.com/edaniels/test"
+	"go.viam.com/test"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 )

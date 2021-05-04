@@ -14,7 +14,7 @@ import (
 	"go.viam.com/robotcore/vision/chess"
 
 	"github.com/edaniels/golog"
-	"github.com/edaniels/test"
+	"go.viam.com/test"
 	"github.com/tonyOreglia/glee/pkg/position"
 )
 
