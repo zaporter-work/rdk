@@ -14,8 +14,8 @@ import (
 	"go.viam.com/robotcore/vision/chess"
 
 	"github.com/edaniels/golog"
-	"go.viam.com/test"
 	"github.com/tonyOreglia/glee/pkg/position"
+	"go.viam.com/test"
 )
 
 var outDir string

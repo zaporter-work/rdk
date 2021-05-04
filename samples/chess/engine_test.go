@@ -3,8 +3,8 @@ package main
 import (
 	"testing"
 
-	"go.viam.com/test"
 	"github.com/tonyOreglia/glee/pkg/position"
+	"go.viam.com/test"
 )
 
 func TestEngine1(t *testing.T) {
