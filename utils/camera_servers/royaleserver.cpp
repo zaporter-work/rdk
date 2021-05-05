@@ -16,7 +16,7 @@ using namespace std;
 class MyListener : public IDepthDataListener {
    public:
     void onNewData(const DepthData* data) {
-        cout << "got data: " << data->width << " x " << data->height << endl;
+        DEBUG("got data: " << data->width << " x " << data->height);
         {
             int x = data->width / 2;
             int y = data->height / 2;
@@ -27,8 +27,8 @@ class MyListener : public IDepthDataListener {
 
             auto val = data->points.at(k);
 
-            cout << "\t" << x << "," << y << " " << k << " z:" << val.z
-                 << " confidence:" << int(val.depthConfidence) << "|" << endl;
+            DEBUG("\t" << x << "," << y << " " << k << " z:" << val.z
+                  << " confidence:" << int(val.depthConfidence));
         }
 
         std::shared_ptr<CameraOutput> output(new CameraOutput());
