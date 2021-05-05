@@ -1,3 +1,4 @@
+// Package main provides a command for computer vision utilities.
 package main
 
 import (

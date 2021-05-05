@@ -1,3 +1,4 @@
+// Package main is the work-in-progress robotic boat from Viam.
 package main
 
 import (

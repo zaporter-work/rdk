@@ -1,3 +1,4 @@
+// Package main allows one to play around with a robotic arm.
 package main
 
 import (
@@ -8,7 +9,7 @@ import (
 
 	"go.viam.com/robotcore/api"
 	"go.viam.com/robotcore/robot"
-	"go.viam.com/robotcore/robot/actions"
+	"go.viam.com/robotcore/robot/action"
 	"go.viam.com/robotcore/robot/web"
 	"go.viam.com/robotcore/utils"
 
@@ -20,7 +21,7 @@ import (
 var logger = golog.NewDevelopmentLogger("armplay")
 
 func init() {
-	actions.RegisterAction("play", func(ctx context.Context, r api.Robot) {
+	action.RegisterAction("play", func(ctx context.Context, r api.Robot) {
 		err := play(ctx, r)
 		if err != nil {
 			logger.Errorf("error playing: %s", err)

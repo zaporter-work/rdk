@@ -1,3 +1,4 @@
+// Package main is a chess game featuring a robot versus a human.
 package main
 
 import (

@@ -1,3 +1,8 @@
+// Package rpc provides a remote procedure call (RPC) library based on gRPC.
+//
+// In a server context, this package should be preferred over gRPC directly
+// since it provides higher level configuration with more features built in,
+// such as grpc-web and gRPC via RESTful JSON.
 package rpc
 
 import (

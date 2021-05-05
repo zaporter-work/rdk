@@ -1,3 +1,6 @@
+// Package main runs a gRPC server running the proto/rpc/examples/echo/v1 service.
+//
+// It is accessible over gRPC, grpc-web, and gRPC via RESTful JSON.
 package main
 
 import (

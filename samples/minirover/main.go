@@ -1,3 +1,4 @@
+// Package main is the work-in-progress robotic land rover from Viam.
 package main
 
 import (
@@ -13,7 +14,7 @@ import (
 	"go.viam.com/robotcore/lidar"
 	"go.viam.com/robotcore/rimage"
 	"go.viam.com/robotcore/robot"
-	"go.viam.com/robotcore/robot/actions"
+	"go.viam.com/robotcore/robot/action"
 	"go.viam.com/robotcore/robot/web"
 	"go.viam.com/robotcore/utils"
 	"go.viam.com/robotcore/vision/segmentation"
@@ -36,7 +37,7 @@ const (
 var logger = golog.NewDevelopmentLogger("minirover")
 
 func init() {
-	actions.RegisterAction("dock", func(ctx context.Context, r api.Robot) {
+	action.RegisterAction("dock", func(ctx context.Context, r api.Robot) {
 		err := dock(ctx, r)
 		if err != nil {
 			logger.Errorf("error docking: %s", err)
