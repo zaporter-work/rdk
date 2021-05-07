@@ -13,7 +13,8 @@ import (
 	"go.viam.com/robotcore/robot/web"
 	"go.viam.com/robotcore/utils"
 
-	_ "go.viam.com/robotcore/robots/eva" // load eva
+	_ "go.viam.com/robotcore/robots/eva"             // load eva
+	_ "go.viam.com/robotcore/robots/universalrobots" // load eva
 
 	"github.com/edaniels/golog"
 )
@@ -27,6 +28,43 @@ func init() {
 			logger.Errorf("error playing: %s", err)
 		}
 	})
+
+	action.RegisterAction("upAndDown", func(ctx context.Context, r api.Robot) {
+		err := upAndDown(ctx, r)
+		if err != nil {
+			logger.Errorf("error upAndDown: %s", err)
+		}
+	})
+
+}
+
+func upAndDown(ctx context.Context, r api.Robot) error {
+	if len(r.ArmNames()) != 1 {
+		return fmt.Errorf("need 1 arm name")
+	}
+
+	arm := r.ArmByName(r.ArmNames()[0])
+
+	for i := 0; i < 1000; i++ {
+		pos, err := arm.CurrentPosition(ctx)
+		if err != nil {
+			return err
+		}
+
+		pos.Z += .30
+		err = arm.MoveToPosition(ctx, pos)
+		if err != nil {
+			return err
+		}
+
+		pos.Z -= .30
+		err = arm.MoveToPosition(ctx, pos)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func play(ctx context.Context, r api.Robot) error {
