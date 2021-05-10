@@ -3,8 +3,8 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
-	"fmt"
 	"time"
 
 	"go.viam.com/robotcore/api"
@@ -51,7 +51,7 @@ func init() {
 
 func chrisCirlce(ctx context.Context, r api.Robot) error {
 	if len(r.ArmNames()) != 1 {
-		return fmt.Errorf("need 1 arm name")
+		return errors.New("need 1 arm name")
 	}
 
 	arm := r.ArmByName(r.ArmNames()[0])
@@ -66,7 +66,7 @@ func chrisCirlce(ctx context.Context, r api.Robot) error {
 
 func upAndDown(ctx context.Context, r api.Robot) error {
 	if len(r.ArmNames()) != 1 {
-		return fmt.Errorf("need 1 arm name")
+		return errors.New("need 1 arm name")
 	}
 
 	arm := r.ArmByName(r.ArmNames()[0])
@@ -96,7 +96,7 @@ func upAndDown(ctx context.Context, r api.Robot) error {
 
 func play(ctx context.Context, r api.Robot) error {
 	if len(r.ArmNames()) != 1 {
-		return fmt.Errorf("need 1 arm name")
+		return errors.New("need 1 arm name")
 	}
 
 	arm := r.ArmByName(r.ArmNames()[0])

@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -105,7 +106,7 @@ func runServer(ctx context.Context, port int, logger golog.Logger) (err error) {
 	utils.ContextMainReadyFunc(ctx)()
 
 	logger.Infow("serving", "url", fmt.Sprintf("http://%s", listener.Addr().String()))
-	if err := httpServer.Serve(listener); err != http.ErrServerClosed {
+	if err := httpServer.Serve(listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
 	return nil

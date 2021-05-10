@@ -258,13 +258,13 @@ type Status struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Arms         map[string]*ArmStatus    `protobuf:"bytes,1,rep,name=arms,proto3" json:"arms,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Bases        map[string]bool          `protobuf:"bytes,2,rep,name=bases,proto3" json:"bases,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	Grippers     map[string]bool          `protobuf:"bytes,3,rep,name=grippers,proto3" json:"grippers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	Boards       map[string]*BoardStatus  `protobuf:"bytes,4,rep,name=boards,proto3" json:"boards,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Cameras      map[string]bool          `protobuf:"bytes,5,rep,name=cameras,proto3" json:"cameras,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	LidarDevices map[string]bool          `protobuf:"bytes,6,rep,name=lidar_devices,json=lidarDevices,proto3" json:"lidar_devices,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	Sensors      map[string]*SensorStatus `protobuf:"bytes,7,rep,name=sensors,proto3" json:"sensors,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Arms     map[string]*ArmStatus    `protobuf:"bytes,1,rep,name=arms,proto3" json:"arms,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bases    map[string]bool          `protobuf:"bytes,2,rep,name=bases,proto3" json:"bases,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	Grippers map[string]bool          `protobuf:"bytes,3,rep,name=grippers,proto3" json:"grippers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	Boards   map[string]*BoardStatus  `protobuf:"bytes,4,rep,name=boards,proto3" json:"boards,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Cameras  map[string]bool          `protobuf:"bytes,5,rep,name=cameras,proto3" json:"cameras,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	Lidars   map[string]bool          `protobuf:"bytes,6,rep,name=lidar_devices,json=lidars,proto3" json:"lidar_devices,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	Sensors  map[string]*SensorStatus `protobuf:"bytes,7,rep,name=sensors,proto3" json:"sensors,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *Status) Reset() {
@@ -334,9 +334,9 @@ func (x *Status) GetCameras() map[string]bool {
 	return nil
 }
 
-func (x *Status) GetLidarDevices() map[string]bool {
+func (x *Status) GetLidars() map[string]bool {
 	if x != nil {
-		return x.LidarDevices
+		return x.Lidars
 	}
 	return nil
 }
@@ -4356,7 +4356,7 @@ var file_proto_api_v1_robot_proto_goTypes = []interface{}{
 	nil,                                      // 73: proto.api.v1.Status.GrippersEntry
 	nil,                                      // 74: proto.api.v1.Status.BoardsEntry
 	nil,                                      // 75: proto.api.v1.Status.CamerasEntry
-	nil,                                      // 76: proto.api.v1.Status.LidarDevicesEntry
+	nil,                                      // 76: proto.api.v1.Status.LidarsEntry
 	nil,                                      // 77: proto.api.v1.Status.SensorsEntry
 	nil,                                      // 78: proto.api.v1.BoardStatus.MotorsEntry
 	nil,                                      // 79: proto.api.v1.BoardStatus.ServosEntry
@@ -4376,7 +4376,7 @@ var file_proto_api_v1_robot_proto_depIdxs = []int32{
 	73, // 5: proto.api.v1.Status.grippers:type_name -> proto.api.v1.Status.GrippersEntry
 	74, // 6: proto.api.v1.Status.boards:type_name -> proto.api.v1.Status.BoardsEntry
 	75, // 7: proto.api.v1.Status.cameras:type_name -> proto.api.v1.Status.CamerasEntry
-	76, // 8: proto.api.v1.Status.lidar_devices:type_name -> proto.api.v1.Status.LidarDevicesEntry
+	76, // 8: proto.api.v1.Status.lidar_devices:type_name -> proto.api.v1.Status.LidarsEntry
 	77, // 9: proto.api.v1.Status.sensors:type_name -> proto.api.v1.Status.SensorsEntry
 	9,  // 10: proto.api.v1.ArmStatus.grid_position:type_name -> proto.api.v1.ArmPosition
 	10, // 11: proto.api.v1.ArmStatus.joint_positions:type_name -> proto.api.v1.JointPositions

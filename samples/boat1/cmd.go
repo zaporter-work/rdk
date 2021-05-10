@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -54,7 +55,7 @@ func (b *Boat) MoveStraight(ctx context.Context, distanceMillis int, millisPerSe
 	}
 
 	if block {
-		return 0, fmt.Errorf("boat can't block for move straight yet")
+		return 0, errors.New("boat can't block for move straight yet")
 	}
 
 	speed := (millisPerSec * 60.0) / float64(millisPerRotation)
@@ -69,7 +70,7 @@ func (b *Boat) MoveStraight(ctx context.Context, distanceMillis int, millisPerSe
 }
 
 func (b *Boat) Spin(ctx context.Context, angleDeg float64, degsPerSec float64, block bool) (float64, error) {
-	return math.NaN(), fmt.Errorf("boat can't spin yet")
+	return math.NaN(), errors.New("boat can't spin yet")
 }
 
 func (b *Boat) WidthMillis(ctx context.Context) (int, error) {
@@ -226,7 +227,7 @@ var toStore []SavedDetph
 
 func doRecordDepth(ctx context.Context, depthSensor sensor.Device) error {
 	if currentLocation.Longitude == 0 {
-		return fmt.Errorf("currentLocation is 0")
+		return errors.New("currentLocation is 0")
 	}
 
 	readings, err := depthSensor.Readings(ctx)
@@ -279,14 +280,14 @@ func NewBoat(robot api.Robot) (*Boat, error) {
 	b := &Boat{}
 	b.theBoard = robot.BoardByName("local")
 	if b.theBoard == nil {
-		return nil, fmt.Errorf("cannot find board")
+		return nil, errors.New("cannot find board")
 	}
 
 	b.starboard = b.theBoard.Motor("starboard")
 	b.port = b.theBoard.Motor("port")
 
 	if b.starboard == nil || b.port == nil {
-		return nil, fmt.Errorf("need a starboard and port motor")
+		return nil, errors.New("need a starboard and port motor")
 	}
 
 	b.throttle = b.theBoard.DigitalInterrupt("throttle")
@@ -297,7 +298,7 @@ func NewBoat(robot api.Robot) (*Boat, error) {
 	b.rightVertical = b.theBoard.DigitalInterrupt("right-vertical")
 
 	if b.throttle == nil || b.direction == nil || b.mode == nil {
-		return nil, fmt.Errorf("need a throttle and direction and mode")
+		return nil, errors.New("need a throttle and direction and mode")
 	}
 
 	return b, nil

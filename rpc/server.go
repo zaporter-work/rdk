@@ -7,6 +7,7 @@ package rpc
 
 import (
 	"context"
+	"errors"
 	"net"
 	"net/http"
 	"strings"
@@ -165,7 +166,7 @@ func (ss *simpleServer) Serve(listener net.Listener) (err error) {
 	ss.httpServer.Handler = handler
 	var errMu sync.Mutex
 	utils.ManagedGo(func() {
-		if serveErr := ss.httpServer.Serve(listener); serveErr != http.ErrServerClosed {
+		if serveErr := ss.httpServer.Serve(listener); serveErr != nil && !errors.Is(serveErr, http.ErrServerClosed) {
 			errMu.Lock()
 			err = multierr.Combine(err, serveErr)
 			errMu.Unlock()

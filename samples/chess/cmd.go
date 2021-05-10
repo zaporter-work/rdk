@@ -152,7 +152,7 @@ func movePiece(ctx context.Context, boardState boardStateGuesser, robot api.Robo
 		}
 		where.Z = where.Z - 10
 		if where.Z <= BoardHeight {
-			return fmt.Errorf("no piece")
+			return errors.New("no piece")
 		}
 		myArm.MoveToPosition(ctx, where)
 	}
@@ -353,7 +353,7 @@ func lookForBoard(ctx context.Context, myArm api.Arm, myRobot api.Robot) error {
 
 	wristCam := myRobot.CameraByName("wristCam")
 	if wristCam == nil {
-		return fmt.Errorf("can't find wristCam")
+		return errors.New("can't find wristCam")
 	}
 
 	for foo := -1.0; foo <= 1.0; foo += 2 {
@@ -404,7 +404,7 @@ func adjustArmInsideSquare(ctx context.Context, robot api.Robot) error {
 
 	cam := robot.CameraByName("gripperCam")
 	if cam == nil {
-		return fmt.Errorf("can't find gripperCam")
+		return errors.New("can't find gripperCam")
 	}
 
 	arm := robot.ArmByName("pieceArm")
@@ -426,10 +426,10 @@ func adjustArmInsideSquare(ctx context.Context, robot api.Robot) error {
 			dm = rimage.ConvertToImageWithDepth(raw).Depth
 		}()
 		if dm == nil {
-			return fmt.Errorf("no depthj on gripperCam")
+			return errors.New("no depth on gripperCam")
 		}
 		//defer img.Close() // TODO(erh): fix the leak
-		fmt.Printf("\t got image\n")
+		fmt.Println("\t got image")
 
 		center := image.Point{dm.Width() / 2, dm.Height() / 2}
 		lowest, lowestValue, _, highestValue := findDepthPeaks(dm, center, 30)
@@ -444,7 +444,7 @@ func adjustArmInsideSquare(ctx context.Context, robot api.Robot) error {
 		offsetY := center.Y - lowest.Y
 
 		if utils.AbsInt(offsetX) < 3 && utils.AbsInt(offsetY) < 3 {
-			fmt.Printf("success!\n")
+			fmt.Println("success!")
 			return nil
 		}
 
@@ -529,7 +529,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	}
 
 	if false {
-		fmt.Printf("ELIOT HACK\n")
+		fmt.Println("ELIOT HACK")
 
 		err = moveTo(ctx, myArm, "c3", 0)
 		if err == nil {
@@ -593,11 +593,11 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 								logger.Debug("got inconsistency reading board, let's try again")
 								boardState.Clear()
 							} else if currentPosition.AllOccupiedSqsBb().Value() != bb.Value() {
-								logger.Debugf("not in initial chess piece setup")
+								logger.Debug("not in initial chess piece setup")
 								bb.Print()
 							} else {
 								initialPositionOk = true
-								logger.Debugf("GOT initial chess piece setup")
+								logger.Debug("GOT initial chess piece setup")
 							}
 						} else {
 							// so we've already made sure we're safe, let's see if a move was made

@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"image"
@@ -50,17 +51,17 @@ func dock(ctx context.Context, r api.Robot) error {
 
 	cam := r.CameraByName("back")
 	if cam == nil {
-		return fmt.Errorf("no back camera")
+		return errors.New("no back camera")
 	}
 
 	base := r.BaseByName("pierre")
 	if base == nil {
-		return fmt.Errorf("no pierre")
+		return errors.New("no pierre")
 	}
 
-	theLidar := r.LidarDeviceByName("lidarOnBase")
+	theLidar := r.LidarByName("lidarOnBase")
 	if theLidar == nil {
-		return fmt.Errorf("no lidar lidarOnBase")
+		return errors.New("no lidar lidarOnBase")
 	}
 
 	for tries := 0; tries < 5; tries++ {
@@ -101,7 +102,7 @@ func dock(ctx context.Context, r api.Robot) error {
 		tries = 0
 	}
 
-	return fmt.Errorf("failed to dock")
+	return errors.New("failed to dock")
 }
 
 // return delta x, delta y, error
@@ -109,17 +110,17 @@ func dockNextMoveCompute(ctx context.Context, cam gostream.ImageSource) (float64
 	ctx, span := trace.StartSpan(ctx, "dockNextMoveCompute")
 	defer span.End()
 
-	logger.Debugf("dock - next")
+	logger.Debug("dock - next")
 	img, closer, err := cam.Next(ctx)
 	if err != nil {
 		return 0, 0, err
 	}
 	defer closer()
 
-	logger.Debugf("dock - convert")
+	logger.Debug("dock - convert")
 	ri := rimage.ConvertImage(img)
 
-	logger.Debugf("dock - findBlack")
+	logger.Debug("dock - findBlack")
 	p, _, err := findBlack(ctx, ri, nil)
 	if err != nil {
 		return 0, 0, err
@@ -182,7 +183,7 @@ func findBlack(ctx context.Context, img *rimage.Image, logger golog.Logger) (ima
 		}
 	}
 
-	return image.Point{}, nil, fmt.Errorf("no black found")
+	return image.Point{}, nil, errors.New("no black found")
 }
 
 // ------
@@ -206,10 +207,10 @@ func (r *Rover) neckPosition(ctx context.Context, pan, tilt uint8) error {
 }
 
 func (r *Rover) Ready(ctx context.Context, theRobot api.Robot) error {
-	logger.Debugf("minirover2 Ready called")
+	logger.Debug("minirover2 Ready called")
 	cam := theRobot.CameraByName("front")
 	if cam == nil {
-		return fmt.Errorf("no camera named front")
+		return errors.New("no camera named front")
 	}
 
 	// doing this in a goroutine so i can see camera and servo data in web ui, but probably not right long term
@@ -229,7 +230,7 @@ func (r *Rover) Ready(ctx context.Context, theRobot api.Robot) error {
 					defer release()
 					pc := rimage.ConvertToImageWithDepth(img)
 					if pc.Depth == nil {
-						logger.Warnf("no depth data")
+						logger.Warn("no depth data")
 						depthErr = true
 						return
 					}
@@ -291,7 +292,7 @@ func NewRover(ctx context.Context, r api.Robot, theBoard board.Board) (*Rover, e
 		}
 	}
 
-	theLidar := r.LidarDeviceByName("lidarBase")
+	theLidar := r.LidarByName("lidarBase")
 	if false && theLidar != nil {
 		utils.PanicCapturingGo(func() {
 			for {
