@@ -226,7 +226,7 @@ message Status {
 	map<string, bool> grippers = 3;
 	map<string, BoardStatus> boards = 4;
 	map<string, bool> cameras = 5;
-	map<string, bool> lidar_devices = 6;
+	map<string, bool> lidars = 6;
 	map<string, SensorStatus> sensors = 7;
 }
 

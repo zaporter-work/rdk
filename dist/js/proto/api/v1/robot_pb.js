@@ -2155,7 +2155,7 @@ proto.proto.api.v1.Status.toObject = function(includeInstance, msg) {
     grippersMap: (f = msg.getGrippersMap()) ? f.toObject(includeInstance, undefined) : [],
     boardsMap: (f = msg.getBoardsMap()) ? f.toObject(includeInstance, proto.proto.api.v1.BoardStatus.toObject) : [],
     camerasMap: (f = msg.getCamerasMap()) ? f.toObject(includeInstance, undefined) : [],
-    lidarDevicesMap: (f = msg.getLidarDevicesMap()) ? f.toObject(includeInstance, undefined) : [],
+    lidarsMap: (f = msg.getLidarsMap()) ? f.toObject(includeInstance, undefined) : [],
     sensorsMap: (f = msg.getSensorsMap()) ? f.toObject(includeInstance, proto.proto.api.v1.SensorStatus.toObject) : []
   };
 
@@ -2224,7 +2224,7 @@ proto.proto.api.v1.Status.deserializeBinaryFromReader = function(msg, reader) {
          });
       break;
     case 6:
-      var value = msg.getLidarDevicesMap();
+      var value = msg.getLidarsMap();
       reader.readMessage(value, function(message, reader) {
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readString, jspb.BinaryReader.prototype.readBool, null, "", false);
          });
@@ -2284,7 +2284,7 @@ proto.proto.api.v1.Status.serializeBinaryToWriter = function(message, writer) {
   if (f && f.getLength() > 0) {
     f.serializeBinary(5, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeBool);
   }
-  f = message.getLidarDevicesMap(true);
+  f = message.getLidarsMap(true);
   if (f && f.getLength() > 0) {
     f.serializeBinary(6, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeBool);
   }
@@ -2406,12 +2406,12 @@ proto.proto.api.v1.Status.prototype.clearCamerasMap = function() {
 
 
 /**
- * map<string, bool> lidar_devices = 6;
+ * map<string, bool> lidars = 6;
  * @param {boolean=} opt_noLazyCreate Do not create the map if
  * empty, instead returning `undefined`
  * @return {!jspb.Map<string,boolean>}
  */
-proto.proto.api.v1.Status.prototype.getLidarDevicesMap = function(opt_noLazyCreate) {
+proto.proto.api.v1.Status.prototype.getLidarsMap = function(opt_noLazyCreate) {
   return /** @type {!jspb.Map<string,boolean>} */ (
       jspb.Message.getMapField(this, 6, opt_noLazyCreate,
       null));
@@ -2422,8 +2422,8 @@ proto.proto.api.v1.Status.prototype.getLidarDevicesMap = function(opt_noLazyCrea
  * Clears values from the map. The map will be non-null.
  * @return {!proto.proto.api.v1.Status} returns this
  */
-proto.proto.api.v1.Status.prototype.clearLidarDevicesMap = function() {
-  this.getLidarDevicesMap().clear();
+proto.proto.api.v1.Status.prototype.clearLidarsMap = function() {
+  this.getLidarsMap().clear();
   return this;};
 
 
