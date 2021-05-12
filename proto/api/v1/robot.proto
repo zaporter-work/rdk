@@ -8,19 +8,24 @@ import "google/protobuf/duration.proto";
 import "google/api/annotations.proto";
 import "google/api/httpbody.proto";
 
+
+// A RobotService encompasses all functionality of some robot comprised of parts, local and remote.
 service RobotService {
+	// Status returns the robot's underlying status.
 	rpc Status(StatusRequest) returns (StatusResponse) {
 	    option (google.api.http) = {
 			get: "/v1/status"
 		};
 	}
 
+	// StatusStream periodically sends the robot's status.
 	rpc StatusStream(StatusStreamRequest) returns (stream StatusStreamResponse) {
 	    option (google.api.http) = {
 			get: "/v1/status_stream"
 		};
 	}
 
+	// DoAction runs an action on the underlying robot.
 	rpc DoAction(DoActionRequest) returns (DoActionResponse) {
 		option (google.api.http) = {
 			post: "/v1/do_action"
@@ -29,24 +34,28 @@ service RobotService {
 
 	// Arm
 
+	// ArmCurrentPosition gets the current position of an arm of the underlying robot.
 	rpc ArmCurrentPosition(ArmCurrentPositionRequest) returns (ArmCurrentPositionResponse) {
 		option (google.api.http) = {
 			get: "/v1/arm/{name}/current_position"
 		};	
 	}
 
+	// ArmMoveToPosition moves an arm of the underlying robot to the requested position.
 	rpc ArmMoveToPosition(ArmMoveToPositionRequest) returns (ArmMoveToPositionResponse) {
 		option (google.api.http) = {
 			put: "/v1/arm/{name}/move_to_position"
 		};	
 	}
 
+	// ArmCurrentJointPositions gets the current joint position of an arm of the underlying robot.
 	rpc ArmCurrentJointPositions(ArmCurrentJointPositionsRequest) returns (ArmCurrentJointPositionsResponse) {
 		option (google.api.http) = {
 			get: "/v1/arm/{name}/current_joint_positions"
 		};	
 	}
 
+	// ArmMoveToJointPositions moves an arm of the underlying robot to the requested joint positions.
 	rpc ArmMoveToJointPositions(ArmMoveToJointPositionsRequest) returns (ArmMoveToJointPositionsResponse) {
 		option (google.api.http) = {
 			put: "/v1/arm/{name}/move_to_joint_positions"
@@ -55,18 +64,21 @@ service RobotService {
 
 	// Base
 
+	// BaseMoveStraight moves a base of the underlying robot straight.
 	rpc BaseMoveStraight(BaseMoveStraightRequest) returns (BaseMoveStraightResponse) {
 		option (google.api.http) = {
 			post: "/v1/base/{name}/move_straight"
 		};	
 	}
 
+	// BaseSpin spins a base of the underlying robot.
 	rpc BaseSpin(BaseSpinRequest) returns (BaseSpinResponse) {
 		option (google.api.http) = {
 			post: "/v1/base/{name}/spin"
 		};	
 	}
 
+	// BaseSpin stops a base of the underlying robot.
 	rpc BaseStop(BaseStopRequest) returns (BaseStopResponse) {
 		option (google.api.http) = {
 			post: "/v1/base/{name}/stop"
@@ -75,12 +87,14 @@ service RobotService {
 
 	// Gripper
 
+	// GripperOpen opens a gripper of the underlying robot.
 	rpc GripperOpen(GripperOpenRequest) returns (GripperOpenResponse) {
 		option (google.api.http) = {
 			put: "/v1/gripper/{name}/open"
 		};	
 	}
 
+	// GripperGrab requests a gripper of the underlying robot to grab.
 	rpc GripperGrab(GripperGrabRequest) returns (GripperGrabResponse) {
 		option (google.api.http) = {
 			put: "/v1/gripper/{name}/grab"
@@ -89,12 +103,16 @@ service RobotService {
 
 	// Camera
 
+	// CameraFrame returns a frame from a camera of the underlying robot. A specific MIME type
+	// can be requested but may not necessarily be the same one returned.
 	rpc CameraFrame(CameraFrameRequest) returns (CameraFrameResponse) {
 		option (google.api.http) = {
 			get: "/v1/camera/{name}/frame"
 		};
 	}
 
+	// CameraFrame renders a frame from a camera of the underlying robot to an HTTP response. A specific MIME type
+	// can be requested but may not necessarily be the same one returned.
 	rpc CameraRenderFrame(CameraRenderFrameRequest) returns (google.api.HttpBody) {
 		option (google.api.http) = {
 			get: "/v1/camera/{name}/render_frame"
@@ -103,36 +121,49 @@ service RobotService {
 
 	// Lidar
 
+	// LidarInfo returns the info of a lidar of the underlying robot.
 	rpc LidarInfo(LidarInfoRequest) returns (LidarInfoResponse) {
 	    option (google.api.http) = {
 			get: "/v1/lidar/{name}/info"
 		};
 	}
+
+	// LidarStart starts a lidar of the underlying robot.
 	rpc LidarStart(LidarStartRequest) returns (LidarStartResponse) {
 		option (google.api.http) = {
 			post: "/v1/lidar/{name}/start"
 		};
 	}
+
+	// LidarStop stops a lidar of the underlying robot.
 	rpc LidarStop(LidarStopRequest) returns (LidarStopResponse) {
 		option (google.api.http) = {
 			post: "/v1/lidar/{name}/stop"
 		};
 	}
+
+	// LidarScan returns a scan from a lidar of the underlying robot.
 	rpc LidarScan(LidarScanRequest) returns (LidarScanResponse) {
 		option (google.api.http) = {
 			post: "/v1/lidar/{name}/scan"
 		};
 	}
+
+	// LidarRange returns the range of a lidar of the underlying robot.
 	rpc LidarRange(LidarRangeRequest) returns (LidarRangeResponse) {
 		option (google.api.http) = {
 			get: "/v1/lidar/{name}/range"
 		};
 	}
+
+	// LidarBounds returns the scan bounds of a lidar of the underlying robot.
 	rpc LidarBounds(LidarBoundsRequest) returns (LidarBoundsResponse) {
 		option (google.api.http) = {
 			get: "/v1/lidar/{name}/bounds"
 		};
 	}
+
+	// LidarAngularResolution returns the scan angular resolution of a lidar of the underlying robot.
 	rpc LidarAngularResolution(LidarAngularResolutionRequest) returns (LidarAngularResolutionResponse) {
 		option (google.api.http) = {
 			get: "/v1/lidar/{name}/angular_resolution"
@@ -141,6 +172,7 @@ service RobotService {
 
 	// Board
 
+	// BoardStatus returns the status of a board of the underlying robot.
 	rpc BoardStatus(BoardStatusRequest) returns (BoardStatusResponse) {
 		option (google.api.http) = {
 			get: "/v1/board/{name}/status"
@@ -149,12 +181,15 @@ service RobotService {
 
 	// Motor
 
+	// BoardMotorGo requests the motor of a board of the underlying robot to go.
 	rpc BoardMotorGo(BoardMotorGoRequest) returns (BoardMotorGoResponse) {
 		option (google.api.http) = {
 			put: "/v1/board/{board_name}/motor/{motor_name}/go"
 		};
 	}
 
+	// BoardMotorGoFor requests the motor of a board of the underlying robot to go for a certain amount based off
+	// the request.
 	rpc BoardMotorGoFor(BoardMotorGoForRequest) returns (BoardMotorGoForResponse) {
 		option (google.api.http) = {
 			put: "/v1/board/{board_name}/motor/{motor_name}/go_for"
@@ -163,14 +198,16 @@ service RobotService {
 
 	// Servo
 
+	// BoardServoMove requests the servo of a board of the underlying robot to move.
 	rpc BoardServoMove(BoardServoMoveRequest) returns (BoardServoMoveResponse) {
 		option (google.api.http) = {
-			put: "/v1/board/{board_name}/servero/{servo_name}/move"
+			put: "/v1/board/{board_name}/servo/{servo_name}/move"
 		};
 	}
 
 	// Sensor
 
+	// SensorReadings returns the readings of a sensor of the underlying robot.
 	rpc SensorReadings(SensorReadingsRequest) returns (SensorReadingsResponse) {
 		option (google.api.http) = {
 			get: "/v1/sensors/sensor/{name}/readings"
@@ -179,18 +216,21 @@ service RobotService {
 
 	// Compass
 
+	// CompassHeading returns the heading of a compass of the underlying robot.
 	rpc CompassHeading(CompassHeadingRequest) returns (CompassHeadingResponse) {
 	    option (google.api.http) = {
 			get: "/v1/sensors/compass/{name}/heading"
 		};
 	}
-	rpc CompassStartCalibration(CompassStartCalibrationRequest) returns (CompassStartCalibrationResponse) {
 
+	// CompassStartCalibration requests the compass of the underlying robot to start calibration.
+	rpc CompassStartCalibration(CompassStartCalibrationRequest) returns (CompassStartCalibrationResponse) {
 		option (google.api.http) = {
 			post: "/v1/sensors/compass/{name}/start_calibration"
 		};
 	}
 
+	// CompassStopCalibration requests the compass of the underlying robot to stop calibration.
 	rpc CompassStopCalibration(CompassStopCalibrationRequest) returns (CompassStopCalibrationResponse) {
 		option (google.api.http) = {
 			post: "/v1/sensors/compass/{name}/stop_calibration"
@@ -199,6 +239,7 @@ service RobotService {
 
 	// Relative Compass
 
+	// CompassMark requests the relative compass of the underlying robot to mark its position.
 	rpc CompassMark(CompassMarkRequest) returns (CompassMarkResponse) {
 		option (google.api.http) = {
 			post: "/v1/sensors/compass/{name}/mark"
@@ -209,7 +250,7 @@ service RobotService {
 message StatusRequest {}
 
 message StatusStreamRequest {
-	google.protobuf.Duration every = 1;
+	google.protobuf.Duration every = 1; // how often to send a new status.
 }
 
 message StatusResponse {

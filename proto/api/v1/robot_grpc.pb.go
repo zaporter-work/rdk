@@ -20,35 +20,68 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RobotServiceClient interface {
+	// Status returns the robot's underlying status.
 	Status(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	// StatusStream periodically sends the robot's status.
 	StatusStream(ctx context.Context, in *StatusStreamRequest, opts ...grpc.CallOption) (RobotService_StatusStreamClient, error)
+	// DoAction runs an action on the underlying robot.
 	DoAction(ctx context.Context, in *DoActionRequest, opts ...grpc.CallOption) (*DoActionResponse, error)
+	// ArmCurrentPosition gets the current position of an arm of the underlying robot.
 	ArmCurrentPosition(ctx context.Context, in *ArmCurrentPositionRequest, opts ...grpc.CallOption) (*ArmCurrentPositionResponse, error)
+	// ArmMoveToPosition moves an arm of the underlying robot to the requested position.
 	ArmMoveToPosition(ctx context.Context, in *ArmMoveToPositionRequest, opts ...grpc.CallOption) (*ArmMoveToPositionResponse, error)
+	// ArmCurrentJointPositions gets the current joint position of an arm of the underlying robot.
 	ArmCurrentJointPositions(ctx context.Context, in *ArmCurrentJointPositionsRequest, opts ...grpc.CallOption) (*ArmCurrentJointPositionsResponse, error)
+	// ArmMoveToJointPositions moves an arm of the underlying robot to the requested joint positions.
 	ArmMoveToJointPositions(ctx context.Context, in *ArmMoveToJointPositionsRequest, opts ...grpc.CallOption) (*ArmMoveToJointPositionsResponse, error)
+	// BaseMoveStraight moves a base of the underlying robot straight.
 	BaseMoveStraight(ctx context.Context, in *BaseMoveStraightRequest, opts ...grpc.CallOption) (*BaseMoveStraightResponse, error)
+	// BaseSpin spins a base of the underlying robot.
 	BaseSpin(ctx context.Context, in *BaseSpinRequest, opts ...grpc.CallOption) (*BaseSpinResponse, error)
+	// BaseSpin stops a base of the underlying robot.
 	BaseStop(ctx context.Context, in *BaseStopRequest, opts ...grpc.CallOption) (*BaseStopResponse, error)
+	// GripperOpen opens a gripper of the underlying robot.
 	GripperOpen(ctx context.Context, in *GripperOpenRequest, opts ...grpc.CallOption) (*GripperOpenResponse, error)
+	// GripperGrab requests a gripper of the underlying robot to grab.
 	GripperGrab(ctx context.Context, in *GripperGrabRequest, opts ...grpc.CallOption) (*GripperGrabResponse, error)
+	// CameraFrame returns a frame from a camera of the underlying robot. A specific MIME type
+	// can be requested but may not necessarily be the same one returned.
 	CameraFrame(ctx context.Context, in *CameraFrameRequest, opts ...grpc.CallOption) (*CameraFrameResponse, error)
+	// CameraFrame renders a frame from a camera of the underlying robot to an HTTP response. A specific MIME type
+	// can be requested but may not necessarily be the same one returned.
 	CameraRenderFrame(ctx context.Context, in *CameraRenderFrameRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error)
+	// LidarInfo returns the info of a lidar of the underlying robot.
 	LidarInfo(ctx context.Context, in *LidarInfoRequest, opts ...grpc.CallOption) (*LidarInfoResponse, error)
+	// LidarStart starts a lidar of the underlying robot.
 	LidarStart(ctx context.Context, in *LidarStartRequest, opts ...grpc.CallOption) (*LidarStartResponse, error)
+	// LidarStop stops a lidar of the underlying robot.
 	LidarStop(ctx context.Context, in *LidarStopRequest, opts ...grpc.CallOption) (*LidarStopResponse, error)
+	// LidarScan returns a scan from a lidar of the underlying robot.
 	LidarScan(ctx context.Context, in *LidarScanRequest, opts ...grpc.CallOption) (*LidarScanResponse, error)
+	// LidarRange returns the range of a lidar of the underlying robot.
 	LidarRange(ctx context.Context, in *LidarRangeRequest, opts ...grpc.CallOption) (*LidarRangeResponse, error)
+	// LidarBounds returns the scan bounds of a lidar of the underlying robot.
 	LidarBounds(ctx context.Context, in *LidarBoundsRequest, opts ...grpc.CallOption) (*LidarBoundsResponse, error)
+	// LidarAngularResolution returns the scan angular resolution of a lidar of the underlying robot.
 	LidarAngularResolution(ctx context.Context, in *LidarAngularResolutionRequest, opts ...grpc.CallOption) (*LidarAngularResolutionResponse, error)
+	// BoardStatus returns the status of a board of the underlying robot.
 	BoardStatus(ctx context.Context, in *BoardStatusRequest, opts ...grpc.CallOption) (*BoardStatusResponse, error)
+	// BoardMotorGo requests the motor of a board of the underlying robot to go.
 	BoardMotorGo(ctx context.Context, in *BoardMotorGoRequest, opts ...grpc.CallOption) (*BoardMotorGoResponse, error)
+	// BoardMotorGoFor requests the motor of a board of the underlying robot to go for a certain amount based off
+	// the request.
 	BoardMotorGoFor(ctx context.Context, in *BoardMotorGoForRequest, opts ...grpc.CallOption) (*BoardMotorGoForResponse, error)
+	// BoardServoMove requests the servo of a board of the underlying robot to move.
 	BoardServoMove(ctx context.Context, in *BoardServoMoveRequest, opts ...grpc.CallOption) (*BoardServoMoveResponse, error)
+	// SensorReadings returns the readings of a sensor of the underlying robot.
 	SensorReadings(ctx context.Context, in *SensorReadingsRequest, opts ...grpc.CallOption) (*SensorReadingsResponse, error)
+	// CompassHeading returns the heading of a compass of the underlying robot.
 	CompassHeading(ctx context.Context, in *CompassHeadingRequest, opts ...grpc.CallOption) (*CompassHeadingResponse, error)
+	// CompassStartCalibration requests the compass of the underlying robot to start calibration.
 	CompassStartCalibration(ctx context.Context, in *CompassStartCalibrationRequest, opts ...grpc.CallOption) (*CompassStartCalibrationResponse, error)
+	// CompassStopCalibration requests the compass of the underlying robot to stop calibration.
 	CompassStopCalibration(ctx context.Context, in *CompassStopCalibrationRequest, opts ...grpc.CallOption) (*CompassStopCalibrationResponse, error)
+	// CompassMark requests the relative compass of the underlying robot to mark its position.
 	CompassMark(ctx context.Context, in *CompassMarkRequest, opts ...grpc.CallOption) (*CompassMarkResponse, error)
 }
 
@@ -357,35 +390,68 @@ func (c *robotServiceClient) CompassMark(ctx context.Context, in *CompassMarkReq
 // All implementations must embed UnimplementedRobotServiceServer
 // for forward compatibility
 type RobotServiceServer interface {
+	// Status returns the robot's underlying status.
 	Status(context.Context, *StatusRequest) (*StatusResponse, error)
+	// StatusStream periodically sends the robot's status.
 	StatusStream(*StatusStreamRequest, RobotService_StatusStreamServer) error
+	// DoAction runs an action on the underlying robot.
 	DoAction(context.Context, *DoActionRequest) (*DoActionResponse, error)
+	// ArmCurrentPosition gets the current position of an arm of the underlying robot.
 	ArmCurrentPosition(context.Context, *ArmCurrentPositionRequest) (*ArmCurrentPositionResponse, error)
+	// ArmMoveToPosition moves an arm of the underlying robot to the requested position.
 	ArmMoveToPosition(context.Context, *ArmMoveToPositionRequest) (*ArmMoveToPositionResponse, error)
+	// ArmCurrentJointPositions gets the current joint position of an arm of the underlying robot.
 	ArmCurrentJointPositions(context.Context, *ArmCurrentJointPositionsRequest) (*ArmCurrentJointPositionsResponse, error)
+	// ArmMoveToJointPositions moves an arm of the underlying robot to the requested joint positions.
 	ArmMoveToJointPositions(context.Context, *ArmMoveToJointPositionsRequest) (*ArmMoveToJointPositionsResponse, error)
+	// BaseMoveStraight moves a base of the underlying robot straight.
 	BaseMoveStraight(context.Context, *BaseMoveStraightRequest) (*BaseMoveStraightResponse, error)
+	// BaseSpin spins a base of the underlying robot.
 	BaseSpin(context.Context, *BaseSpinRequest) (*BaseSpinResponse, error)
+	// BaseSpin stops a base of the underlying robot.
 	BaseStop(context.Context, *BaseStopRequest) (*BaseStopResponse, error)
+	// GripperOpen opens a gripper of the underlying robot.
 	GripperOpen(context.Context, *GripperOpenRequest) (*GripperOpenResponse, error)
+	// GripperGrab requests a gripper of the underlying robot to grab.
 	GripperGrab(context.Context, *GripperGrabRequest) (*GripperGrabResponse, error)
+	// CameraFrame returns a frame from a camera of the underlying robot. A specific MIME type
+	// can be requested but may not necessarily be the same one returned.
 	CameraFrame(context.Context, *CameraFrameRequest) (*CameraFrameResponse, error)
+	// CameraFrame renders a frame from a camera of the underlying robot to an HTTP response. A specific MIME type
+	// can be requested but may not necessarily be the same one returned.
 	CameraRenderFrame(context.Context, *CameraRenderFrameRequest) (*httpbody.HttpBody, error)
+	// LidarInfo returns the info of a lidar of the underlying robot.
 	LidarInfo(context.Context, *LidarInfoRequest) (*LidarInfoResponse, error)
+	// LidarStart starts a lidar of the underlying robot.
 	LidarStart(context.Context, *LidarStartRequest) (*LidarStartResponse, error)
+	// LidarStop stops a lidar of the underlying robot.
 	LidarStop(context.Context, *LidarStopRequest) (*LidarStopResponse, error)
+	// LidarScan returns a scan from a lidar of the underlying robot.
 	LidarScan(context.Context, *LidarScanRequest) (*LidarScanResponse, error)
+	// LidarRange returns the range of a lidar of the underlying robot.
 	LidarRange(context.Context, *LidarRangeRequest) (*LidarRangeResponse, error)
+	// LidarBounds returns the scan bounds of a lidar of the underlying robot.
 	LidarBounds(context.Context, *LidarBoundsRequest) (*LidarBoundsResponse, error)
+	// LidarAngularResolution returns the scan angular resolution of a lidar of the underlying robot.
 	LidarAngularResolution(context.Context, *LidarAngularResolutionRequest) (*LidarAngularResolutionResponse, error)
+	// BoardStatus returns the status of a board of the underlying robot.
 	BoardStatus(context.Context, *BoardStatusRequest) (*BoardStatusResponse, error)
+	// BoardMotorGo requests the motor of a board of the underlying robot to go.
 	BoardMotorGo(context.Context, *BoardMotorGoRequest) (*BoardMotorGoResponse, error)
+	// BoardMotorGoFor requests the motor of a board of the underlying robot to go for a certain amount based off
+	// the request.
 	BoardMotorGoFor(context.Context, *BoardMotorGoForRequest) (*BoardMotorGoForResponse, error)
+	// BoardServoMove requests the servo of a board of the underlying robot to move.
 	BoardServoMove(context.Context, *BoardServoMoveRequest) (*BoardServoMoveResponse, error)
+	// SensorReadings returns the readings of a sensor of the underlying robot.
 	SensorReadings(context.Context, *SensorReadingsRequest) (*SensorReadingsResponse, error)
+	// CompassHeading returns the heading of a compass of the underlying robot.
 	CompassHeading(context.Context, *CompassHeadingRequest) (*CompassHeadingResponse, error)
+	// CompassStartCalibration requests the compass of the underlying robot to start calibration.
 	CompassStartCalibration(context.Context, *CompassStartCalibrationRequest) (*CompassStartCalibrationResponse, error)
+	// CompassStopCalibration requests the compass of the underlying robot to stop calibration.
 	CompassStopCalibration(context.Context, *CompassStopCalibrationRequest) (*CompassStopCalibrationResponse, error)
+	// CompassMark requests the relative compass of the underlying robot to mark its position.
 	CompassMark(context.Context, *CompassMarkRequest) (*CompassMarkResponse, error)
 	mustEmbedUnimplementedRobotServiceServer()
 }

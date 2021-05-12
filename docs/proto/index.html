@@ -1,0 +1,4654 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0;  
+      }
+
+       
+      .field-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(3) {  
+        width: 6em;
+      }
+      .field-table td:nth-child(4) {  
+        width: auto;
+      }
+
+       
+      .extension-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) {  
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) {  
+        width: auto;
+      }
+
+       
+      .enum-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) {  
+        width: auto;
+      }
+
+       
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+       
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+       
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+       
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        
+          
+          <li>
+            <a href="#proto%2fapi%2fv1%2frobot.proto">proto/api/v1/robot.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#proto.api.v1.AnalogStatus"><span class="badge">M</span>AnalogStatus</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmCurrentJointPositionsRequest"><span class="badge">M</span>ArmCurrentJointPositionsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmCurrentJointPositionsResponse"><span class="badge">M</span>ArmCurrentJointPositionsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmCurrentPositionRequest"><span class="badge">M</span>ArmCurrentPositionRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmCurrentPositionResponse"><span class="badge">M</span>ArmCurrentPositionResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmMoveToJointPositionsRequest"><span class="badge">M</span>ArmMoveToJointPositionsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmMoveToJointPositionsResponse"><span class="badge">M</span>ArmMoveToJointPositionsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmMoveToPositionRequest"><span class="badge">M</span>ArmMoveToPositionRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmMoveToPositionResponse"><span class="badge">M</span>ArmMoveToPositionResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmPosition"><span class="badge">M</span>ArmPosition</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ArmStatus"><span class="badge">M</span>ArmStatus</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BaseMoveStraightRequest"><span class="badge">M</span>BaseMoveStraightRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BaseMoveStraightResponse"><span class="badge">M</span>BaseMoveStraightResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BaseSpinRequest"><span class="badge">M</span>BaseSpinRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BaseSpinResponse"><span class="badge">M</span>BaseSpinResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BaseStopRequest"><span class="badge">M</span>BaseStopRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BaseStopResponse"><span class="badge">M</span>BaseStopResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardMotorGoForRequest"><span class="badge">M</span>BoardMotorGoForRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardMotorGoForResponse"><span class="badge">M</span>BoardMotorGoForResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardMotorGoRequest"><span class="badge">M</span>BoardMotorGoRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardMotorGoResponse"><span class="badge">M</span>BoardMotorGoResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardServoMoveRequest"><span class="badge">M</span>BoardServoMoveRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardServoMoveResponse"><span class="badge">M</span>BoardServoMoveResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardStatus"><span class="badge">M</span>BoardStatus</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardStatus.AnalogsEntry"><span class="badge">M</span>BoardStatus.AnalogsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardStatus.DigitalInterruptsEntry"><span class="badge">M</span>BoardStatus.DigitalInterruptsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardStatus.MotorsEntry"><span class="badge">M</span>BoardStatus.MotorsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardStatus.ServosEntry"><span class="badge">M</span>BoardStatus.ServosEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardStatusRequest"><span class="badge">M</span>BoardStatusRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.BoardStatusResponse"><span class="badge">M</span>BoardStatusResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CameraFrameRequest"><span class="badge">M</span>CameraFrameRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CameraFrameResponse"><span class="badge">M</span>CameraFrameResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CameraRenderFrameRequest"><span class="badge">M</span>CameraRenderFrameRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CompassHeadingRequest"><span class="badge">M</span>CompassHeadingRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CompassHeadingResponse"><span class="badge">M</span>CompassHeadingResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CompassMarkRequest"><span class="badge">M</span>CompassMarkRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CompassMarkResponse"><span class="badge">M</span>CompassMarkResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CompassStartCalibrationRequest"><span class="badge">M</span>CompassStartCalibrationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CompassStartCalibrationResponse"><span class="badge">M</span>CompassStartCalibrationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CompassStopCalibrationRequest"><span class="badge">M</span>CompassStopCalibrationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.CompassStopCalibrationResponse"><span class="badge">M</span>CompassStopCalibrationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.DigitalInterruptStatus"><span class="badge">M</span>DigitalInterruptStatus</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.DoActionRequest"><span class="badge">M</span>DoActionRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.DoActionResponse"><span class="badge">M</span>DoActionResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.GripperGrabRequest"><span class="badge">M</span>GripperGrabRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.GripperGrabResponse"><span class="badge">M</span>GripperGrabResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.GripperOpenRequest"><span class="badge">M</span>GripperOpenRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.GripperOpenResponse"><span class="badge">M</span>GripperOpenResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.JointPositions"><span class="badge">M</span>JointPositions</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarAngularResolutionRequest"><span class="badge">M</span>LidarAngularResolutionRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarAngularResolutionResponse"><span class="badge">M</span>LidarAngularResolutionResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarBoundsRequest"><span class="badge">M</span>LidarBoundsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarBoundsResponse"><span class="badge">M</span>LidarBoundsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarInfoRequest"><span class="badge">M</span>LidarInfoRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarInfoResponse"><span class="badge">M</span>LidarInfoResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarMeasurement"><span class="badge">M</span>LidarMeasurement</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarRangeRequest"><span class="badge">M</span>LidarRangeRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarRangeResponse"><span class="badge">M</span>LidarRangeResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarScanRequest"><span class="badge">M</span>LidarScanRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarScanResponse"><span class="badge">M</span>LidarScanResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarStartRequest"><span class="badge">M</span>LidarStartRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarStartResponse"><span class="badge">M</span>LidarStartResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarStopRequest"><span class="badge">M</span>LidarStopRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.LidarStopResponse"><span class="badge">M</span>LidarStopResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.MotorStatus"><span class="badge">M</span>MotorStatus</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.SensorReadingsRequest"><span class="badge">M</span>SensorReadingsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.SensorReadingsResponse"><span class="badge">M</span>SensorReadingsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.SensorStatus"><span class="badge">M</span>SensorStatus</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.ServoStatus"><span class="badge">M</span>ServoStatus</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.Status"><span class="badge">M</span>Status</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.Status.ArmsEntry"><span class="badge">M</span>Status.ArmsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.Status.BasesEntry"><span class="badge">M</span>Status.BasesEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.Status.BoardsEntry"><span class="badge">M</span>Status.BoardsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.Status.CamerasEntry"><span class="badge">M</span>Status.CamerasEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.Status.GrippersEntry"><span class="badge">M</span>Status.GrippersEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.Status.LidarsEntry"><span class="badge">M</span>Status.LidarsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.Status.SensorsEntry"><span class="badge">M</span>Status.SensorsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.StatusRequest"><span class="badge">M</span>StatusRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.StatusResponse"><span class="badge">M</span>StatusResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.StatusStreamRequest"><span class="badge">M</span>StatusStreamRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.api.v1.StatusStreamResponse"><span class="badge">M</span>StatusStreamResponse</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#proto.api.v1.DirectionRelative"><span class="badge">E</span>DirectionRelative</a>
+                </li>
+              
+              
+              
+                <li>
+                  <a href="#proto.api.v1.RobotService"><span class="badge">S</span>RobotService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#proto%2frpc%2fexamples%2fecho%2fv1%2fecho.proto">proto/rpc/examples/echo/v1/echo.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#proto.rpc.examples.echo.v1.EchoRequest"><span class="badge">M</span>EchoRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.rpc.examples.echo.v1.EchoResponse"><span class="badge">M</span>EchoResponse</a>
+                </li>
+              
+              
+              
+              
+                <li>
+                  <a href="#proto.rpc.examples.echo.v1.EchoService"><span class="badge">S</span>EchoService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#proto%2fslam%2fv1%2fslam.proto">proto/slam/v1/slam.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#proto.slam.v1.BasePosition"><span class="badge">M</span>BasePosition</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.CalibrateRequest"><span class="badge">M</span>CalibrateRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.CalibrateResponse"><span class="badge">M</span>CalibrateResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.DeviceOffset"><span class="badge">M</span>DeviceOffset</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.GetLidarSeedRequest"><span class="badge">M</span>GetLidarSeedRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.GetLidarSeedResponse"><span class="badge">M</span>GetLidarSeedResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.MoveRobotBackwardRequest"><span class="badge">M</span>MoveRobotBackwardRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.MoveRobotBackwardResponse"><span class="badge">M</span>MoveRobotBackwardResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.MoveRobotForwardRequest"><span class="badge">M</span>MoveRobotForwardRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.MoveRobotForwardResponse"><span class="badge">M</span>MoveRobotForwardResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.MoveRobotRequest"><span class="badge">M</span>MoveRobotRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.MoveRobotResponse"><span class="badge">M</span>MoveRobotResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SaveRequest"><span class="badge">M</span>SaveRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SaveResponse"><span class="badge">M</span>SaveResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SetClientClickModeRequest"><span class="badge">M</span>SetClientClickModeRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SetClientClickModeResponse"><span class="badge">M</span>SetClientClickModeResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SetClientLidarViewModeRequest"><span class="badge">M</span>SetClientLidarViewModeRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SetClientLidarViewModeResponse"><span class="badge">M</span>SetClientLidarViewModeResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SetClientZoomRequest"><span class="badge">M</span>SetClientZoomRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SetClientZoomResponse"><span class="badge">M</span>SetClientZoomResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SetLidarSeedRequest"><span class="badge">M</span>SetLidarSeedRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.SetLidarSeedResponse"><span class="badge">M</span>SetLidarSeedResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.StartLidarRequest"><span class="badge">M</span>StartLidarRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.StartLidarResponse"><span class="badge">M</span>StartLidarResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.StatsRequest"><span class="badge">M</span>StatsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.StatsResponse"><span class="badge">M</span>StatsResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.StopLidarRequest"><span class="badge">M</span>StopLidarRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.StopLidarResponse"><span class="badge">M</span>StopLidarResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.TurnRobotToRequest"><span class="badge">M</span>TurnRobotToRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.TurnRobotToResponse"><span class="badge">M</span>TurnRobotToResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.UpdateRobotDeviceOffsetRequest"><span class="badge">M</span>UpdateRobotDeviceOffsetRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.UpdateRobotDeviceOffsetResponse"><span class="badge">M</span>UpdateRobotDeviceOffsetResponse</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#proto.slam.v1.ClickMode"><span class="badge">E</span>ClickMode</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.Direction"><span class="badge">E</span>Direction</a>
+                </li>
+              
+                <li>
+                  <a href="#proto.slam.v1.LidarViewMode"><span class="badge">E</span>LidarViewMode</a>
+                </li>
+              
+              
+              
+                <li>
+                  <a href="#proto.slam.v1.SlamService"><span class="badge">S</span>SlamService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+        <li><a href="#scalar-value-types">Scalar Value Types</a></li>
+      </ul>
+    </div>
+
+    
+      
+      <div class="file-heading">
+        <h2 id="proto/api/v1/robot.proto">proto/api/v1/robot.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="proto.api.v1.AnalogStatus">AnalogStatus</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ArmCurrentJointPositionsRequest">ArmCurrentJointPositionsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ArmCurrentJointPositionsResponse">ArmCurrentJointPositionsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>positions</td>
+                  <td><a href="#proto.api.v1.JointPositions">JointPositions</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ArmCurrentPositionRequest">ArmCurrentPositionRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ArmCurrentPositionResponse">ArmCurrentPositionResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>position</td>
+                  <td><a href="#proto.api.v1.ArmPosition">ArmPosition</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ArmMoveToJointPositionsRequest">ArmMoveToJointPositionsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>to</td>
+                  <td><a href="#proto.api.v1.JointPositions">JointPositions</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ArmMoveToJointPositionsResponse">ArmMoveToJointPositionsResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.ArmMoveToPositionRequest">ArmMoveToPositionRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>to</td>
+                  <td><a href="#proto.api.v1.ArmPosition">ArmPosition</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ArmMoveToPositionResponse">ArmMoveToPositionResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.ArmPosition">ArmPosition</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>x</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>millimeters of the end effector from the base </p></td>
+                </tr>
+              
+                <tr>
+                  <td>y</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>z</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>r_x</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p>angular orientation about each axis, in degrees </p></td>
+                </tr>
+              
+                <tr>
+                  <td>r_y</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>r_z</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ArmStatus">ArmStatus</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>grid_position</td>
+                  <td><a href="#proto.api.v1.ArmPosition">ArmPosition</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>joint_positions</td>
+                  <td><a href="#proto.api.v1.JointPositions">JointPositions</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BaseMoveStraightRequest">BaseMoveStraightRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>distance_millis</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>millis_per_sec</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BaseMoveStraightResponse">BaseMoveStraightResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>success</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>error</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>distance_millis</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BaseSpinRequest">BaseSpinRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>angle_deg</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>degs_per_sec</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BaseSpinResponse">BaseSpinResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>success</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>error</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>angle_deg</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BaseStopRequest">BaseStopRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BaseStopResponse">BaseStopResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.BoardMotorGoForRequest">BoardMotorGoForRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>board_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>motor_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>direction</td>
+                  <td><a href="#proto.api.v1.DirectionRelative">DirectionRelative</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>rpm</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>revolutions</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardMotorGoForResponse">BoardMotorGoForResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.BoardMotorGoRequest">BoardMotorGoRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>board_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>motor_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>direction</td>
+                  <td><a href="#proto.api.v1.DirectionRelative">DirectionRelative</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>power_pct</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardMotorGoResponse">BoardMotorGoResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.BoardServoMoveRequest">BoardServoMoveRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>board_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>servo_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>angle_deg</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p>(0-180) </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardServoMoveResponse">BoardServoMoveResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.BoardStatus">BoardStatus</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>motors</td>
+                  <td><a href="#proto.api.v1.BoardStatus.MotorsEntry">BoardStatus.MotorsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>servos</td>
+                  <td><a href="#proto.api.v1.BoardStatus.ServosEntry">BoardStatus.ServosEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>analogs</td>
+                  <td><a href="#proto.api.v1.BoardStatus.AnalogsEntry">BoardStatus.AnalogsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>digital_interrupts</td>
+                  <td><a href="#proto.api.v1.BoardStatus.DigitalInterruptsEntry">BoardStatus.DigitalInterruptsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardStatus.AnalogsEntry">BoardStatus.AnalogsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#proto.api.v1.AnalogStatus">AnalogStatus</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardStatus.DigitalInterruptsEntry">BoardStatus.DigitalInterruptsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#proto.api.v1.DigitalInterruptStatus">DigitalInterruptStatus</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardStatus.MotorsEntry">BoardStatus.MotorsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#proto.api.v1.MotorStatus">MotorStatus</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardStatus.ServosEntry">BoardStatus.ServosEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#proto.api.v1.ServoStatus">ServoStatus</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardStatusRequest">BoardStatusRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.BoardStatusResponse">BoardStatusResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#proto.api.v1.BoardStatus">BoardStatus</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CameraFrameRequest">CameraFrameRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mime_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CameraFrameResponse">CameraFrameResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>mime_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>frame</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>dim_x</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>dim_y</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CameraRenderFrameRequest">CameraRenderFrameRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mime_type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CompassHeadingRequest">CompassHeadingRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CompassHeadingResponse">CompassHeadingResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>heading</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CompassMarkRequest">CompassMarkRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CompassMarkResponse">CompassMarkResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.CompassStartCalibrationRequest">CompassStartCalibrationRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CompassStartCalibrationResponse">CompassStartCalibrationResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.CompassStopCalibrationRequest">CompassStopCalibrationRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.CompassStopCalibrationResponse">CompassStopCalibrationResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.DigitalInterruptStatus">DigitalInterruptStatus</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.DoActionRequest">DoActionRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.DoActionResponse">DoActionResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.GripperGrabRequest">GripperGrabRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.GripperGrabResponse">GripperGrabResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>grabbed</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.GripperOpenRequest">GripperOpenRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.GripperOpenResponse">GripperOpenResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.JointPositions">JointPositions</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>degrees</td>
+                  <td><a href="#double">double</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarAngularResolutionRequest">LidarAngularResolutionRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarAngularResolutionResponse">LidarAngularResolutionResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>angular_resolution</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarBoundsRequest">LidarBoundsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarBoundsResponse">LidarBoundsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>x</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>y</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarInfoRequest">LidarInfoRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarInfoResponse">LidarInfoResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>info</td>
+                  <td><a href="#google.protobuf.Struct">google.protobuf.Struct</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarMeasurement">LidarMeasurement</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>angle</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>angle_deg</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>distance</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>x</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>y</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarRangeRequest">LidarRangeRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarRangeResponse">LidarRangeResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>range</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarScanRequest">LidarScanRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>count</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>no_filter</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarScanResponse">LidarScanResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>measurements</td>
+                  <td><a href="#proto.api.v1.LidarMeasurement">LidarMeasurement</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarStartRequest">LidarStartRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarStartResponse">LidarStartResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.LidarStopRequest">LidarStopRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.LidarStopResponse">LidarStopResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.MotorStatus">MotorStatus</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>on</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>position_supported</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>position</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.SensorReadingsRequest">SensorReadingsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.SensorReadingsResponse">SensorReadingsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>readings</td>
+                  <td><a href="#google.protobuf.Value">google.protobuf.Value</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.SensorStatus">SensorStatus</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.ServoStatus">ServoStatus</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>angle</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.Status">Status</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>arms</td>
+                  <td><a href="#proto.api.v1.Status.ArmsEntry">Status.ArmsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>bases</td>
+                  <td><a href="#proto.api.v1.Status.BasesEntry">Status.BasesEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>grippers</td>
+                  <td><a href="#proto.api.v1.Status.GrippersEntry">Status.GrippersEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>boards</td>
+                  <td><a href="#proto.api.v1.Status.BoardsEntry">Status.BoardsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>cameras</td>
+                  <td><a href="#proto.api.v1.Status.CamerasEntry">Status.CamerasEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>lidars</td>
+                  <td><a href="#proto.api.v1.Status.LidarsEntry">Status.LidarsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>sensors</td>
+                  <td><a href="#proto.api.v1.Status.SensorsEntry">Status.SensorsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.Status.ArmsEntry">Status.ArmsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#proto.api.v1.ArmStatus">ArmStatus</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.Status.BasesEntry">Status.BasesEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.Status.BoardsEntry">Status.BoardsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#proto.api.v1.BoardStatus">BoardStatus</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.Status.CamerasEntry">Status.CamerasEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.Status.GrippersEntry">Status.GrippersEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.Status.LidarsEntry">Status.LidarsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.Status.SensorsEntry">Status.SensorsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#proto.api.v1.SensorStatus">SensorStatus</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.StatusRequest">StatusRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.api.v1.StatusResponse">StatusResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#proto.api.v1.Status">Status</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.StatusStreamRequest">StatusStreamRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>every</td>
+                  <td><a href="#google.protobuf.Duration">google.protobuf.Duration</a></td>
+                  <td></td>
+                  <td><p>how often to send a new status. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.api.v1.StatusStreamResponse">StatusStreamResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#proto.api.v1.Status">Status</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="proto.api.v1.DirectionRelative">DirectionRelative</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>DIRECTION_RELATIVE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DIRECTION_RELATIVE_FORWARD</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DIRECTION_RELATIVE_BACKWARD</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+        <h3 id="proto.api.v1.RobotService">RobotService</h3>
+        <p>A RobotService encompasses all functionality of some robot comprised of parts, local and remote.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Status</td>
+                <td><a href="#proto.api.v1.StatusRequest">StatusRequest</a></td>
+                <td><a href="#proto.api.v1.StatusResponse">StatusResponse</a></td>
+                <td><p>Status returns the robot&#39;s underlying status.</p></td>
+              </tr>
+            
+              <tr>
+                <td>StatusStream</td>
+                <td><a href="#proto.api.v1.StatusStreamRequest">StatusStreamRequest</a></td>
+                <td><a href="#proto.api.v1.StatusStreamResponse">StatusStreamResponse</a> stream</td>
+                <td><p>StatusStream periodically sends the robot&#39;s status.</p></td>
+              </tr>
+            
+              <tr>
+                <td>DoAction</td>
+                <td><a href="#proto.api.v1.DoActionRequest">DoActionRequest</a></td>
+                <td><a href="#proto.api.v1.DoActionResponse">DoActionResponse</a></td>
+                <td><p>DoAction runs an action on the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>ArmCurrentPosition</td>
+                <td><a href="#proto.api.v1.ArmCurrentPositionRequest">ArmCurrentPositionRequest</a></td>
+                <td><a href="#proto.api.v1.ArmCurrentPositionResponse">ArmCurrentPositionResponse</a></td>
+                <td><p>ArmCurrentPosition gets the current position of an arm of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>ArmMoveToPosition</td>
+                <td><a href="#proto.api.v1.ArmMoveToPositionRequest">ArmMoveToPositionRequest</a></td>
+                <td><a href="#proto.api.v1.ArmMoveToPositionResponse">ArmMoveToPositionResponse</a></td>
+                <td><p>ArmMoveToPosition moves an arm of the underlying robot to the requested position.</p></td>
+              </tr>
+            
+              <tr>
+                <td>ArmCurrentJointPositions</td>
+                <td><a href="#proto.api.v1.ArmCurrentJointPositionsRequest">ArmCurrentJointPositionsRequest</a></td>
+                <td><a href="#proto.api.v1.ArmCurrentJointPositionsResponse">ArmCurrentJointPositionsResponse</a></td>
+                <td><p>ArmCurrentJointPositions gets the current joint position of an arm of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>ArmMoveToJointPositions</td>
+                <td><a href="#proto.api.v1.ArmMoveToJointPositionsRequest">ArmMoveToJointPositionsRequest</a></td>
+                <td><a href="#proto.api.v1.ArmMoveToJointPositionsResponse">ArmMoveToJointPositionsResponse</a></td>
+                <td><p>ArmMoveToJointPositions moves an arm of the underlying robot to the requested joint positions.</p></td>
+              </tr>
+            
+              <tr>
+                <td>BaseMoveStraight</td>
+                <td><a href="#proto.api.v1.BaseMoveStraightRequest">BaseMoveStraightRequest</a></td>
+                <td><a href="#proto.api.v1.BaseMoveStraightResponse">BaseMoveStraightResponse</a></td>
+                <td><p>BaseMoveStraight moves a base of the underlying robot straight.</p></td>
+              </tr>
+            
+              <tr>
+                <td>BaseSpin</td>
+                <td><a href="#proto.api.v1.BaseSpinRequest">BaseSpinRequest</a></td>
+                <td><a href="#proto.api.v1.BaseSpinResponse">BaseSpinResponse</a></td>
+                <td><p>BaseSpin spins a base of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>BaseStop</td>
+                <td><a href="#proto.api.v1.BaseStopRequest">BaseStopRequest</a></td>
+                <td><a href="#proto.api.v1.BaseStopResponse">BaseStopResponse</a></td>
+                <td><p>BaseSpin stops a base of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>GripperOpen</td>
+                <td><a href="#proto.api.v1.GripperOpenRequest">GripperOpenRequest</a></td>
+                <td><a href="#proto.api.v1.GripperOpenResponse">GripperOpenResponse</a></td>
+                <td><p>GripperOpen opens a gripper of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>GripperGrab</td>
+                <td><a href="#proto.api.v1.GripperGrabRequest">GripperGrabRequest</a></td>
+                <td><a href="#proto.api.v1.GripperGrabResponse">GripperGrabResponse</a></td>
+                <td><p>GripperGrab requests a gripper of the underlying robot to grab.</p></td>
+              </tr>
+            
+              <tr>
+                <td>CameraFrame</td>
+                <td><a href="#proto.api.v1.CameraFrameRequest">CameraFrameRequest</a></td>
+                <td><a href="#proto.api.v1.CameraFrameResponse">CameraFrameResponse</a></td>
+                <td><p>CameraFrame returns a frame from a camera of the underlying robot. A specific MIME type
+can be requested but may not necessarily be the same one returned.</p></td>
+              </tr>
+            
+              <tr>
+                <td>CameraRenderFrame</td>
+                <td><a href="#proto.api.v1.CameraRenderFrameRequest">CameraRenderFrameRequest</a></td>
+                <td><a href="#google.api.HttpBody">.google.api.HttpBody</a></td>
+                <td><p>CameraFrame renders a frame from a camera of the underlying robot to an HTTP response. A specific MIME type
+can be requested but may not necessarily be the same one returned.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LidarInfo</td>
+                <td><a href="#proto.api.v1.LidarInfoRequest">LidarInfoRequest</a></td>
+                <td><a href="#proto.api.v1.LidarInfoResponse">LidarInfoResponse</a></td>
+                <td><p>LidarInfo returns the info of a lidar of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LidarStart</td>
+                <td><a href="#proto.api.v1.LidarStartRequest">LidarStartRequest</a></td>
+                <td><a href="#proto.api.v1.LidarStartResponse">LidarStartResponse</a></td>
+                <td><p>LidarStart starts a lidar of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LidarStop</td>
+                <td><a href="#proto.api.v1.LidarStopRequest">LidarStopRequest</a></td>
+                <td><a href="#proto.api.v1.LidarStopResponse">LidarStopResponse</a></td>
+                <td><p>LidarStop stops a lidar of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LidarScan</td>
+                <td><a href="#proto.api.v1.LidarScanRequest">LidarScanRequest</a></td>
+                <td><a href="#proto.api.v1.LidarScanResponse">LidarScanResponse</a></td>
+                <td><p>LidarScan returns a scan from a lidar of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LidarRange</td>
+                <td><a href="#proto.api.v1.LidarRangeRequest">LidarRangeRequest</a></td>
+                <td><a href="#proto.api.v1.LidarRangeResponse">LidarRangeResponse</a></td>
+                <td><p>LidarRange returns the range of a lidar of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LidarBounds</td>
+                <td><a href="#proto.api.v1.LidarBoundsRequest">LidarBoundsRequest</a></td>
+                <td><a href="#proto.api.v1.LidarBoundsResponse">LidarBoundsResponse</a></td>
+                <td><p>LidarBounds returns the scan bounds of a lidar of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>LidarAngularResolution</td>
+                <td><a href="#proto.api.v1.LidarAngularResolutionRequest">LidarAngularResolutionRequest</a></td>
+                <td><a href="#proto.api.v1.LidarAngularResolutionResponse">LidarAngularResolutionResponse</a></td>
+                <td><p>LidarAngularResolution returns the scan angular resolution of a lidar of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>BoardStatus</td>
+                <td><a href="#proto.api.v1.BoardStatusRequest">BoardStatusRequest</a></td>
+                <td><a href="#proto.api.v1.BoardStatusResponse">BoardStatusResponse</a></td>
+                <td><p>BoardStatus returns the status of a board of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>BoardMotorGo</td>
+                <td><a href="#proto.api.v1.BoardMotorGoRequest">BoardMotorGoRequest</a></td>
+                <td><a href="#proto.api.v1.BoardMotorGoResponse">BoardMotorGoResponse</a></td>
+                <td><p>BoardMotorGo requests the motor of a board of the underlying robot to go.</p></td>
+              </tr>
+            
+              <tr>
+                <td>BoardMotorGoFor</td>
+                <td><a href="#proto.api.v1.BoardMotorGoForRequest">BoardMotorGoForRequest</a></td>
+                <td><a href="#proto.api.v1.BoardMotorGoForResponse">BoardMotorGoForResponse</a></td>
+                <td><p>BoardMotorGoFor requests the motor of a board of the underlying robot to go for a certain amount based off
+the request.</p></td>
+              </tr>
+            
+              <tr>
+                <td>BoardServoMove</td>
+                <td><a href="#proto.api.v1.BoardServoMoveRequest">BoardServoMoveRequest</a></td>
+                <td><a href="#proto.api.v1.BoardServoMoveResponse">BoardServoMoveResponse</a></td>
+                <td><p>BoardServoMove requests the servo of a board of the underlying robot to move.</p></td>
+              </tr>
+            
+              <tr>
+                <td>SensorReadings</td>
+                <td><a href="#proto.api.v1.SensorReadingsRequest">SensorReadingsRequest</a></td>
+                <td><a href="#proto.api.v1.SensorReadingsResponse">SensorReadingsResponse</a></td>
+                <td><p>SensorReadings returns the readings of a sensor of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>CompassHeading</td>
+                <td><a href="#proto.api.v1.CompassHeadingRequest">CompassHeadingRequest</a></td>
+                <td><a href="#proto.api.v1.CompassHeadingResponse">CompassHeadingResponse</a></td>
+                <td><p>CompassHeading returns the heading of a compass of the underlying robot.</p></td>
+              </tr>
+            
+              <tr>
+                <td>CompassStartCalibration</td>
+                <td><a href="#proto.api.v1.CompassStartCalibrationRequest">CompassStartCalibrationRequest</a></td>
+                <td><a href="#proto.api.v1.CompassStartCalibrationResponse">CompassStartCalibrationResponse</a></td>
+                <td><p>CompassStartCalibration requests the compass of the underlying robot to start calibration.</p></td>
+              </tr>
+            
+              <tr>
+                <td>CompassStopCalibration</td>
+                <td><a href="#proto.api.v1.CompassStopCalibrationRequest">CompassStopCalibrationRequest</a></td>
+                <td><a href="#proto.api.v1.CompassStopCalibrationResponse">CompassStopCalibrationResponse</a></td>
+                <td><p>CompassStopCalibration requests the compass of the underlying robot to stop calibration.</p></td>
+              </tr>
+            
+              <tr>
+                <td>CompassMark</td>
+                <td><a href="#proto.api.v1.CompassMarkRequest">CompassMarkRequest</a></td>
+                <td><a href="#proto.api.v1.CompassMarkResponse">CompassMarkResponse</a></td>
+                <td><p>CompassMark requests the relative compass of the underlying robot to mark its position.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+          
+          
+          <h4>Methods with HTTP bindings</h4>
+          <table>
+            <thead>
+              <tr>
+                <td>Method Name</td>
+                <td>Method</td>
+                <td>Pattern</td>
+                <td>Body</td>
+              </tr>
+            </thead>
+            <tbody>
+            
+              
+              
+              <tr>
+                <td>Status</td>
+                <td>GET</td>
+                <td>/v1/status</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>StatusStream</td>
+                <td>GET</td>
+                <td>/v1/status_stream</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>DoAction</td>
+                <td>POST</td>
+                <td>/v1/do_action</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>ArmCurrentPosition</td>
+                <td>GET</td>
+                <td>/v1/arm/{name}/current_position</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>ArmMoveToPosition</td>
+                <td>PUT</td>
+                <td>/v1/arm/{name}/move_to_position</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>ArmCurrentJointPositions</td>
+                <td>GET</td>
+                <td>/v1/arm/{name}/current_joint_positions</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>ArmMoveToJointPositions</td>
+                <td>PUT</td>
+                <td>/v1/arm/{name}/move_to_joint_positions</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>BaseMoveStraight</td>
+                <td>POST</td>
+                <td>/v1/base/{name}/move_straight</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>BaseSpin</td>
+                <td>POST</td>
+                <td>/v1/base/{name}/spin</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>BaseStop</td>
+                <td>POST</td>
+                <td>/v1/base/{name}/stop</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>GripperOpen</td>
+                <td>PUT</td>
+                <td>/v1/gripper/{name}/open</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>GripperGrab</td>
+                <td>PUT</td>
+                <td>/v1/gripper/{name}/grab</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>CameraFrame</td>
+                <td>GET</td>
+                <td>/v1/camera/{name}/frame</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>CameraRenderFrame</td>
+                <td>GET</td>
+                <td>/v1/camera/{name}/render_frame</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>LidarInfo</td>
+                <td>GET</td>
+                <td>/v1/lidar/{name}/info</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>LidarStart</td>
+                <td>POST</td>
+                <td>/v1/lidar/{name}/start</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>LidarStop</td>
+                <td>POST</td>
+                <td>/v1/lidar/{name}/stop</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>LidarScan</td>
+                <td>POST</td>
+                <td>/v1/lidar/{name}/scan</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>LidarRange</td>
+                <td>GET</td>
+                <td>/v1/lidar/{name}/range</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>LidarBounds</td>
+                <td>GET</td>
+                <td>/v1/lidar/{name}/bounds</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>LidarAngularResolution</td>
+                <td>GET</td>
+                <td>/v1/lidar/{name}/angular_resolution</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>BoardStatus</td>
+                <td>GET</td>
+                <td>/v1/board/{name}/status</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>BoardMotorGo</td>
+                <td>PUT</td>
+                <td>/v1/board/{board_name}/motor/{motor_name}/go</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>BoardMotorGoFor</td>
+                <td>PUT</td>
+                <td>/v1/board/{board_name}/motor/{motor_name}/go_for</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>BoardServoMove</td>
+                <td>PUT</td>
+                <td>/v1/board/{board_name}/servo/{servo_name}/move</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>SensorReadings</td>
+                <td>GET</td>
+                <td>/v1/sensors/sensor/{name}/readings</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>CompassHeading</td>
+                <td>GET</td>
+                <td>/v1/sensors/compass/{name}/heading</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>CompassStartCalibration</td>
+                <td>POST</td>
+                <td>/v1/sensors/compass/{name}/start_calibration</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>CompassStopCalibration</td>
+                <td>POST</td>
+                <td>/v1/sensors/compass/{name}/stop_calibration</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>CompassMark</td>
+                <td>POST</td>
+                <td>/v1/sensors/compass/{name}/mark</td>
+                <td></td>
+              </tr>
+              
+            
+            </tbody>
+          </table>
+          
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="proto/rpc/examples/echo/v1/echo.proto">proto/rpc/examples/echo/v1/echo.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="proto.rpc.examples.echo.v1.EchoRequest">EchoRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>message</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.rpc.examples.echo.v1.EchoResponse">EchoResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>message</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+        <h3 id="proto.rpc.examples.echo.v1.EchoService">EchoService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Echo</td>
+                <td><a href="#proto.rpc.examples.echo.v1.EchoRequest">EchoRequest</a></td>
+                <td><a href="#proto.rpc.examples.echo.v1.EchoResponse">EchoResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+          
+          
+          <h4>Methods with HTTP bindings</h4>
+          <table>
+            <thead>
+              <tr>
+                <td>Method Name</td>
+                <td>Method</td>
+                <td>Pattern</td>
+                <td>Body</td>
+              </tr>
+            </thead>
+            <tbody>
+            
+              
+              
+              <tr>
+                <td>Echo</td>
+                <td>POST</td>
+                <td>/v1/echo</td>
+                <td>*</td>
+              </tr>
+              
+            
+            </tbody>
+          </table>
+          
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="proto/slam/v1/slam.proto">proto/slam/v1/slam.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="proto.slam.v1.BasePosition">BasePosition</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>x</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>y</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.CalibrateRequest">CalibrateRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.CalibrateResponse">CalibrateResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.DeviceOffset">DeviceOffset</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>angle</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>distance_x</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>distance_y</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.GetLidarSeedRequest">GetLidarSeedRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.GetLidarSeedResponse">GetLidarSeedResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>seeds</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.MoveRobotBackwardRequest">MoveRobotBackwardRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.MoveRobotBackwardResponse">MoveRobotBackwardResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>new_position</td>
+                  <td><a href="#proto.slam.v1.BasePosition">BasePosition</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.MoveRobotForwardRequest">MoveRobotForwardRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.MoveRobotForwardResponse">MoveRobotForwardResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>new_position</td>
+                  <td><a href="#proto.slam.v1.BasePosition">BasePosition</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.MoveRobotRequest">MoveRobotRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>direction</td>
+                  <td><a href="#proto.slam.v1.Direction">Direction</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.MoveRobotResponse">MoveRobotResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>new_position</td>
+                  <td><a href="#proto.slam.v1.BasePosition">BasePosition</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.SaveRequest">SaveRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>file</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.SaveResponse">SaveResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.SetClientClickModeRequest">SetClientClickModeRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>mode</td>
+                  <td><a href="#proto.slam.v1.ClickMode">ClickMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.SetClientClickModeResponse">SetClientClickModeResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.SetClientLidarViewModeRequest">SetClientLidarViewModeRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>mode</td>
+                  <td><a href="#proto.slam.v1.LidarViewMode">LidarViewMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.SetClientLidarViewModeResponse">SetClientLidarViewModeResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.SetClientZoomRequest">SetClientZoomRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>zoom</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.SetClientZoomResponse">SetClientZoomResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.SetLidarSeedRequest">SetLidarSeedRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>device_number</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>seed</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.SetLidarSeedResponse">SetLidarSeedResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.StartLidarRequest">StartLidarRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>device_number</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.StartLidarResponse">StartLidarResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.StatsRequest">StatsRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.StatsResponse">StatsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>base_position</td>
+                  <td><a href="#proto.slam.v1.BasePosition">BasePosition</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.StopLidarRequest">StopLidarRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>device_number</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.StopLidarResponse">StopLidarResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.TurnRobotToRequest">TurnRobotToRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>direction</td>
+                  <td><a href="#proto.slam.v1.Direction">Direction</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.TurnRobotToResponse">TurnRobotToResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="proto.slam.v1.UpdateRobotDeviceOffsetRequest">UpdateRobotDeviceOffsetRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>offset_index</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>offset</td>
+                  <td><a href="#proto.slam.v1.DeviceOffset">DeviceOffset</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="proto.slam.v1.UpdateRobotDeviceOffsetResponse">UpdateRobotDeviceOffsetResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+
+      
+        <h3 id="proto.slam.v1.ClickMode">ClickMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>CLICK_MODE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CLICK_MODE_MOVE</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CLICK_MODE_INFO</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="proto.slam.v1.Direction">Direction</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>DIRECTION_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DIRECTION_UP</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DIRECTION_RIGHT</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DIRECTION_DOWN</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DIRECTION_LEFT</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="proto.slam.v1.LidarViewMode">LidarViewMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>LIDAR_VIEW_MODE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>LIDAR_VIEW_MODE_STORED</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>LIDAR_VIEW_MODE_LIVE</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+        <h3 id="proto.slam.v1.SlamService">SlamService</h3>
+        <p>SlamService is not yet documented as its very experimental.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Save</td>
+                <td><a href="#proto.slam.v1.SaveRequest">SaveRequest</a></td>
+                <td><a href="#proto.slam.v1.SaveResponse">SaveResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>Stats</td>
+                <td><a href="#proto.slam.v1.StatsRequest">StatsRequest</a></td>
+                <td><a href="#proto.slam.v1.StatsResponse">StatsResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>Calibrate</td>
+                <td><a href="#proto.slam.v1.CalibrateRequest">CalibrateRequest</a></td>
+                <td><a href="#proto.slam.v1.CalibrateResponse">CalibrateResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>MoveRobot</td>
+                <td><a href="#proto.slam.v1.MoveRobotRequest">MoveRobotRequest</a></td>
+                <td><a href="#proto.slam.v1.MoveRobotResponse">MoveRobotResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>MoveRobotForward</td>
+                <td><a href="#proto.slam.v1.MoveRobotForwardRequest">MoveRobotForwardRequest</a></td>
+                <td><a href="#proto.slam.v1.MoveRobotForwardResponse">MoveRobotForwardResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>MoveRobotBackward</td>
+                <td><a href="#proto.slam.v1.MoveRobotBackwardRequest">MoveRobotBackwardRequest</a></td>
+                <td><a href="#proto.slam.v1.MoveRobotBackwardResponse">MoveRobotBackwardResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>TurnRobotTo</td>
+                <td><a href="#proto.slam.v1.TurnRobotToRequest">TurnRobotToRequest</a></td>
+                <td><a href="#proto.slam.v1.TurnRobotToResponse">TurnRobotToResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateRobotDeviceOffset</td>
+                <td><a href="#proto.slam.v1.UpdateRobotDeviceOffsetRequest">UpdateRobotDeviceOffsetRequest</a></td>
+                <td><a href="#proto.slam.v1.UpdateRobotDeviceOffsetResponse">UpdateRobotDeviceOffsetResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>StartLidar</td>
+                <td><a href="#proto.slam.v1.StartLidarRequest">StartLidarRequest</a></td>
+                <td><a href="#proto.slam.v1.StartLidarResponse">StartLidarResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>StopLidar</td>
+                <td><a href="#proto.slam.v1.StopLidarRequest">StopLidarRequest</a></td>
+                <td><a href="#proto.slam.v1.StopLidarResponse">StopLidarResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GetLidarSeed</td>
+                <td><a href="#proto.slam.v1.GetLidarSeedRequest">GetLidarSeedRequest</a></td>
+                <td><a href="#proto.slam.v1.GetLidarSeedResponse">GetLidarSeedResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>SetLidarSeed</td>
+                <td><a href="#proto.slam.v1.SetLidarSeedRequest">SetLidarSeedRequest</a></td>
+                <td><a href="#proto.slam.v1.SetLidarSeedResponse">SetLidarSeedResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>SetClientZoom</td>
+                <td><a href="#proto.slam.v1.SetClientZoomRequest">SetClientZoomRequest</a></td>
+                <td><a href="#proto.slam.v1.SetClientZoomResponse">SetClientZoomResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>SetClientLidarViewMode</td>
+                <td><a href="#proto.slam.v1.SetClientLidarViewModeRequest">SetClientLidarViewModeRequest</a></td>
+                <td><a href="#proto.slam.v1.SetClientLidarViewModeResponse">SetClientLidarViewModeResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>SetClientClickMode</td>
+                <td><a href="#proto.slam.v1.SetClientClickModeRequest">SetClientClickModeRequest</a></td>
+                <td><a href="#proto.slam.v1.SetClientClickModeResponse">SetClientClickModeResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+          
+          
+          <h4>Methods with HTTP bindings</h4>
+          <table>
+            <thead>
+              <tr>
+                <td>Method Name</td>
+                <td>Method</td>
+                <td>Pattern</td>
+                <td>Body</td>
+              </tr>
+            </thead>
+            <tbody>
+            
+              
+              
+              <tr>
+                <td>Save</td>
+                <td>POST</td>
+                <td>/v1/save</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>Stats</td>
+                <td>GET</td>
+                <td>/v1/stats</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>Calibrate</td>
+                <td>POST</td>
+                <td>/v1/calibrate</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>MoveRobot</td>
+                <td>POST</td>
+                <td>/v1/move_robot</td>
+                <td>*</td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>MoveRobotForward</td>
+                <td>POST</td>
+                <td>/v1/move_robot_forward</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>MoveRobotBackward</td>
+                <td>POST</td>
+                <td>/v1/move_robot_forward</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>TurnRobotTo</td>
+                <td>POST</td>
+                <td>/v1/turn_robot_to</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>UpdateRobotDeviceOffset</td>
+                <td>POST</td>
+                <td>/v1/upate_robot_device_offset</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>StartLidar</td>
+                <td>POST</td>
+                <td>/v1/start_lidar</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>StopLidar</td>
+                <td>POST</td>
+                <td>/v1/stop_lidar</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>GetLidarSeed</td>
+                <td>GET</td>
+                <td>/v1/get_lidar_seed</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>SetLidarSeed</td>
+                <td>PUT</td>
+                <td>/v1/set_lidar_seed</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>SetClientZoom</td>
+                <td>PUT</td>
+                <td>/v1/set_client_zoom</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>SetClientLidarViewMode</td>
+                <td>PUT</td>
+                <td>/v1/set_client_lidar_view_mode</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>SetClientClickMode</td>
+                <td>PUT</td>
+                <td>/v1/set_client_click_mode</td>
+                <td></td>
+              </tr>
+              
+            
+            </tbody>
+          </table>
+          
+        
+    
+
+    <h2 id="scalar-value-types">Scalar Value Types</h2>
+    <table class="scalar-value-types-table">
+      <thead>
+        <tr><td>.proto Type</td><td>Notes</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td><td>Ruby</td></tr>
+      </thead>
+      <tbody>
+        
+          <tr id="double">
+            <td>double</td>
+            <td></td>
+            <td>double</td>
+            <td>double</td>
+            <td>float</td>
+            <td>float64</td>
+            <td>double</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="float">
+            <td>float</td>
+            <td></td>
+            <td>float</td>
+            <td>float</td>
+            <td>float</td>
+            <td>float32</td>
+            <td>float</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="int32">
+            <td>int32</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="int64">
+            <td>int64</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="uint32">
+            <td>uint32</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int/long</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="uint64">
+            <td>uint64</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint32">
+            <td>sint32</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint64">
+            <td>sint64</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="fixed32">
+            <td>fixed32</td>
+            <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="fixed64">
+            <td>fixed64</td>
+            <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="sfixed32">
+            <td>sfixed32</td>
+            <td>Always four bytes.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sfixed64">
+            <td>sfixed64</td>
+            <td>Always eight bytes.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="bool">
+            <td>bool</td>
+            <td></td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>boolean</td>
+            <td>bool</td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>TrueClass/FalseClass</td>
+          </tr>
+        
+          <tr id="string">
+            <td>string</td>
+            <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
+            <td>string</td>
+            <td>String</td>
+            <td>str/unicode</td>
+            <td>string</td>
+            <td>string</td>
+            <td>string</td>
+            <td>String (UTF-8)</td>
+          </tr>
+        
+          <tr id="bytes">
+            <td>bytes</td>
+            <td>May contain any arbitrary sequence of bytes.</td>
+            <td>string</td>
+            <td>ByteString</td>
+            <td>str</td>
+            <td>[]byte</td>
+            <td>ByteString</td>
+            <td>string</td>
+            <td>String (ASCII-8BIT)</td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </body>
+</html>
+

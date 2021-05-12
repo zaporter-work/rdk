@@ -128,6 +128,7 @@ message SetClientClickModeRequest {
 
 message SetClientClickModeResponse {}
 
+// SlamService is not yet documented as its very experimental.
 service SlamService {
 	rpc Save(SaveRequest) returns (SaveResponse) {
 	    option (google.api.http) = {
