@@ -18,6 +18,7 @@ import (
 	"go.viam.com/robotcore/api"
 	"go.viam.com/robotcore/board"
 	pb "go.viam.com/robotcore/proto/api/v1"
+	"go.viam.com/robotcore/rlog"
 	"go.viam.com/robotcore/robot"
 	"go.viam.com/robotcore/robot/web"
 	"go.viam.com/robotcore/sensor"
@@ -199,7 +200,7 @@ var currentLocation nmea.GLL
 func trackGPS() {
 	dev, err := serial.OpenDevice("/dev/ttyAMA1")
 	if err != nil {
-		golog.Global.Fatalf("canot open gps serial %s", err)
+		rlog.Logger.Fatalf("canot open gps serial %s", err)
 	}
 	defer dev.Close()
 
@@ -207,12 +208,12 @@ func trackGPS() {
 	for {
 		line, err := r.ReadString('\n')
 		if err != nil {
-			golog.Global.Fatalf("can't read gps serial %s", err)
+			rlog.Logger.Fatalf("can't read gps serial %s", err)
 		}
 
 		s, err := nmea.Parse(line)
 		if err != nil {
-			golog.Global.Debugf("can't parse nmea %s : %s", line, err)
+			rlog.Logger.Debugf("can't parse nmea %s : %s", line, err)
 			continue
 		}
 
@@ -244,7 +245,7 @@ func doRecordDepth(ctx context.Context, depthSensor sensor.Device) error {
 	depth := m["distance"].(float64)
 
 	if confidence < 90 {
-		golog.Global.Debugf("confidence too low, skipping confidence: %v depth: %v", confidence, depth)
+		rlog.Logger.Debugf("confidence too low, skipping confidence: %v depth: %v", confidence, depth)
 		return nil
 	}
 
@@ -261,7 +262,7 @@ func doRecordDepth(ctx context.Context, depthSensor sensor.Device) error {
 
 func recordDepthWorker(ctx context.Context, depthSensor sensor.Device) {
 	if depthSensor == nil {
-		golog.Global.Fatalf("depthSensor cannot be nil")
+		rlog.Logger.Fatalf("depthSensor cannot be nil")
 	}
 
 	for {
@@ -271,7 +272,7 @@ func recordDepthWorker(ctx context.Context, depthSensor sensor.Device) {
 
 		err := doRecordDepth(ctx, depthSensor)
 		if err != nil {
-			golog.Global.Debugf("erorr recording depth %s", err)
+			rlog.Logger.Debugf("erorr recording depth %s", err)
 		}
 	}
 }

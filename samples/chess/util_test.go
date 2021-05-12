@@ -11,6 +11,7 @@ import (
 
 	"go.viam.com/robotcore/artifact"
 	"go.viam.com/robotcore/rimage"
+	"go.viam.com/robotcore/rlog"
 	"go.viam.com/robotcore/vision/chess"
 
 	"github.com/edaniels/golog"
@@ -26,7 +27,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	golog.Global.Debugf("out dir: %q", outDir)
+	rlog.Logger.Debugf("out dir: %q", outDir)
 }
 
 /* TODO(erh): put back
