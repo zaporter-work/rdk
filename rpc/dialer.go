@@ -10,8 +10,19 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// A Dialer is responsible for making connections to gRPC endpoints.
 type Dialer interface {
+	// Dial makes a connection to the given target with the supplied options.
 	Dial(ctx context.Context, target string, opts ...grpc.DialOption) (ClientConn, error)
+
+	// Close ensures all connections made are cleanly closed.
+	Close() error
+}
+
+// A ClientConn is a wrapper around the gRPC client connection interface but ensures
+// there is a way to close the connection.
+type ClientConn interface {
+	grpc.ClientConnInterface
 	Close() error
 }
 
@@ -38,6 +49,9 @@ type cachedDialer struct {
 	conns map[string]*refCountedConnWrapper
 }
 
+// NewCachedDialer returns a Dialer that returns the same connection if it
+// already has been established at a particular target (regardless of the
+// options used).
 func NewCachedDialer() Dialer {
 	return &cachedDialer{conns: map[string]*refCountedConnWrapper{}}
 }
@@ -83,11 +97,6 @@ func (cd *cachedDialer) Close() error {
 	return err
 }
 
-type ClientConn interface {
-	grpc.ClientConnInterface
-	Close() error
-}
-
 func newRefCountedConnWrapper(conn ClientConn) *refCountedConnWrapper {
 	return &refCountedConnWrapper{NewRefCountedValue(conn), conn}
 }
@@ -107,6 +116,8 @@ type reffedConn struct {
 	deref     func() bool
 }
 
+// Close will deref the reference and if it is the last to do so, will close
+// the underlying connection.
 func (rc *reffedConn) Close() error {
 	var err error
 	rc.derefOnce.Do(func() {
@@ -119,8 +130,16 @@ func (rc *reffedConn) Close() error {
 	return err
 }
 
+// RefCountedValue is a utility to "reference count" values in order
+// to destruct them once no one references them.
+// If you don't require that kind of logic, just rely on golang's
+// garbage collection.
 type RefCountedValue interface {
+	// Ref increments the reference count and returns the value.
 	Ref() interface{}
+
+	// Deref decrements the reference count and returns if this
+	// dereference resulted in the value being unreferenced.
 	Deref() (unreferenced bool)
 }
 
@@ -130,6 +149,9 @@ type refCountedValue struct {
 	val   interface{}
 }
 
+// NewRefCountedValue returns a new reference counted value for the given
+// value. Its reference count starts at zero but is not released. It is
+// assumed the caller of this will reference it at least once.
 func NewRefCountedValue(val interface{}) RefCountedValue {
 	return &refCountedValue{val: val}
 }

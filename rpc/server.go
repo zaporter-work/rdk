@@ -29,18 +29,42 @@ import (
 // A Server provides a convenient way to get a gRPC server up and running
 // with HTTP facilities.
 type Server interface {
+	// InternalAddr returns the address from the listener used for
+	// gRPC communications. It may be the same listener the server
+	// was constructed with.
 	InternalAddr() net.Addr
+
+	// Start only starts up the internal gRPC server.
 	Start() error
+
+	// Serve will externally serve, on the given listener, the
+	// all in one handler described by http.Handler.
 	Serve(listener net.Listener) (err error)
+
+	// Stop stops the internal gRPC and the HTTP server if it
+	// was started.
 	Stop() error
+
+	// RegisterServiceServer associates a service description with
+	// its implementation along with any gateway handlers.
 	RegisterServiceServer(
 		ctx context.Context,
 		svcDesc *grpc.ServiceDesc,
 		svcServer interface{},
 		svcHandlers ...RegisterServiceHandlerFromEndpointFunc,
 	) error
+
+	// GatewayHandler returns a handler for gateway based gRPC requests.
+	// See: https://github.com/grpc-ecosystem/grpc-gateway
 	GatewayHandler() http.Handler
+
+	// GRPCHandler returns a handler for standard grpc/grpc-web requests which
+	// expect to be served from a root path.
 	GRPCHandler() http.Handler
+
+	// http.Handler implemented here is an all-in-one handler for any kind of gRPC traffic.
+	// This is useful in a scenario where all gRPC is served from the root path due to
+	// limitations of normal gRPC being served from a non-root path.
 	http.Handler
 }
 
@@ -63,6 +87,8 @@ var JSONPB = &runtime.JSONPb{
 	},
 }
 
+// NewServerWithListener returns a new server ready to be started that
+// will listen on the given listener.
 func NewServerWithListener(grpcListener net.Listener) Server {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
@@ -84,6 +110,8 @@ func NewServerWithListener(grpcListener net.Listener) Server {
 	}
 }
 
+// NewServer returns a new server ready to be started that
+// will listen on some random port bound to localhost.
 func NewServer() (Server, error) {
 	grpcListener, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
@@ -110,16 +138,12 @@ func (ss *simpleServer) getRequestType(r *http.Request) requestType {
 	return requestTypeNone
 }
 
-// GatewayHandler returns a handler for gateway based gRPC requests.
-// See: https://github.com/grpc-ecosystem/grpc-gateway
 func (ss *simpleServer) GatewayHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ss.grpcGatewayHandler.ServeHTTP(w, r)
 	})
 }
 
-// GRPCHandler returns a handler for standard grpc/grpc-web requests which
-// expect to be served from a root path.
 func (ss *simpleServer) GRPCHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch ss.getRequestType(r) {

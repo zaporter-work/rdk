@@ -3,7 +3,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"image"
@@ -154,7 +153,7 @@ func main() {
 	flag.Parse()
 
 	if flag.NArg() < 2 {
-		panic(errors.New("need two args <program> <filename>"))
+		panic("need two args <program> <filename>")
 	}
 
 	prog := flag.Arg(0)
