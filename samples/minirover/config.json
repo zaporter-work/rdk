@@ -56,7 +56,7 @@
             "log": true
         },
         {
-            "name": "/home/erh/robotcore/etc/camera_servers/intelrealserver",
+            "name": "/home/erh/core/etc/camera_servers/intelrealserver",
             "log": true
         }
 
