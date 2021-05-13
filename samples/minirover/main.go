@@ -16,7 +16,7 @@ import (
 	"go.viam.com/core/lidar"
 	"go.viam.com/core/rimage"
 	"go.viam.com/core/robot"
-	builtinrobot "go.viam.com/core/robot/builtin"
+	robotimpl "go.viam.com/core/robot/impl"
 	"go.viam.com/core/utils"
 	"go.viam.com/core/vision/segmentation"
 	"go.viam.com/core/web"
@@ -331,7 +331,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		return err
 	}
 
-	myRobot, err := builtinrobot.NewRobot(ctx, cfg, logger)
+	myRobot, err := robotimpl.NewRobot(ctx, cfg, logger)
 	if err != nil {
 		return err
 	}
