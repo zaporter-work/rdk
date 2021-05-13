@@ -9,10 +9,10 @@ import (
 	"strings"
 	"testing"
 
-	"go.viam.com/robotcore/artifact"
-	"go.viam.com/robotcore/rimage"
-	"go.viam.com/robotcore/rlog"
-	"go.viam.com/robotcore/vision/chess"
+	"go.viam.com/core/artifact"
+	"go.viam.com/core/rimage"
+	"go.viam.com/core/rlog"
+	"go.viam.com/core/vision/chess"
 
 	"github.com/edaniels/golog"
 	"github.com/tonyOreglia/glee/pkg/position"

@@ -5,7 +5,7 @@ import (
 	"net"
 	"testing"
 
-	pb "go.viam.com/robotcore/proto/rpc/examples/echo/v1"
+	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
 
 	"go.viam.com/test"
 	"google.golang.org/grpc"

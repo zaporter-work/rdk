@@ -11,10 +11,10 @@ import (
 	"net/http"
 	"time"
 
-	pb "go.viam.com/robotcore/proto/rpc/examples/echo/v1"
-	"go.viam.com/robotcore/rlog"
-	"go.viam.com/robotcore/rpc"
-	"go.viam.com/robotcore/utils"
+	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
+	"go.viam.com/core/rlog"
+	"go.viam.com/core/rpc"
+	"go.viam.com/core/utils"
 
 	"github.com/edaniels/golog"
 	"go.uber.org/multierr"

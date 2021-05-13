@@ -5,11 +5,11 @@ import (
 	"errors"
 	"time"
 
-	"go.viam.com/robotcore/action"
-	"go.viam.com/robotcore/board"
-	pb "go.viam.com/robotcore/proto/api/v1"
-	"go.viam.com/robotcore/robot"
-	"go.viam.com/robotcore/utils"
+	"go.viam.com/core/action"
+	"go.viam.com/core/board"
+	pb "go.viam.com/core/proto/api/v1"
+	"go.viam.com/core/robot"
+	"go.viam.com/core/utils"
 )
 
 func init() {

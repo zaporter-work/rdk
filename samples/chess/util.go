@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"image"
 
-	"go.viam.com/robotcore/rimage"
-	"go.viam.com/robotcore/utils"
-	"go.viam.com/robotcore/vision/chess"
+	"go.viam.com/core/rimage"
+	"go.viam.com/core/utils"
+	"go.viam.com/core/vision/chess"
 
 	"github.com/tonyOreglia/glee/pkg/bitboard"
 	"github.com/tonyOreglia/glee/pkg/moves"

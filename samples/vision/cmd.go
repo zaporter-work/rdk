@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"go.viam.com/robotcore/rimage"
-	"go.viam.com/robotcore/utils"
-	"go.viam.com/robotcore/vision/segmentation"
+	"go.viam.com/core/rimage"
+	"go.viam.com/core/utils"
+	"go.viam.com/core/vision/segmentation"
 
 	"github.com/disintegration/imaging"
 	"github.com/edaniels/golog"

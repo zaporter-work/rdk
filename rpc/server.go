@@ -14,7 +14,7 @@ import (
 	"sync"
 	"time"
 
-	"go.viam.com/robotcore/utils"
+	"go.viam.com/core/utils"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"

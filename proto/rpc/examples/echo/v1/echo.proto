@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "go.viam.com/robotcore/proto/rpc/examples/echo/v1";
+option go_package = "go.viam.com/core/proto/rpc/examples/echo/v1";
 
 package proto.rpc.examples.echo.v1;
 

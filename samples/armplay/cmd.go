@@ -7,18 +7,18 @@ import (
 	"flag"
 	"time"
 
-	"go.viam.com/robotcore/action"
-	"go.viam.com/robotcore/config"
-	pb "go.viam.com/robotcore/proto/api/v1"
-	"go.viam.com/robotcore/robot"
-	builtinrobot "go.viam.com/robotcore/robot/builtin"
-	"go.viam.com/robotcore/utils"
-	"go.viam.com/robotcore/web"
+	"go.viam.com/core/action"
+	"go.viam.com/core/config"
+	pb "go.viam.com/core/proto/api/v1"
+	"go.viam.com/core/robot"
+	builtinrobot "go.viam.com/core/robot/builtin"
+	"go.viam.com/core/utils"
+	"go.viam.com/core/web"
 
-	_ "go.viam.com/robotcore/board/detector"         // load boards
-	_ "go.viam.com/robotcore/robots/eva"             // load arm
-	_ "go.viam.com/robotcore/robots/universalrobots" // load arm
-	_ "go.viam.com/robotcore/robots/varm"            // load arm
+	_ "go.viam.com/core/board/detector"         // load boards
+	_ "go.viam.com/core/robots/eva"             // load arm
+	_ "go.viam.com/core/robots/universalrobots" // load arm
+	_ "go.viam.com/core/robots/varm"            // load arm
 
 	"github.com/edaniels/golog"
 	"go.uber.org/multierr"

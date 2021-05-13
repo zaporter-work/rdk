@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "go.viam.com/robotcore/proto/api/v1";
+option go_package = "go.viam.com/core/proto/api/v1";
 
 package proto.api.v1;
 
