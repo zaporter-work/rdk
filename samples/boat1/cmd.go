@@ -15,15 +15,16 @@ import (
 	"sync"
 	"time"
 
-	"go.viam.com/robotcore/api"
 	"go.viam.com/robotcore/board"
+	"go.viam.com/robotcore/config"
 	pb "go.viam.com/robotcore/proto/api/v1"
 	"go.viam.com/robotcore/rlog"
 	"go.viam.com/robotcore/robot"
-	"go.viam.com/robotcore/robot/web"
+	builtinrobot "go.viam.com/robotcore/robot/builtin"
 	"go.viam.com/robotcore/sensor"
 	"go.viam.com/robotcore/serial"
 	"go.viam.com/robotcore/utils"
+	"go.viam.com/robotcore/web"
 
 	_ "go.viam.com/robotcore/board/detector"
 
@@ -198,7 +199,7 @@ func storeAll(docs []SavedDetph) error {
 var currentLocation nmea.GLL
 
 func trackGPS() {
-	dev, err := serial.OpenDevice("/dev/ttyAMA1")
+	dev, err := serial.Open("/dev/ttyAMA1")
 	if err != nil {
 		rlog.Logger.Fatalf("canot open gps serial %s", err)
 	}
@@ -226,7 +227,7 @@ func trackGPS() {
 
 var toStore []SavedDetph
 
-func doRecordDepth(ctx context.Context, depthSensor sensor.Device) error {
+func doRecordDepth(ctx context.Context, depthSensor sensor.Sensor) error {
 	if currentLocation.Longitude == 0 {
 		return errors.New("currentLocation is 0")
 	}
@@ -260,7 +261,7 @@ func doRecordDepth(ctx context.Context, depthSensor sensor.Device) error {
 	return err
 }
 
-func recordDepthWorker(ctx context.Context, depthSensor sensor.Device) {
+func recordDepthWorker(ctx context.Context, depthSensor sensor.Sensor) {
 	if depthSensor == nil {
 		rlog.Logger.Fatalf("depthSensor cannot be nil")
 	}
@@ -277,9 +278,9 @@ func recordDepthWorker(ctx context.Context, depthSensor sensor.Device) {
 	}
 }
 
-func NewBoat(robot api.Robot) (*Boat, error) {
+func NewBoat(r robot.Robot) (*Boat, error) {
 	b := &Boat{}
-	b.theBoard = robot.BoardByName("local")
+	b.theBoard = r.BoardByName("local")
 	if b.theBoard == nil {
 		return nil, errors.New("cannot find board")
 	}
@@ -312,12 +313,12 @@ func main() {
 func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err error) {
 	flag.Parse()
 
-	cfg, err := api.ReadConfig(flag.Arg(0))
+	cfg, err := config.Read(flag.Arg(0))
 	if err != nil {
 		return err
 	}
 
-	myRobot, err := robot.NewRobot(ctx, cfg, logger)
+	myRobot, err := builtinrobot.NewRobot(ctx, cfg, logger)
 	if err != nil {
 		return err
 	}
@@ -330,7 +331,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	defer boat.Close()
 	boat.StartRC(ctx)
 
-	myRobot.AddBase(boat, api.ComponentConfig{Name: "boatbot"})
+	myRobot.AddBase(boat, config.Component{Name: "boatbot"})
 
 	var activeBackgroundWorkers sync.WaitGroup
 	activeBackgroundWorkers.Add(2)

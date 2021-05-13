@@ -9,16 +9,17 @@ import (
 	"image"
 	"time"
 
-	"go.viam.com/robotcore/api"
+	"go.viam.com/robotcore/action"
 	"go.viam.com/robotcore/artifact"
 	"go.viam.com/robotcore/board"
+	"go.viam.com/robotcore/config"
 	"go.viam.com/robotcore/lidar"
 	"go.viam.com/robotcore/rimage"
 	"go.viam.com/robotcore/robot"
-	"go.viam.com/robotcore/robot/action"
-	"go.viam.com/robotcore/robot/web"
+	builtinrobot "go.viam.com/robotcore/robot/builtin"
 	"go.viam.com/robotcore/utils"
 	"go.viam.com/robotcore/vision/segmentation"
+	"go.viam.com/robotcore/web"
 
 	_ "go.viam.com/robotcore/board/detector"
 	_ "go.viam.com/robotcore/rimage/imagesource"
@@ -38,7 +39,7 @@ const (
 var logger = golog.NewDevelopmentLogger("minirover")
 
 func init() {
-	action.RegisterAction("dock", func(ctx context.Context, r api.Robot) {
+	action.RegisterAction("dock", func(ctx context.Context, r robot.Robot) {
 		err := dock(ctx, r)
 		if err != nil {
 			logger.Errorf("error docking: %s", err)
@@ -46,7 +47,7 @@ func init() {
 	})
 }
 
-func dock(ctx context.Context, r api.Robot) error {
+func dock(ctx context.Context, r robot.Robot) error {
 	logger.Info("docking started")
 
 	cam := r.CameraByName("back")
@@ -186,8 +187,6 @@ func findBlack(ctx context.Context, img *rimage.Image, logger golog.Logger) (ima
 	return image.Point{}, nil, errors.New("no black found")
 }
 
-// ------
-
 type Rover struct {
 	theBoard  board.Board
 	pan, tilt board.Servo
@@ -206,7 +205,7 @@ func (r *Rover) neckPosition(ctx context.Context, pan, tilt uint8) error {
 	return multierr.Combine(r.pan.Move(ctx, pan), r.tilt.Move(ctx, tilt))
 }
 
-func (r *Rover) Ready(ctx context.Context, theRobot api.Robot) error {
+func (r *Rover) Ready(ctx context.Context, theRobot robot.Robot) error {
 	logger.Debug("minirover2 Ready called")
 	cam := theRobot.CameraByName("front")
 	if cam == nil {
@@ -249,7 +248,7 @@ func (r *Rover) Ready(ctx context.Context, theRobot api.Robot) error {
 	return nil
 }
 
-func NewRover(ctx context.Context, r api.Robot, theBoard board.Board) (*Rover, error) {
+func NewRover(ctx context.Context, r robot.Robot, theBoard board.Board) (*Rover, error) {
 	rover := &Rover{theBoard: theBoard}
 	rover.pan = theBoard.Servo("pan")
 	rover.tilt = theBoard.Servo("tilt")
@@ -327,12 +326,12 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	trace.RegisterExporter(exp)
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 
-	cfg, err := api.ReadConfig("samples/minirover/config.json")
+	cfg, err := config.Read("samples/minirover/config.json")
 	if err != nil {
 		return err
 	}
 
-	myRobot, err := robot.NewRobot(ctx, cfg, logger)
+	myRobot, err := builtinrobot.NewRobot(ctx, cfg, logger)
 	if err != nil {
 		return err
 	}

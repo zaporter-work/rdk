@@ -7,12 +7,13 @@ import (
 	"flag"
 	"time"
 
-	"go.viam.com/robotcore/api"
+	"go.viam.com/robotcore/action"
+	"go.viam.com/robotcore/config"
 	pb "go.viam.com/robotcore/proto/api/v1"
 	"go.viam.com/robotcore/robot"
-	"go.viam.com/robotcore/robot/action"
-	"go.viam.com/robotcore/robot/web"
+	builtinrobot "go.viam.com/robotcore/robot/builtin"
 	"go.viam.com/robotcore/utils"
+	"go.viam.com/robotcore/web"
 
 	_ "go.viam.com/robotcore/board/detector"         // load boards
 	_ "go.viam.com/robotcore/robots/eva"             // load arm
@@ -26,21 +27,21 @@ import (
 var logger = golog.NewDevelopmentLogger("armplay")
 
 func init() {
-	action.RegisterAction("play", func(ctx context.Context, r api.Robot) {
+	action.RegisterAction("play", func(ctx context.Context, r robot.Robot) {
 		err := play(ctx, r)
 		if err != nil {
 			logger.Errorf("error playing: %s", err)
 		}
 	})
 
-	action.RegisterAction("chrisCirlce", func(ctx context.Context, r api.Robot) {
+	action.RegisterAction("chrisCirlce", func(ctx context.Context, r robot.Robot) {
 		err := chrisCirlce(ctx, r)
 		if err != nil {
 			logger.Errorf("error: %s", err)
 		}
 	})
 
-	action.RegisterAction("upAndDown", func(ctx context.Context, r api.Robot) {
+	action.RegisterAction("upAndDown", func(ctx context.Context, r robot.Robot) {
 		err := upAndDown(ctx, r)
 		if err != nil {
 			logger.Errorf("error upAndDown: %s", err)
@@ -49,7 +50,7 @@ func init() {
 
 }
 
-func chrisCirlce(ctx context.Context, r api.Robot) error {
+func chrisCirlce(ctx context.Context, r robot.Robot) error {
 	if len(r.ArmNames()) != 1 {
 		return errors.New("need 1 arm name")
 	}
@@ -64,7 +65,7 @@ func chrisCirlce(ctx context.Context, r api.Robot) error {
 	)
 }
 
-func upAndDown(ctx context.Context, r api.Robot) error {
+func upAndDown(ctx context.Context, r robot.Robot) error {
 	if len(r.ArmNames()) != 1 {
 		return errors.New("need 1 arm name")
 	}
@@ -94,7 +95,7 @@ func upAndDown(ctx context.Context, r api.Robot) error {
 	return nil
 }
 
-func play(ctx context.Context, r api.Robot) error {
+func play(ctx context.Context, r robot.Robot) error {
 	if len(r.ArmNames()) != 1 {
 		return errors.New("need 1 arm name")
 	}
@@ -128,12 +129,12 @@ func main() {
 func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err error) {
 	flag.Parse()
 
-	cfg, err := api.ReadConfig(flag.Arg(0))
+	cfg, err := config.Read(flag.Arg(0))
 	if err != nil {
 		return err
 	}
 
-	myRobot, err := robot.NewRobot(ctx, cfg, logger)
+	myRobot, err := builtinrobot.NewRobot(ctx, cfg, logger)
 	if err != nil {
 		return err
 	}

@@ -16,15 +16,18 @@ import (
 
 	"go.uber.org/multierr"
 
-	"go.viam.com/robotcore/api"
+	"go.viam.com/robotcore/arm"
 	"go.viam.com/robotcore/artifact"
+	"go.viam.com/robotcore/config"
+	"go.viam.com/robotcore/gripper"
 	pb "go.viam.com/robotcore/proto/api/v1"
 	"go.viam.com/robotcore/rimage"
 	"go.viam.com/robotcore/rimage/imagesource"
 	"go.viam.com/robotcore/robot"
-	"go.viam.com/robotcore/robot/web"
+	builtinrobot "go.viam.com/robotcore/robot/builtin"
 	"go.viam.com/robotcore/utils"
 	"go.viam.com/robotcore/vision/chess"
+	"go.viam.com/robotcore/web"
 
 	"github.com/edaniels/golog"
 	"github.com/edaniels/gostream"
@@ -64,7 +67,7 @@ func getCoord(chess string) pos {
 	return pos{Center.x + int64((x * float64(BoardWidth))), Center.y + int64((y * float64(BoardWidth)))} // HARD CODED
 }
 
-func moveTo(ctx context.Context, myArm api.Arm, chess string, heightModMillis int64) error {
+func moveTo(ctx context.Context, myArm arm.Arm, chess string, heightModMillis int64) error {
 	// first make sure in safe position
 	where, err := myArm.CurrentPosition(ctx)
 	if err != nil {
@@ -90,7 +93,7 @@ func moveTo(ctx context.Context, myArm api.Arm, chess string, heightModMillis in
 	return myArm.MoveToPosition(ctx, where)
 }
 
-func movePiece(ctx context.Context, boardState boardStateGuesser, robot api.Robot, myArm api.Arm, myGripper api.Gripper, from, to string) error {
+func movePiece(ctx context.Context, boardState boardStateGuesser, robot robot.Robot, myArm arm.Arm, myGripper gripper.Gripper, from, to string) error {
 
 	if to[0] != '-' {
 		toHeight, err := boardState.game.GetPieceHeight(boardState.NewestBoard(), to)
@@ -209,7 +212,7 @@ func movePiece(ctx context.Context, boardState boardStateGuesser, robot api.Robo
 	return nil
 }
 
-func moveOutOfWay(ctx context.Context, myArm api.Arm) error {
+func moveOutOfWay(ctx context.Context, myArm arm.Arm) error {
 	foo := getCoord("a1")
 
 	where, err := myArm.CurrentPosition(ctx)
@@ -223,7 +226,7 @@ func moveOutOfWay(ctx context.Context, myArm api.Arm) error {
 	return myArm.MoveToPosition(ctx, where)
 }
 
-func initArm(ctx context.Context, myArm api.Arm) error {
+func initArm(ctx context.Context, myArm arm.Arm) error {
 	foo := getCoord("a1")
 	err := myArm.MoveToPosition(ctx, &pb.ArmPosition{
 		X:  foo.x,
@@ -302,7 +305,7 @@ func getWristPicCorners(ctx context.Context, wristCam gostream.ImageSource, debu
 	return corners, imageSize, err
 }
 
-func lookForBoardAdjust(ctx context.Context, myArm api.Arm, wristCam gostream.ImageSource, corners []image.Point, imageSize image.Point) error {
+func lookForBoardAdjust(ctx context.Context, myArm arm.Arm, wristCam gostream.ImageSource, corners []image.Point, imageSize image.Point) error {
 	debugNumber := 100
 	for {
 		where, err := myArm.CurrentPosition(ctx)
@@ -348,7 +351,7 @@ func lookForBoardAdjust(ctx context.Context, myArm api.Arm, wristCam gostream.Im
 
 }
 
-func lookForBoard(ctx context.Context, myArm api.Arm, myRobot api.Robot) error {
+func lookForBoard(ctx context.Context, myArm arm.Arm, myRobot robot.Robot) error {
 	debugNumber := 0
 
 	wristCam := myRobot.CameraByName("wristCam")
@@ -396,7 +399,7 @@ func lookForBoard(ctx context.Context, myArm api.Arm, myRobot api.Robot) error {
 
 }
 
-func adjustArmInsideSquare(ctx context.Context, robot api.Robot) error {
+func adjustArmInsideSquare(ctx context.Context, robot robot.Robot) error {
 	// wait for camera to focus
 	if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
 		return ctx.Err()
@@ -488,12 +491,12 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		defer pprof.StopCPUProfile()
 	}
 
-	cfg, err := api.ReadConfig(cfgFile)
+	cfg, err := config.Read(cfgFile)
 	if err != nil {
 		return err
 	}
 
-	myRobot, err := robot.NewRobot(ctx, cfg, logger)
+	myRobot, err := builtinrobot.NewRobot(ctx, cfg, logger)
 	if err != nil {
 		return err
 	}
@@ -550,7 +553,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	initialPositionOk := false
 
 	annotatedImageHolder := &imagesource.StaticSource{}
-	myRobot.AddCamera(annotatedImageHolder, api.ComponentConfig{})
+	myRobot.AddCamera(annotatedImageHolder, config.Component{})
 
 	utils.PanicCapturingGo(func() {
 		for {
