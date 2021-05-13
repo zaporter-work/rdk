@@ -2468,7 +2468,7 @@ func RegisterRobotServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.S
 // RegisterRobotServiceHandler registers the http handlers for service RobotService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
 func RegisterRobotServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterRobotServiceHandlerClient(ctx, mux, NewRobotServiceClient(conn))
+	return RegisterRobotServiceHandlerClient(ctx, mux, NewServiceClient(conn))
 }
 
 // RegisterRobotServiceHandlerClient registers the http handlers for service RobotService

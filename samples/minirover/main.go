@@ -331,7 +331,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		return err
 	}
 
-	myRobot, err := robotimpl.NewRobot(ctx, cfg, logger)
+	myRobot, err := robotimpl.New(ctx, cfg, logger)
 	if err != nil {
 		return err
 	}
