@@ -21,6 +21,7 @@ import (
 	"go.viam.com/core/vision/segmentation"
 	"go.viam.com/core/web"
 
+	_ "go.viam.com/core/base/impl"
 	_ "go.viam.com/core/board/detector"
 	_ "go.viam.com/core/rimage/imagesource"
 
