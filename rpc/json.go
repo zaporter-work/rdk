@@ -15,7 +15,7 @@ var (
 	messageT = reflect.TypeOf((*protoiface.MessageV1)(nil)).Elem()
 )
 
-// CallClientMethodJSON calls a method on the given client by deserializing data
+// CallClientMethodLineJSON calls a method on the given client by deserializing data
 // expected to be from a line format of JSON where the format is:
 // <MethodName> [JSON]
 func CallClientMethodLineJSON(ctx context.Context, client interface{}, data []byte) ([]byte, error) {

@@ -31,6 +31,7 @@ import (
 	"go.uber.org/multierr"
 )
 
+// TODO
 const (
 	PanCenter  = 94
 	TiltCenter = 113
@@ -187,6 +188,7 @@ func findBlack(ctx context.Context, img *rimage.Image, logger golog.Logger) (ima
 	return image.Point{}, nil, errors.New("no black found")
 }
 
+// Rover TODO
 type Rover struct {
 	theBoard  board.Board
 	pan, tilt board.Servo
@@ -205,6 +207,7 @@ func (r *Rover) neckPosition(ctx context.Context, pan, tilt uint8) error {
 	return multierr.Combine(r.pan.Move(ctx, pan), r.tilt.Move(ctx, tilt))
 }
 
+// Ready TODO
 func (r *Rover) Ready(ctx context.Context, theRobot robot.Robot) error {
 	logger.Debug("minirover2 Ready called")
 	cam := theRobot.CameraByName("front")
@@ -248,6 +251,7 @@ func (r *Rover) Ready(ctx context.Context, theRobot robot.Robot) error {
 	return nil
 }
 
+// NewRover TODO
 func NewRover(ctx context.Context, r robot.Robot, theBoard board.Board) (*Rover, error) {
 	rover := &Rover{theBoard: theBoard}
 	rover.pan = theBoard.Servo("pan")

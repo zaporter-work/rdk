@@ -80,6 +80,7 @@ type simpleServer struct {
 	secure               bool
 }
 
+// JSONPB are the JSON protobuf options we use globally.
 var JSONPB = &runtime.JSONPb{
 	MarshalOptions: protojson.MarshalOptions{
 		UseProtoNames:   true,
@@ -214,6 +215,7 @@ func (ss *simpleServer) Stop() (err error) {
 	return ss.httpServer.Shutdown(context.Background())
 }
 
+// A RegisterServiceHandlerFromEndpointFunc is a means to have a service attach itself to a gRPC gateway mux.
 type RegisterServiceHandlerFromEndpointFunc func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error)
 
 func (ss *simpleServer) RegisterServiceServer(

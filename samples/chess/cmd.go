@@ -41,6 +41,7 @@ type pos struct {
 	y int64
 }
 
+// TODO
 var (
 	BoardWidth     = int64(381)
 	Center         = pos{-435, 0}

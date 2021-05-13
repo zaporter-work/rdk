@@ -13,9 +13,8 @@ import (
 	"github.com/tonyOreglia/glee/pkg/position"
 )
 
-var (
-	NumBoards = 2
-)
+// NumBoards is the number of boards in play.
+var NumBoards = 2
 
 type boardStateGuesser struct {
 	game   *chess.Game

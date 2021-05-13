@@ -16,6 +16,7 @@ func init() {
 	action.RegisterAction("ResetBox", ResetBox)
 }
 
+// ResetBox TODO
 func ResetBox(ctx context.Context, theRobot robot.Robot) {
 	err := ResetBoxSteps(ctx, theRobot, 4)
 	if err != nil {
@@ -23,6 +24,7 @@ func ResetBox(ctx context.Context, theRobot robot.Robot) {
 	}
 }
 
+// ResetBoxSteps TODO
 func ResetBoxSteps(ctx context.Context, theRobot robot.Robot, shakes int) error {
 	resetBoard := theRobot.BoardByName("resetDriveBoard")
 	if resetBoard == nil {
@@ -78,6 +80,7 @@ func ResetBoxSteps(ctx context.Context, theRobot robot.Robot, shakes int) error 
 	return ReplaceObject(ctx, theRobot)
 }
 
+// OpenBox TODO
 func OpenBox(ctx context.Context, b board.Board, gentle bool) error {
 	lSwitch := b.DigitalInterrupt("open")
 	currentValue := lSwitch.Value()
@@ -119,6 +122,7 @@ func OpenBox(ctx context.Context, b board.Board, gentle bool) error {
 	return nil
 }
 
+// CloseBox TODO
 func CloseBox(ctx context.Context, b board.Board) error {
 	lSwitch := b.DigitalInterrupt("closed")
 	currentValue := lSwitch.Value()
@@ -142,16 +146,19 @@ func CloseBox(ctx context.Context, b board.Board) error {
 	return nil
 }
 
+// TiltField TODO
 func TiltField(ctx context.Context, b board.Board) error {
 	tiltServo := b.Servo("tilt")
 	return tiltServo.Move(ctx, 70)
 }
 
+// FlatField TODO
 func FlatField(ctx context.Context, b board.Board) error {
 	tiltServo := b.Servo("tilt")
 	return tiltServo.Move(ctx, 32)
 }
 
+// ReplaceObject TODO
 func ReplaceObject(ctx context.Context, theRobot robot.Robot) error {
 	myArm := theRobot.ArmByName("pieceArm")
 	myGripper := theRobot.GripperByName("pieceGripper")

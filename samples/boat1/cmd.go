@@ -40,6 +40,7 @@ const (
 
 var logger = golog.NewDevelopmentLogger("boat1")
 
+// Boat TODO
 type Boat struct {
 	theBoard        board.Board
 	starboard, port board.Motor
@@ -49,6 +50,7 @@ type Boat struct {
 	activeBackgroundWorkers            sync.WaitGroup
 }
 
+// MoveStraight TODO
 func (b *Boat) MoveStraight(ctx context.Context, distanceMillis int, millisPerSec float64, block bool) (int, error) {
 	dir := pb.DirectionRelative_DIRECTION_RELATIVE_FORWARD
 	if distanceMillis < 0 {
@@ -71,23 +73,28 @@ func (b *Boat) MoveStraight(ctx context.Context, distanceMillis int, millisPerSe
 
 }
 
+// Spin TODO
 func (b *Boat) Spin(ctx context.Context, angleDeg float64, degsPerSec float64, block bool) (float64, error) {
 	return math.NaN(), errors.New("boat can't spin yet")
 }
 
+// WidthMillis TODO
 func (b *Boat) WidthMillis(ctx context.Context) (int, error) {
 	return 1, nil
 }
 
+// Stop TODO
 func (b *Boat) Stop(ctx context.Context) error {
 	return multierr.Combine(b.starboard.Off(ctx), b.port.Off(ctx))
 }
 
+// Close TODO
 func (b *Boat) Close() error {
 	defer b.activeBackgroundWorkers.Wait()
 	return b.Stop(context.Background())
 }
 
+// StartRC TODO
 func (b *Boat) StartRC(ctx context.Context) {
 	b.activeBackgroundWorkers.Add(1)
 	utils.ManagedGo(func() {
@@ -170,14 +177,15 @@ func (b *Boat) StartRC(ctx context.Context) {
 	}, b.activeBackgroundWorkers.Done)
 }
 
-type SavedDetph struct {
+// SavedDepth TODO
+type SavedDepth struct {
 	Longitude float64
 	Latitude  float64
 	Depth     float64
 	Extra     interface{}
 }
 
-func storeAll(docs []SavedDetph) error {
+func storeAll(docs []SavedDepth) error {
 	for _, doc := range docs {
 		data, err := json.Marshal(doc)
 		if err != nil {
@@ -225,7 +233,7 @@ func trackGPS() {
 	}
 }
 
-var toStore []SavedDetph
+var toStore []SavedDepth
 
 func doRecordDepth(ctx context.Context, depthSensor sensor.Sensor) error {
 	if currentLocation.Longitude == 0 {
@@ -250,13 +258,13 @@ func doRecordDepth(ctx context.Context, depthSensor sensor.Sensor) error {
 		return nil
 	}
 
-	d := SavedDetph{currentLocation.Longitude, currentLocation.Latitude, depth, m}
+	d := SavedDepth{currentLocation.Longitude, currentLocation.Latitude, depth, m}
 
 	toStore = append(toStore, d)
 
 	err = storeAll(toStore)
 	if err == nil {
-		toStore = []SavedDetph{}
+		toStore = []SavedDepth{}
 	}
 	return err
 }
@@ -278,6 +286,7 @@ func recordDepthWorker(ctx context.Context, depthSensor sensor.Sensor) {
 	}
 }
 
+// NewBoat TODO
 func NewBoat(r robot.Robot) (*Boat, error) {
 	b := &Boat{}
 	b.theBoard = r.BoardByName("local")
