@@ -89,7 +89,7 @@ type robotServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewServiceClient(cc grpc.ClientConnInterface) RobotServiceClient {
+func NewRobotServiceClient(cc grpc.ClientConnInterface) RobotServiceClient {
 	return &robotServiceClient{cc}
 }
 
