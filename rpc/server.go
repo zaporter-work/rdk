@@ -7,12 +7,13 @@ package rpc
 
 import (
 	"context"
-	"errors"
 	"net"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/go-errors/errors"
 
 	"go.viam.com/core/utils"
 

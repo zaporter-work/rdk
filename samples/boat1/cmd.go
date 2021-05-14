@@ -6,14 +6,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"flag"
-	"fmt"
 	"log"
 	"math"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/go-errors/errors"
 
 	"go.viam.com/core/board"
 	"go.viam.com/core/config"
@@ -245,7 +245,7 @@ func doRecordDepth(ctx context.Context, depthSensor sensor.Sensor) error {
 		return err
 	}
 	if len(readings) != 1 {
-		return fmt.Errorf("readings is unexpected %v", readings)
+		return errors.Errorf("readings is unexpected %v", readings)
 	}
 
 	m := readings[0].(map[string]interface{})

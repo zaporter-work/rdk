@@ -3,7 +3,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"image"
@@ -13,6 +12,8 @@ import (
 	"runtime/pprof"
 	"sync/atomic"
 	"time"
+
+	"github.com/go-errors/errors"
 
 	"go.uber.org/multierr"
 
@@ -59,7 +60,7 @@ func getCoord(chess string) pos {
 	var y = float64(chess[1] - '1')
 
 	if x < 0 || x > 7 || y < 0 || y > 7 {
-		panic(fmt.Errorf("invalid position: %s", chess))
+		panic(errors.Errorf("invalid position: %s", chess))
 	}
 
 	x = (3.5 - x) / 7.0
@@ -441,7 +442,7 @@ func adjustArmInsideSquare(ctx context.Context, robot robot.Robot) error {
 		diff := highestValue - lowestValue
 
 		if diff < 11 {
-			return fmt.Errorf("no chess piece because height is only: %v", diff)
+			return errors.Errorf("no chess piece because height is only: %v", diff)
 		}
 
 		offsetX := center.X - lowest.X

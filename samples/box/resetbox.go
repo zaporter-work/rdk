@@ -2,8 +2,9 @@ package action
 
 import (
 	"context"
-	"errors"
 	"time"
+
+	"github.com/go-errors/errors"
 
 	"go.viam.com/core/action"
 	"go.viam.com/core/board"

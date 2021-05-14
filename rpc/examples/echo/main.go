@@ -5,11 +5,12 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/go-errors/errors"
 
 	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
 	"go.viam.com/core/rlog"

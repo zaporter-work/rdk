@@ -3,9 +3,10 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"time"
+
+	"github.com/go-errors/errors"
 
 	"go.viam.com/core/action"
 	"go.viam.com/core/config"

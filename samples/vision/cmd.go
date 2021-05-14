@@ -20,6 +20,7 @@ import (
 	"github.com/edaniels/gostream"
 	"github.com/edaniels/gostream/codec/x264"
 	"github.com/fogleman/gg"
+	"github.com/go-errors/errors"
 )
 
 var (
@@ -161,7 +162,7 @@ func main() {
 
 	img, err := rimage.NewImageFromFile(fn)
 	if err != nil {
-		panic(fmt.Errorf("error reading image from file (%s) %w", fn, err))
+		panic(errors.Errorf("error reading image from file (%s) %w", fn, err))
 	}
 
 	if *blur {
@@ -183,11 +184,11 @@ func main() {
 	case "view":
 		err = view(img)
 	default:
-		panic(fmt.Errorf("unknown program: %s", prog))
+		panic(errors.Errorf("unknown program: %s", prog))
 	}
 
 	if err != nil {
-		panic(fmt.Errorf("error running command: %w", err))
+		panic(errors.Errorf("error running command: %w", err))
 	}
 
 }

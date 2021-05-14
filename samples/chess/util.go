@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"image"
 
 	"go.viam.com/core/rimage"
 	"go.viam.com/core/utils"
 	"go.viam.com/core/vision/chess"
 
+	"github.com/go-errors/errors"
 	"github.com/tonyOreglia/glee/pkg/bitboard"
 	"github.com/tonyOreglia/glee/pkg/moves"
 	"github.com/tonyOreglia/glee/pkg/position"
@@ -124,7 +124,7 @@ func (state *boardStateGuesser) GetPrevMove(prev *position.Position) (*moves.Mov
 		prevSqs.Print()
 		nowSqs.Print()
 		temp.Print()
-		return nil, fmt.Errorf("pop count sad %d", temp.PopulationCount())
+		return nil, errors.Errorf("pop count sad %d", temp.PopulationCount())
 	}
 
 	fromBoard := bitboard.NewBitboard(prevSqs.Value() & temp.Value())

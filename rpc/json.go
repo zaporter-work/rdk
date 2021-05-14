@@ -3,9 +3,9 @@ package rpc
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"reflect"
 
+	"github.com/go-errors/errors"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/runtime/protoiface"
 )
@@ -28,21 +28,21 @@ func CallClientMethodLineJSON(ctx context.Context, client interface{}, data []by
 	clientT := clientV.Type()
 	method, ok := clientT.MethodByName(methodName)
 	if !ok {
-		return nil, fmt.Errorf("method %q does not exist", methodName)
+		return nil, errors.Errorf("method %q does not exist", methodName)
 	}
 	if method.Type.NumIn() != 4 { // (Client, context.Context, pb.<Method>Request, ...grpc.CallOption)
-		return nil, fmt.Errorf("method %q does not look unary", methodName)
+		return nil, errors.Errorf("method %q does not look unary", methodName)
 	}
 	if method.Type.In(1) != contextT {
-		return nil, fmt.Errorf("expected method %q first param to be context", methodName)
+		return nil, errors.Errorf("expected method %q first param to be context", methodName)
 	}
 	if !method.Type.In(2).Implements(messageT) {
-		return nil, fmt.Errorf("expected method %q second param to be a proto message", methodName)
+		return nil, errors.Errorf("expected method %q second param to be a proto message", methodName)
 	}
 	message := reflect.New(method.Type.In(2).Elem()).Interface()
 	if len(dataSplit) > 1 && len(dataSplit[1]) > 0 {
 		if err := JSONPB.Unmarshal(dataSplit[1], message); err != nil {
-			return nil, fmt.Errorf("error unmarshaling into message: %w", err)
+			return nil, errors.Errorf("error unmarshaling into message: %w", err)
 		}
 	}
 	// ignore opts
@@ -52,12 +52,12 @@ func CallClientMethodLineJSON(ctx context.Context, client interface{}, data []by
 	})
 	if errV := rets[1]; errV.IsValid() && !errV.IsZero() {
 		gErr := status.Convert(errV.Interface().(error)).Message()
-		return nil, fmt.Errorf("error calling method %q: %s", methodName, gErr)
+		return nil, errors.Errorf("error calling method %q: %s", methodName, gErr)
 	}
 	resp := rets[0].Interface()
 	md, err := JSONPB.Marshal(resp)
 	if err != nil {
-		return nil, fmt.Errorf("error marshaling response: %w", err)
+		return nil, errors.Errorf("error marshaling response: %w", err)
 	}
 	return md, nil
 }

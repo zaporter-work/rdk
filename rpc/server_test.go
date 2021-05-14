@@ -3,13 +3,14 @@ package rpc
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/go-errors/errors"
 
 	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
 

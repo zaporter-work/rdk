@@ -3,11 +3,12 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"image"
 	"time"
+
+	"github.com/go-errors/errors"
 
 	"go.viam.com/core/action"
 	"go.viam.com/core/artifact"
