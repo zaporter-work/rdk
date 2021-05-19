@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"math"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/go-errors/errors"
 
+	"go.viam.com/core/base"
 	"go.viam.com/core/board"
 	"go.viam.com/core/config"
 	pb "go.viam.com/core/proto/api/v1"
@@ -47,7 +49,7 @@ type Boat struct {
 
 	throttle, direction, mode, aSwitch board.DigitalInterrupt
 	rightVertical, rightHorizontal     board.DigitalInterrupt
-	activeBackgroundWorkers            sync.WaitGroup
+	activeBackgroundWorkers            *sync.WaitGroup
 }
 
 // MoveStraight TODO
@@ -86,6 +88,18 @@ func (b *Boat) WidthMillis(ctx context.Context) (int, error) {
 // Stop TODO
 func (b *Boat) Stop(ctx context.Context) error {
 	return multierr.Combine(b.starboard.Off(ctx), b.port.Off(ctx))
+}
+
+// Reconfigure replaces this base with the given base.
+func (b *Boat) Reconfigure(newBase base.Base) {
+	actual, ok := newBase.(*Boat)
+	if !ok {
+		panic(fmt.Errorf("expected new base to be %T but got %T", actual, newBase))
+	}
+	if err := b.Close(); err != nil {
+		rlog.Logger.Errorw("error closing old", "error", err)
+	}
+	*b = *actual
 }
 
 // Close TODO
@@ -288,7 +302,7 @@ func recordDepthWorker(ctx context.Context, depthSensor sensor.Sensor) {
 
 // NewBoat TODO
 func NewBoat(r robot.Robot) (*Boat, error) {
-	b := &Boat{}
+	b := &Boat{activeBackgroundWorkers: &sync.WaitGroup{}}
 	b.theBoard = r.BoardByName("local")
 	if b.theBoard == nil {
 		return nil, errors.New("cannot find board")

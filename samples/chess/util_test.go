@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"image"
-	"io/ioutil"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -12,6 +11,7 @@ import (
 	"go.viam.com/core/artifact"
 	"go.viam.com/core/rimage"
 	"go.viam.com/core/rlog"
+	"go.viam.com/core/testutils"
 	"go.viam.com/core/vision/chess"
 
 	"github.com/edaniels/golog"
@@ -23,7 +23,7 @@ var outDir string
 
 func init() {
 	var err error
-	outDir, err = ioutil.TempDir("", "samples_chess")
+	outDir, err = testutils.TempDir("", "samples_chess")
 	if err != nil {
 		panic(err)
 	}

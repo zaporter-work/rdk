@@ -19,6 +19,7 @@ import (
 
 	"go.viam.com/core/arm"
 	"go.viam.com/core/artifact"
+	"go.viam.com/core/camera"
 	"go.viam.com/core/config"
 	"go.viam.com/core/gripper"
 	pb "go.viam.com/core/proto/api/v1"
@@ -555,7 +556,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	initialPositionOk := false
 
 	annotatedImageHolder := &imagesource.StaticSource{}
-	myRobot.AddCamera(annotatedImageHolder, config.Component{})
+	myRobot.AddCamera(&camera.ImageSource{annotatedImageHolder}, config.Component{})
 
 	utils.PanicCapturingGo(func() {
 		for {
