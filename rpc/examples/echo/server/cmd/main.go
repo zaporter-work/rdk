@@ -1,6 +1,6 @@
 // Package main runs a gRPC server running the proto/rpc/examples/echo/v1 service.
 //
-// It is accessible over gRPC, grpc-web, and gRPC via RESTful JSON.
+// It is accessible over gRPC, grpc-web, gRPC via RESTful JSON, and gRPC via WebRTC.
 package main
 
 import (
@@ -12,9 +12,10 @@ import (
 
 	"github.com/go-errors/errors"
 
-	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
+	echopb "go.viam.com/core/proto/rpc/examples/echo/v1"
 	"go.viam.com/core/rlog"
-	"go.viam.com/core/rpc"
+	"go.viam.com/core/rpc/examples/echo/server"
+	rpcserver "go.viam.com/core/rpc/server"
 	"go.viam.com/core/utils"
 
 	"github.com/edaniels/golog"
@@ -57,7 +58,10 @@ func runServer(ctx context.Context, port int, logger golog.Logger) (err error) {
 		return err
 	}
 
-	rpcServer, err := rpc.NewServer()
+	rpcServer, err := rpcserver.NewWithOptions(
+		rpcserver.Options{WebRTC: rpcserver.WebRTCOptions{Enable: true}},
+		logger,
+	)
 	if err != nil {
 		return err
 	}
@@ -67,9 +71,9 @@ func runServer(ctx context.Context, port int, logger golog.Logger) (err error) {
 
 	if err := rpcServer.RegisterServiceServer(
 		ctx,
-		&pb.EchoService_ServiceDesc,
-		&echoServer{},
-		pb.RegisterEchoServiceHandlerFromEndpoint,
+		&echopb.EchoService_ServiceDesc,
+		&server.Server{},
+		echopb.RegisterEchoServiceHandlerFromEndpoint,
 	); err != nil {
 		return err
 	}
@@ -111,12 +115,4 @@ func runServer(ctx context.Context, port int, logger golog.Logger) (err error) {
 		return err
 	}
 	return nil
-}
-
-type echoServer struct {
-	pb.UnimplementedEchoServiceServer
-}
-
-func (es *echoServer) Echo(ctx context.Context, req *pb.EchoRequest) (*pb.EchoResponse, error) {
-	return &pb.EchoResponse{Message: req.Message}, nil
 }

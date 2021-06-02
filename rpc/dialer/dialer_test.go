@@ -1,24 +1,29 @@
-package rpc
+package dialer_test
 
 import (
 	"context"
 	"net"
 	"testing"
 
+	"github.com/edaniels/golog"
 	"google.golang.org/grpc"
 
-	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
-
 	"go.viam.com/test"
+
+	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
+	"go.viam.com/core/rpc/dialer"
+	echoserver "go.viam.com/core/rpc/examples/echo/server"
+	"go.viam.com/core/rpc/server"
 )
 
 func TestCachedDialer(t *testing.T) {
-	rpcServer1, err := NewServer()
+	logger := golog.NewTestLogger(t)
+	rpcServer1, err := server.New(logger)
 	test.That(t, err, test.ShouldBeNil)
-	rpcServer2, err := NewServer()
+	rpcServer2, err := server.New(logger)
 	test.That(t, err, test.ShouldBeNil)
 
-	es := echoServer{}
+	es := echoserver.Server{}
 	err = rpcServer1.RegisterServiceServer(
 		context.Background(),
 		&pb.EchoService_ServiceDesc,
@@ -48,20 +53,20 @@ func TestCachedDialer(t *testing.T) {
 		errChan2 <- rpcServer2.Serve(httpListener2)
 	}()
 
-	dialer := NewCachedDialer()
-	conn1, err := dialer.Dial(context.Background(), httpListener1.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
+	cachedDialer := dialer.NewCachedDialer()
+	conn1, err := cachedDialer.Dial(context.Background(), httpListener1.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
 	test.That(t, err, test.ShouldBeNil)
-	conn2, err := dialer.Dial(context.Background(), httpListener1.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
+	conn2, err := cachedDialer.Dial(context.Background(), httpListener1.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
 	test.That(t, err, test.ShouldBeNil)
-	conn3, err := dialer.Dial(context.Background(), httpListener2.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
+	conn3, err := cachedDialer.Dial(context.Background(), httpListener2.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
 	test.That(t, err, test.ShouldBeNil)
-	test.That(t, conn1.(*reffedConn).ClientConn, test.ShouldEqual, conn2.(*reffedConn).ClientConn)
-	test.That(t, conn2.(*reffedConn).ClientConn, test.ShouldNotEqual, conn3.(*reffedConn).ClientConn)
+	test.That(t, conn1.(*dialer.ReffedConn).ClientConn, test.ShouldEqual, conn2.(*dialer.ReffedConn).ClientConn)
+	test.That(t, conn2.(*dialer.ReffedConn).ClientConn, test.ShouldNotEqual, conn3.(*dialer.ReffedConn).ClientConn)
 	test.That(t, conn1.Close(), test.ShouldBeNil)
 	test.That(t, conn2.Close(), test.ShouldBeNil)
 	test.That(t, conn3.Close(), test.ShouldBeNil)
 
-	test.That(t, dialer.Close(), test.ShouldBeNil)
+	test.That(t, cachedDialer.Close(), test.ShouldBeNil)
 
 	test.That(t, rpcServer1.Stop(), test.ShouldBeNil)
 	test.That(t, rpcServer2.Stop(), test.ShouldBeNil)
@@ -73,7 +78,7 @@ func TestCachedDialer(t *testing.T) {
 
 func TestReffedConn(t *testing.T) {
 	tracking := &closeReffedConn{}
-	wrapper := newRefCountedConnWrapper(tracking)
+	wrapper := dialer.NewRefCountedConnWrapper(tracking)
 	conn1 := wrapper.Ref()
 	conn2 := wrapper.Ref()
 	test.That(t, conn1.Close(), test.ShouldBeNil)
@@ -87,7 +92,7 @@ func TestReffedConn(t *testing.T) {
 }
 
 func TestRefCountedValue(t *testing.T) {
-	rcv := NewRefCountedValue(nil)
+	rcv := dialer.NewRefCountedValue(nil)
 	test.That(t, func() { rcv.Deref() }, test.ShouldPanic)
 	test.That(t, rcv.Ref(), test.ShouldBeNil)
 	test.That(t, rcv.Ref(), test.ShouldBeNil)
@@ -97,7 +102,7 @@ func TestRefCountedValue(t *testing.T) {
 	test.That(t, func() { rcv.Ref() }, test.ShouldPanic)
 
 	someIntPtr := 5
-	rcv = NewRefCountedValue(&someIntPtr)
+	rcv = dialer.NewRefCountedValue(&someIntPtr)
 	test.That(t, func() { rcv.Deref() }, test.ShouldPanic)
 	test.That(t, rcv.Ref(), test.ShouldEqual, &someIntPtr)
 	test.That(t, rcv.Ref(), test.ShouldEqual, &someIntPtr)
@@ -108,7 +113,7 @@ func TestRefCountedValue(t *testing.T) {
 }
 
 type closeReffedConn struct {
-	ClientConn
+	dialer.ClientConn
 	closeCalled int
 }
 
@@ -119,10 +124,10 @@ func (crc *closeReffedConn) Close() error {
 
 func TestContextDialer(t *testing.T) {
 	ctx := context.Background()
-	dialer := NewCachedDialer()
-	ctx = ContextWithDialer(ctx, dialer)
-	dialer2 := ContextDialer(context.Background())
-	test.That(t, dialer2, test.ShouldBeNil)
-	dialer2 = ContextDialer(ctx)
-	test.That(t, dialer2, test.ShouldEqual, dialer)
+	cachedDialer := dialer.NewCachedDialer()
+	ctx = dialer.ContextWithDialer(ctx, cachedDialer)
+	cachedDialer2 := dialer.ContextDialer(context.Background())
+	test.That(t, cachedDialer2, test.ShouldBeNil)
+	cachedDialer2 = dialer.ContextDialer(ctx)
+	test.That(t, cachedDialer2, test.ShouldEqual, cachedDialer)
 }

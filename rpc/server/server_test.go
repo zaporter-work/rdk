@@ -1,4 +1,4 @@
-package rpc
+package server
 
 import (
 	"context"
@@ -10,9 +10,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-errors/errors"
+	"github.com/edaniels/golog"
 
 	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
+	echoserver "go.viam.com/core/rpc/examples/echo/server"
+	rpcwebrtc "go.viam.com/core/rpc/webrtc"
 
 	"go.viam.com/test"
 	"google.golang.org/grpc"
@@ -20,10 +22,11 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	rpcServer, err := NewServer()
+	logger := golog.NewTestLogger(t)
+	rpcServer, err := NewWithOptions(Options{WebRTC: WebRTCOptions{Enable: true}}, logger)
 	test.That(t, err, test.ShouldBeNil)
 
-	es := echoServer{}
+	es := echoserver.Server{}
 	err = rpcServer.RegisterServiceServer(
 		context.Background(),
 		&pb.EchoService_ServiceDesc,
@@ -52,11 +55,11 @@ func TestServer(t *testing.T) {
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, echoResp.GetMessage(), test.ShouldEqual, "hello")
 
-	es.fail = true
+	es.SetFail(true)
 	_, err = client.Echo(context.Background(), &pb.EchoRequest{Message: "hello"})
 	test.That(t, err, test.ShouldNotBeNil)
 	test.That(t, status.Convert(err).Message(), test.ShouldEqual, "whoops")
-	es.fail = false
+	es.SetFail(false)
 
 	// grpc-web
 	httpURL := fmt.Sprintf("http://%s/proto.rpc.examples.echo.v1.EchoService/Echo", httpListener.Addr().String())
@@ -70,12 +73,12 @@ func TestServer(t *testing.T) {
 	// it says hey!
 	test.That(t, string(rd), test.ShouldResemble, "AAAAAAYKBGhleSE=gAAAABBncnBjLXN0YXR1czogMA0K")
 
-	es.fail = true
+	es.SetFail(true)
 	httpResp1, err = http.Post(httpURL, "application/grpc-web-text", strings.NewReader(grpcWebReq))
 	test.That(t, err, test.ShouldBeNil)
 	defer httpResp1.Body.Close()
 	test.That(t, httpResp1.StatusCode, test.ShouldEqual, 200)
-	es.fail = false
+	es.SetFail(false)
 	rd, err = ioutil.ReadAll(httpResp1.Body)
 	test.That(t, err, test.ShouldBeNil)
 	// it says hey!
@@ -93,26 +96,32 @@ func TestServer(t *testing.T) {
 	test.That(t, dec.Decode(&echoM), test.ShouldBeNil)
 	test.That(t, echoM, test.ShouldResemble, map[string]interface{}{"message": "world"})
 
-	es.fail = true
+	es.SetFail(true)
 	httpResp2, err = http.Post(httpURL, "application/json", strings.NewReader(`{"message": "world"}`))
 	test.That(t, err, test.ShouldBeNil)
 	defer httpResp2.Body.Close()
 	test.That(t, httpResp2.StatusCode, test.ShouldEqual, 500)
-	es.fail = false
+	es.SetFail(false)
+
+	// WebRTC
+	rtcConn, err := rpcwebrtc.Dial(context.Background(), httpListener.Addr().String(), logger)
+	test.That(t, err, test.ShouldBeNil)
+	defer func() {
+		test.That(t, rtcConn.Close(), test.ShouldBeNil)
+	}()
+	client = pb.NewEchoServiceClient(rtcConn)
+
+	echoResp, err = client.Echo(context.Background(), &pb.EchoRequest{Message: "hello"})
+	test.That(t, err, test.ShouldBeNil)
+	test.That(t, echoResp.GetMessage(), test.ShouldEqual, "hello")
+
+	es.SetFail(true)
+	_, err = client.Echo(context.Background(), &pb.EchoRequest{Message: "hello"})
+	test.That(t, err, test.ShouldNotBeNil)
+	test.That(t, status.Convert(err).Message(), test.ShouldEqual, "whoops")
+	es.SetFail(false)
 
 	test.That(t, rpcServer.Stop(), test.ShouldBeNil)
 	err = <-errChan
 	test.That(t, err, test.ShouldBeNil)
-}
-
-type echoServer struct {
-	pb.UnimplementedEchoServiceServer
-	fail bool
-}
-
-func (es *echoServer) Echo(ctx context.Context, req *pb.EchoRequest) (*pb.EchoResponse, error) {
-	if es.fail {
-		return nil, errors.New("whoops")
-	}
-	return &pb.EchoResponse{Message: req.Message}, nil
 }

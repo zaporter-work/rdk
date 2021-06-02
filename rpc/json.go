@@ -1,3 +1,8 @@
+// Package rpc provides a remote procedure call (RPC) library based on gRPC.
+//
+// In a server context, this package should be preferred over gRPC directly
+// since it provides higher level configuration with more features built in,
+// such as grpc-web and gRPC via RESTful JSON.
 package rpc
 
 import (
@@ -6,9 +11,19 @@ import (
 	"reflect"
 
 	"github.com/go-errors/errors"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/runtime/protoiface"
 )
+
+// JSONPB are the JSON protobuf options we use globally.
+var JSONPB = &runtime.JSONPb{
+	MarshalOptions: protojson.MarshalOptions{
+		UseProtoNames:   true,
+		EmitUnpopulated: true,
+	},
+}
 
 var (
 	contextT = reflect.TypeOf((*context.Context)(nil)).Elem()

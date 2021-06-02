@@ -1,9 +1,5 @@
-// Package rpc provides a remote procedure call (RPC) library based on gRPC.
-//
-// In a server context, this package should be preferred over gRPC directly
-// since it provides higher level configuration with more features built in,
-// such as grpc-web and gRPC via RESTful JSON.
-package rpc
+// Package server provides the remote procedure call (RPC) server based on gRPC.
+package server
 
 import (
 	"context"
@@ -13,8 +9,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/edaniels/golog"
 	"github.com/go-errors/errors"
 
+	webrtcpb "go.viam.com/core/proto/rpc/webrtc/v1"
+	"go.viam.com/core/rpc"
+	rpcwebrtc "go.viam.com/core/rpc/webrtc"
 	"go.viam.com/core/utils"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -24,7 +24,6 @@ import (
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // A Server provides a convenient way to get a gRPC server up and running
@@ -76,26 +75,45 @@ type simpleServer struct {
 	grpcWebServer        *grpcweb.WrappedGrpcServer
 	grpcGatewayHandler   *runtime.ServeMux
 	httpServer           *http.Server
+	webrtcServer         *rpcwebrtc.Server
+	webrtcAnswerer       *rpcwebrtc.SignalingAnswerer
 	serviceServerCancels []func()
 	serviceServers       []interface{}
 	secure               bool
+	stopped              bool
+	logger               golog.Logger
 }
 
-// JSONPB are the JSON protobuf options we use globally.
-var JSONPB = &runtime.JSONPb{
-	MarshalOptions: protojson.MarshalOptions{
-		UseProtoNames:   true,
-		EmitUnpopulated: true,
-	},
+// Options change the runtime behavior of the server.
+type Options struct {
+	WebRTC WebRTCOptions
 }
 
-// NewServerWithListener returns a new server ready to be started that
+// WebRTCOptions control how WebRTC is utilized in a server.
+type WebRTCOptions struct {
+	// Enable controls if WebRTC should be turned on. It is disabled
+	// by default since signaling has the potential to open up random
+	// ports on the host which may not be expected.
+	Enable bool
+
+	// SignalingAddress specifies where the WebRTC signaling
+	// answerer should connect to and "listen" from. If it is empty,
+	// it will connect to the server's internal address acting as
+	// an answerer for itself.
+	SignalingAddress string
+}
+
+// NewWithListener returns a new server ready to be started that
 // will listen on the given listener.
-func NewServerWithListener(grpcListener net.Listener) Server {
+func NewWithListener(
+	grpcListener net.Listener,
+	opts Options,
+	logger golog.Logger,
+) (Server, error) {
 	grpcServer := grpc.NewServer()
 	reflection.Register(grpcServer)
 	grpcWebServer := grpcweb.WrapServer(grpcServer)
-	grpcGatewayHandler := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.HTTPBodyMarshaler{JSONPB}))
+	grpcGatewayHandler := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.HTTPBodyMarshaler{rpc.JSONPB}))
 
 	httpServer := &http.Server{
 		ReadTimeout:    10 * time.Second,
@@ -103,24 +121,53 @@ func NewServerWithListener(grpcListener net.Listener) Server {
 		MaxHeaderBytes: 1 << 24,
 	}
 
-	return &simpleServer{
+	server := &simpleServer{
 		grpcListener:       grpcListener,
 		grpcServer:         grpcServer,
 		grpcWebServer:      grpcWebServer,
 		grpcGatewayHandler: grpcGatewayHandler,
 		httpServer:         httpServer,
+		logger:             logger,
 	}
+
+	// Signaling is always turned on as it doesn't explicitly enable WebRTC,
+	// it just provides a means to exchange SDPs to interested parties.
+	if err := server.RegisterServiceServer(
+		context.Background(),
+		&webrtcpb.SignalingService_ServiceDesc,
+		rpcwebrtc.NewSignalingServer(),
+		webrtcpb.RegisterSignalingServiceHandlerFromEndpoint,
+	); err != nil {
+		return nil, err
+	}
+
+	if opts.WebRTC.Enable {
+		server.webrtcServer = rpcwebrtc.NewServer(logger)
+		address := opts.WebRTC.SignalingAddress
+		if address == "" {
+			address = grpcListener.Addr().String()
+		}
+		server.webrtcAnswerer = rpcwebrtc.NewSignalingAnswerer(address, server.webrtcServer, logger)
+	}
+
+	return server, nil
 }
 
-// NewServer returns a new server ready to be started that
+// NewWithOptions returns a new server ready to be started that
 // will listen on some random port bound to localhost.
-func NewServer() (Server, error) {
+func NewWithOptions(opts Options, logger golog.Logger) (Server, error) {
 	grpcListener, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
 		return nil, err
 	}
 
-	return NewServerWithListener(grpcListener), nil
+	return NewWithListener(grpcListener, opts, logger)
+}
+
+// New returns a new server ready to be started that
+// will listen on some random port bound to localhost.
+func New(logger golog.Logger) (Server, error) {
+	return NewWithOptions(Options{}, logger)
 }
 
 type requestType int
@@ -178,10 +225,38 @@ func (ss *simpleServer) InternalAddr() net.Addr {
 }
 
 func (ss *simpleServer) Start() error {
-	return ss.grpcServer.Serve(ss.grpcListener)
+	var err error
+	var errMu sync.Mutex
+	utils.PanicCapturingGo(func() {
+		if serveErr := ss.grpcServer.Serve(ss.grpcListener); serveErr != nil {
+			errMu.Lock()
+			err = multierr.Combine(err, serveErr)
+			errMu.Unlock()
+		}
+
+	})
+
+	if ss.webrtcAnswerer == nil {
+		return nil
+	}
+
+	errMu.Lock()
+	if startErr := ss.webrtcAnswerer.Start(); err != nil && utils.FilterOutError(startErr, context.Canceled) != nil {
+		err = multierr.Combine(err, startErr)
+	}
+	capErr := err
+	errMu.Unlock()
+
+	if capErr != nil {
+		ss.grpcServer.Stop()
+	}
+
+	errMu.Lock()
+	defer errMu.Unlock()
+	return err
 }
 
-func (ss *simpleServer) Serve(listener net.Listener) (err error) {
+func (ss *simpleServer) Serve(listener net.Listener) error {
 	var handler http.Handler = ss
 	if !ss.secure {
 		h2s := &http2.Server{}
@@ -190,6 +265,7 @@ func (ss *simpleServer) Serve(listener net.Listener) (err error) {
 	}
 	ss.httpServer.Addr = listener.Addr().String()
 	ss.httpServer.Handler = handler
+	var err error
 	var errMu sync.Mutex
 	utils.ManagedGo(func() {
 		if serveErr := ss.httpServer.Serve(listener); serveErr != nil && !errors.Is(serveErr, http.ErrServerClosed) {
@@ -198,22 +274,48 @@ func (ss *simpleServer) Serve(listener net.Listener) (err error) {
 			errMu.Unlock()
 		}
 	}, nil)
-	serveErr := ss.Start()
+	startErr := ss.Start()
 	errMu.Lock()
-	err = multierr.Combine(err, serveErr)
+	err = multierr.Combine(err, startErr)
 	errMu.Unlock()
-	return
+	return err
 }
 
 func (ss *simpleServer) Stop() (err error) {
+	ss.mu.Lock()
+	if ss.stopped {
+		ss.mu.Unlock()
+		return nil
+	}
+	ss.stopped = true
+	ss.mu.Unlock()
+	ss.logger.Info("stopping server")
 	defer ss.grpcServer.Stop()
+	ss.logger.Info("canceling service servers for gateway")
 	for _, cancel := range ss.serviceServerCancels {
 		cancel()
 	}
+	ss.logger.Info("service servers for gateway canceled")
+	ss.logger.Info("closing service servers")
 	for _, srv := range ss.serviceServers {
 		err = multierr.Combine(err, utils.TryClose(srv))
 	}
-	return ss.httpServer.Shutdown(context.Background())
+	ss.logger.Info("service servers closed")
+	if ss.webrtcAnswerer != nil {
+		ss.logger.Info("stopping WebRTC answerer")
+		ss.webrtcAnswerer.Stop()
+		ss.logger.Info("WebRTC answerer stopped")
+	}
+	if ss.webrtcServer != nil {
+		ss.logger.Info("stopping WebRTC server")
+		ss.webrtcServer.Stop()
+		ss.logger.Info("WebRTC server stopped")
+	}
+	ss.logger.Info("shutting down HTTP server")
+	err = multierr.Combine(err, ss.httpServer.Shutdown(context.Background()))
+	ss.logger.Info("HTTP server shut down")
+	ss.logger.Info("stopped cleanly")
+	return nil
 }
 
 // A RegisterServiceHandlerFromEndpointFunc is a means to have a service attach itself to a gRPC gateway mux.
@@ -231,6 +333,9 @@ func (ss *simpleServer) RegisterServiceServer(
 	ss.serviceServerCancels = append(ss.serviceServerCancels, stopCancel)
 	ss.serviceServers = append(ss.serviceServers, svcServer)
 	ss.grpcServer.RegisterService(svcDesc, svcServer)
+	if ss.webrtcServer != nil {
+		ss.webrtcServer.RegisterService(svcDesc, svcServer)
+	}
 	if len(svcHandlers) != 0 {
 		addr := ss.grpcListener.Addr().String()
 		opts := []grpc.DialOption{grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1 << 24))}

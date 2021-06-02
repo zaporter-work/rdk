@@ -1,21 +1,27 @@
-package rpc
+package rpc_test
 
 import (
 	"context"
 	"net"
 	"testing"
 
-	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
+	"github.com/edaniels/golog"
+	"google.golang.org/grpc"
 
 	"go.viam.com/test"
-	"google.golang.org/grpc"
+
+	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
+	"go.viam.com/core/rpc"
+	echoserver "go.viam.com/core/rpc/examples/echo/server"
+	"go.viam.com/core/rpc/server"
 )
 
 func TestCallClientMethodLineJSON(t *testing.T) {
-	rpcServer, err := NewServer()
+	logger := golog.NewTestLogger(t)
+	rpcServer, err := server.New(logger)
 	test.That(t, err, test.ShouldBeNil)
 
-	es := echoServer{}
+	es := echoserver.Server{}
 	err = rpcServer.RegisterServiceServer(
 		context.Background(),
 		&pb.EchoService_ServiceDesc,
@@ -39,28 +45,28 @@ func TestCallClientMethodLineJSON(t *testing.T) {
 		test.That(t, conn.Close(), test.ShouldBeNil)
 	}()
 
-	resp, err := CallClientMethodLineJSON(context.Background(), client, nil)
+	resp, err := rpc.CallClientMethodLineJSON(context.Background(), client, nil)
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, resp, test.ShouldResemble, []byte(nil))
 
-	resp, err = CallClientMethodLineJSON(context.Background(), client, []byte(`Echo`))
+	resp, err = rpc.CallClientMethodLineJSON(context.Background(), client, []byte(`Echo`))
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, resp, test.ShouldResemble, []byte(`{"message":""}`))
 
-	_, err = CallClientMethodLineJSON(context.Background(), client, []byte(`Echo foo`))
+	_, err = rpc.CallClientMethodLineJSON(context.Background(), client, []byte(`Echo foo`))
 	test.That(t, err, test.ShouldNotBeNil)
 	test.That(t, err.Error(), test.ShouldContainSubstring, "error unmarshaling")
 
-	resp, err = CallClientMethodLineJSON(context.Background(), client, []byte(`Echo {}`))
+	resp, err = rpc.CallClientMethodLineJSON(context.Background(), client, []byte(`Echo {}`))
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, resp, test.ShouldResemble, []byte(`{"message":""}`))
 
-	resp, err = CallClientMethodLineJSON(context.Background(), client, []byte(`Echo {"message": "hey"}`))
+	resp, err = rpc.CallClientMethodLineJSON(context.Background(), client, []byte(`Echo {"message": "hey"}`))
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, resp, test.ShouldResemble, []byte(`{"message":"hey"}`))
 
-	es.fail = true
-	_, err = CallClientMethodLineJSON(context.Background(), client, []byte(`Echo {}`))
+	es.SetFail(true)
+	_, err = rpc.CallClientMethodLineJSON(context.Background(), client, []byte(`Echo {}`))
 	test.That(t, err, test.ShouldNotBeNil)
 	test.That(t, err.Error(), test.ShouldContainSubstring, "whoops")
 
