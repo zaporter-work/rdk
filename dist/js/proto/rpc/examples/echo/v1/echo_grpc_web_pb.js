@@ -156,5 +156,80 @@ proto.proto.rpc.examples.echo.v1.EchoServicePromiseClient.prototype.echo =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.proto.rpc.examples.echo.v1.EchoMultipleRequest,
+ *   !proto.proto.rpc.examples.echo.v1.EchoMultipleResponse>}
+ */
+const methodDescriptor_EchoService_EchoMultiple = new grpc.web.MethodDescriptor(
+  '/proto.rpc.examples.echo.v1.EchoService/EchoMultiple',
+  grpc.web.MethodType.SERVER_STREAMING,
+  proto.proto.rpc.examples.echo.v1.EchoMultipleRequest,
+  proto.proto.rpc.examples.echo.v1.EchoMultipleResponse,
+  /**
+   * @param {!proto.proto.rpc.examples.echo.v1.EchoMultipleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.proto.rpc.examples.echo.v1.EchoMultipleResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.proto.rpc.examples.echo.v1.EchoMultipleRequest,
+ *   !proto.proto.rpc.examples.echo.v1.EchoMultipleResponse>}
+ */
+const methodInfo_EchoService_EchoMultiple = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.proto.rpc.examples.echo.v1.EchoMultipleResponse,
+  /**
+   * @param {!proto.proto.rpc.examples.echo.v1.EchoMultipleRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.proto.rpc.examples.echo.v1.EchoMultipleResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.proto.rpc.examples.echo.v1.EchoMultipleRequest} request The request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.proto.rpc.examples.echo.v1.EchoMultipleResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.proto.rpc.examples.echo.v1.EchoServiceClient.prototype.echoMultiple =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/proto.rpc.examples.echo.v1.EchoService/EchoMultiple',
+      request,
+      metadata || {},
+      methodDescriptor_EchoService_EchoMultiple);
+};
+
+
+/**
+ * @param {!proto.proto.rpc.examples.echo.v1.EchoMultipleRequest} request The request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.proto.rpc.examples.echo.v1.EchoMultipleResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.proto.rpc.examples.echo.v1.EchoServicePromiseClient.prototype.echoMultiple =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/proto.rpc.examples.echo.v1.EchoService/EchoMultiple',
+      request,
+      metadata || {},
+      methodDescriptor_EchoService_EchoMultiple);
+};
+
+
 module.exports = proto.proto.rpc.examples.echo.v1;
 
