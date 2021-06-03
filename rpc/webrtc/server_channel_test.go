@@ -204,8 +204,9 @@ func TestServerChannel(t *testing.T) {
 	test.That(t, clientCh.writeMessage(&webrtcpb.Stream{
 		Id: 4,
 	}, &webrtcpb.RequestMessage{
-		Message: reqMd,
-		Eos:     true,
+		HasMessage: true,
+		Message:    reqMd,
+		Eos:        true,
 	}), test.ShouldBeNil)
 
 	offer := <-signalServer.callQueue
@@ -242,8 +243,9 @@ func TestServerChannel(t *testing.T) {
 	test.That(t, clientCh.writeMessage(&webrtcpb.Stream{
 		Id: 5,
 	}, &webrtcpb.RequestMessage{
-		Message: reqMd,
-		Eos:     true,
+		HasMessage: true,
+		Message:    reqMd,
+		Eos:        true,
 	}), test.ShouldBeNil)
 
 	offer = <-signalServer.callQueue

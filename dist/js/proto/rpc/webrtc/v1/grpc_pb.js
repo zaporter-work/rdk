@@ -914,8 +914,9 @@ proto.proto.rpc.webrtc.v1.RequestMessage.prototype.toObject = function(opt_inclu
  */
 proto.proto.rpc.webrtc.v1.RequestMessage.toObject = function(includeInstance, msg) {
   var f, obj = {
+    hasMessage: jspb.Message.getBooleanFieldWithDefault(msg, 1, false),
     message: msg.getMessage_asB64(),
-    eos: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
+    eos: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
 
   if (includeInstance) {
@@ -953,10 +954,14 @@ proto.proto.rpc.webrtc.v1.RequestMessage.deserializeBinaryFromReader = function(
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setHasMessage(value);
+      break;
+    case 2:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setMessage(value);
       break;
-    case 2:
+    case 3:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setEos(value);
       break;
@@ -989,17 +994,24 @@ proto.proto.rpc.webrtc.v1.RequestMessage.prototype.serializeBinary = function() 
  */
 proto.proto.rpc.webrtc.v1.RequestMessage.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getHasMessage();
+  if (f) {
+    writer.writeBool(
+      1,
+      f
+    );
+  }
   f = message.getMessage_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      1,
+      2,
       f
     );
   }
   f = message.getEos();
   if (f) {
     writer.writeBool(
-      2,
+      3,
       f
     );
   }
@@ -1007,16 +1019,34 @@ proto.proto.rpc.webrtc.v1.RequestMessage.serializeBinaryToWriter = function(mess
 
 
 /**
- * optional bytes message = 1;
- * @return {string}
+ * optional bool has_message = 1;
+ * @return {boolean}
  */
-proto.proto.rpc.webrtc.v1.RequestMessage.prototype.getMessage = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+proto.proto.rpc.webrtc.v1.RequestMessage.prototype.getHasMessage = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 1, false));
 };
 
 
 /**
- * optional bytes message = 1;
+ * @param {boolean} value
+ * @return {!proto.proto.rpc.webrtc.v1.RequestMessage} returns this
+ */
+proto.proto.rpc.webrtc.v1.RequestMessage.prototype.setHasMessage = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 1, value);
+};
+
+
+/**
+ * optional bytes message = 2;
+ * @return {string}
+ */
+proto.proto.rpc.webrtc.v1.RequestMessage.prototype.getMessage = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * optional bytes message = 2;
  * This is a type-conversion wrapper around `getMessage()`
  * @return {string}
  */
@@ -1027,7 +1057,7 @@ proto.proto.rpc.webrtc.v1.RequestMessage.prototype.getMessage_asB64 = function()
 
 
 /**
- * optional bytes message = 1;
+ * optional bytes message = 2;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getMessage()`
@@ -1044,16 +1074,16 @@ proto.proto.rpc.webrtc.v1.RequestMessage.prototype.getMessage_asU8 = function() 
  * @return {!proto.proto.rpc.webrtc.v1.RequestMessage} returns this
  */
 proto.proto.rpc.webrtc.v1.RequestMessage.prototype.setMessage = function(value) {
-  return jspb.Message.setProto3BytesField(this, 1, value);
+  return jspb.Message.setProto3BytesField(this, 2, value);
 };
 
 
 /**
- * optional bool eos = 2;
+ * optional bool eos = 3;
  * @return {boolean}
  */
 proto.proto.rpc.webrtc.v1.RequestMessage.prototype.getEos = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
 };
 
 
@@ -1062,7 +1092,7 @@ proto.proto.rpc.webrtc.v1.RequestMessage.prototype.getEos = function() {
  * @return {!proto.proto.rpc.webrtc.v1.RequestMessage} returns this
  */
 proto.proto.rpc.webrtc.v1.RequestMessage.prototype.setEos = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 2, value);
+  return jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 

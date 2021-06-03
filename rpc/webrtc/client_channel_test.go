@@ -64,8 +64,9 @@ func TestClientChannel(t *testing.T) {
 			Stream: &webrtcpb.Stream{Id: 1},
 			Type: &webrtcpb.Request_Message{
 				Message: &webrtcpb.RequestMessage{
-					Message: someStatusMd,
-					Eos:     true,
+					HasMessage: true,
+					Message:    someStatusMd,
+					Eos:        true,
 				},
 			},
 		},
@@ -177,8 +178,9 @@ func TestClientChannel(t *testing.T) {
 			Stream: &webrtcpb.Stream{Id: 2},
 			Type: &webrtcpb.Request_Message{
 				Message: &webrtcpb.RequestMessage{
-					Message: someStatusMd,
-					Eos:     true,
+					HasMessage: true,
+					Message:    someStatusMd,
+					Eos:        true,
 				},
 			},
 		},
@@ -208,8 +210,9 @@ func TestClientChannel(t *testing.T) {
 			Stream: &webrtcpb.Stream{Id: 3},
 			Type: &webrtcpb.Request_Message{
 				Message: &webrtcpb.RequestMessage{
-					Message: someStatusMd,
-					Eos:     true,
+					HasMessage: true,
+					Message:    someStatusMd,
+					Eos:        true,
 				},
 			},
 		},
@@ -237,8 +240,9 @@ func TestClientChannel(t *testing.T) {
 			Stream: &webrtcpb.Stream{Id: 4},
 			Type: &webrtcpb.Request_Message{
 				Message: &webrtcpb.RequestMessage{
-					Message: someStatusMd,
-					Eos:     true,
+					HasMessage: true,
+					Message:    someStatusMd,
+					Eos:        true,
 				},
 			},
 		},
@@ -267,8 +271,9 @@ func TestClientChannel(t *testing.T) {
 			Stream: &webrtcpb.Stream{Id: 5},
 			Type: &webrtcpb.Request_Message{
 				Message: &webrtcpb.RequestMessage{
-					Message: someStatusMd,
-					Eos:     true,
+					HasMessage: true,
+					Message:    someStatusMd,
+					Eos:        true,
 				},
 			},
 		},

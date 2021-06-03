@@ -34,8 +34,9 @@ message RequestHeaders {
 // A RequestMessage contains individual gRPC messages and a potential
 // end-of-stream (EOS) marker.
 message RequestMessage {
-	bytes message = 1;
-	bool eos = 2;
+	bool has_message = 1;
+	bytes message = 2;
+	bool eos = 3;
 }
 
 // A Response is a frame coming from a server. It is always

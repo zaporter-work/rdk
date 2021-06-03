@@ -96,6 +96,10 @@ type WebRTCOptions struct {
 	// ports on the host which may not be expected.
 	Enable bool
 
+	// EnableSignaling controls if this server will provide SDP signaling
+	// assistance.
+	EnableSignaling bool
+
 	// SignalingAddress specifies where the WebRTC signaling
 	// answerer should connect to and "listen" from. If it is empty,
 	// it will connect to the server's internal address acting as
@@ -130,15 +134,15 @@ func NewWithListener(
 		logger:             logger,
 	}
 
-	// Signaling is always turned on as it doesn't explicitly enable WebRTC,
-	// it just provides a means to exchange SDPs to interested parties.
-	if err := server.RegisterServiceServer(
-		context.Background(),
-		&webrtcpb.SignalingService_ServiceDesc,
-		rpcwebrtc.NewSignalingServer(),
-		webrtcpb.RegisterSignalingServiceHandlerFromEndpoint,
-	); err != nil {
-		return nil, err
+	if opts.WebRTC.EnableSignaling || (opts.WebRTC.Enable && opts.WebRTC.SignalingAddress == "") {
+		if err := server.RegisterServiceServer(
+			context.Background(),
+			&webrtcpb.SignalingService_ServiceDesc,
+			rpcwebrtc.NewSignalingServer(),
+			webrtcpb.RegisterSignalingServiceHandlerFromEndpoint,
+		); err != nil {
+			return nil, err
+		}
 	}
 
 	if opts.WebRTC.Enable {

@@ -201,7 +201,7 @@ func (s *ServerStream) processMessage(msg *webrtcpb.RequestMessage) {
 		s.logger.Error("message received after EOS")
 		return
 	}
-	if msg.Message != nil {
+	if msg.HasMessage {
 		s.msgCh <- msg.Message
 	}
 	if msg.Eos {

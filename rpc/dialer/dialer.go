@@ -70,7 +70,11 @@ func (cd *cachedDialer) Dial(ctx context.Context, target string, opts ...grpc.Di
 	if err != nil {
 		return nil, err
 	}
-	refConn := NewRefCountedConnWrapper(conn)
+	refConn := NewRefCountedConnWrapper(conn, func() {
+		cd.mu.Lock()
+		delete(cd.conns, target)
+		cd.mu.Unlock()
+	})
 	cd.mu.Lock()
 	defer cd.mu.Unlock()
 
@@ -99,19 +103,20 @@ func (cd *cachedDialer) Close() error {
 }
 
 // NewRefCountedConnWrapper wraps the given connection to be able to be reference counted.
-func NewRefCountedConnWrapper(conn ClientConn) *RefCountedConnWrapper {
-	return &RefCountedConnWrapper{NewRefCountedValue(conn), conn}
+func NewRefCountedConnWrapper(conn ClientConn, onUnref func()) *RefCountedConnWrapper {
+	return &RefCountedConnWrapper{NewRefCountedValue(conn), conn, onUnref}
 }
 
 // RefCountedConnWrapper wraps a ClientConn to be reference counted.
 type RefCountedConnWrapper struct {
-	ref    RefCountedValue
-	actual ClientConn
+	ref     RefCountedValue
+	actual  ClientConn
+	onUnref func()
 }
 
 // Ref returns a new reference to the underlying ClientConn.
 func (w *RefCountedConnWrapper) Ref() ClientConn {
-	return &ReffedConn{ClientConn: w.ref.Ref().(ClientConn), deref: w.ref.Deref}
+	return &ReffedConn{ClientConn: w.ref.Ref().(ClientConn), deref: w.ref.Deref, onUnref: w.onUnref}
 }
 
 // A ReffedConn reference counts a ClieentConn and closes it on the last dereference.
@@ -119,6 +124,7 @@ type ReffedConn struct {
 	ClientConn
 	derefOnce sync.Once
 	deref     func() bool
+	onUnref   func()
 }
 
 // Close will deref the reference and if it is the last to do so, will close
@@ -127,6 +133,9 @@ func (rc *ReffedConn) Close() error {
 	var err error
 	rc.derefOnce.Do(func() {
 		if unref := rc.deref(); unref {
+			if rc.onUnref != nil {
+				defer rc.onUnref()
+			}
 			if closeErr := rc.ClientConn.Close(); closeErr != nil && status.Convert(closeErr).Code() != codes.Canceled {
 				err = closeErr
 			}

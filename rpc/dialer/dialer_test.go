@@ -65,6 +65,9 @@ func TestCachedDialer(t *testing.T) {
 	test.That(t, conn1.Close(), test.ShouldBeNil)
 	test.That(t, conn2.Close(), test.ShouldBeNil)
 	test.That(t, conn3.Close(), test.ShouldBeNil)
+	conn1New, err := cachedDialer.Dial(context.Background(), httpListener1.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
+	test.That(t, err, test.ShouldBeNil)
+	test.That(t, conn1New.(*dialer.ReffedConn).ClientConn, test.ShouldNotEqual, conn1.(*dialer.ReffedConn).ClientConn)
 
 	test.That(t, cachedDialer.Close(), test.ShouldBeNil)
 
@@ -78,7 +81,7 @@ func TestCachedDialer(t *testing.T) {
 
 func TestReffedConn(t *testing.T) {
 	tracking := &closeReffedConn{}
-	wrapper := dialer.NewRefCountedConnWrapper(tracking)
+	wrapper := dialer.NewRefCountedConnWrapper(tracking, nil)
 	conn1 := wrapper.Ref()
 	conn2 := wrapper.Ref()
 	test.That(t, conn1.Close(), test.ShouldBeNil)

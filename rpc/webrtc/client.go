@@ -4,6 +4,7 @@ package rpcwebrtc
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/edaniels/golog"
@@ -11,10 +12,16 @@ import (
 	"github.com/pion/webrtc/v3"
 	"go.uber.org/multierr"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	webrtcpb "go.viam.com/core/proto/rpc/webrtc/v1"
 	"go.viam.com/core/rpc/dialer"
 )
+
+// ErrNoSignaler happens if a gRPC request is made on a server that does not support
+// signaling for WebRTC.
+var ErrNoSignaler = errors.New("no signaler present")
 
 // Dial connects to the signaling service at the given address and attempts to establish
 // a WebRTC connection with the corresponding peer reflected in the address.
@@ -63,6 +70,9 @@ func Dial(ctx context.Context, address string, logger golog.Logger) (ch *ClientC
 
 	answerResp, err := signalingClient.Call(ctx, &webrtcpb.CallRequest{Sdp: encodedSDP})
 	if err != nil {
+		if s, ok := status.FromError(err); ok && s.Code() == codes.Unimplemented {
+			return nil, ErrNoSignaler
+		}
 		return nil, err
 	}
 

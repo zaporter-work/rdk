@@ -130,8 +130,9 @@ func (s *ClientStream) writeMessage(m interface{}, eos bool) (err error) {
 		}
 	}
 	return s.ch.writeMessage(s.stream, &webrtcpb.RequestMessage{
-		Message: md,
-		Eos:     eos,
+		HasMessage: m != nil,
+		Message:    md,
+		Eos:        eos,
 	})
 }
 
