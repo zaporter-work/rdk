@@ -2,7 +2,10 @@
 //
 // In a server context, this package should be preferred over gRPC directly
 // since it provides higher level configuration with more features built in,
-// such as grpc-web and gRPC via RESTful JSON.
+// such as grpc-web, gRPC via RESTful JSON, and gRPC via WebRTC.
+//
+// Note: Authentication/Authorization/Encryption are not yet supported concepts.
+// It is assumed this will be used in a trusted, secure environment.
 package rpc
 
 import (
