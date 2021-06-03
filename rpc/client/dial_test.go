@@ -13,10 +13,12 @@ import (
 	"go.viam.com/core/rpc/client"
 	echoserver "go.viam.com/core/rpc/examples/echo/server"
 	"go.viam.com/core/rpc/server"
+	"go.viam.com/core/testutils"
 )
 
 // TODO(erd): test local.* once available
 func TestDial(t *testing.T) {
+	testutils.SkipUnlessInternet(t)
 	logger := golog.NewTestLogger(t)
 
 	// pure failure cases
