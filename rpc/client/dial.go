@@ -42,6 +42,8 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 			if port != "" {
 				localAddress = fmt.Sprintf("%s:%s", localHost, port)
 			}
+			// TODO(erd): This needs to authenticate the server so we don't have a confused
+			// deputy.
 			if conn, err := dialDirectGRPC(ctx, localAddress, opts); err == nil {
 				logger.Debugw("connected directly via local host", "address", localAddress)
 				return conn, nil
