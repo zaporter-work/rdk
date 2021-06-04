@@ -3,7 +3,6 @@ package client
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -12,7 +11,6 @@ import (
 	"google.golang.org/grpc"
 
 	"go.viam.com/core/rpc/dialer"
-	rpcwebrtc "go.viam.com/core/rpc/webrtc"
 )
 
 // DialOptions are extra dial time options.
@@ -51,18 +49,19 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 		}
 	}
 
-	conn, err := rpcwebrtc.Dial(ctx, address, logger)
-	if err != nil {
-		if errors.Is(err, rpcwebrtc.ErrNoSignaler) {
-			if conn, err := dialDirectGRPC(ctx, address, opts); err == nil {
-				logger.Debugw("connected directly", "address", address)
-				return conn, nil
-			}
-		}
-		return nil, err
-	}
-	logger.Debug("connected via WebRTC")
-	return conn, nil
+	return dialDirectGRPC(ctx, address, opts)
+	// conn, err := rpcwebrtc.Dial(ctx, address, logger)
+	// if err != nil {
+	// 	if errors.Is(err, rpcwebrtc.ErrNoSignaler) {
+	// 		if conn, err := dialDirectGRPC(ctx, address, opts); err == nil {
+	// 			logger.Debugw("connected directly", "address", address)
+	// 			return conn, nil
+	// 		}
+	// 	}
+	// 	return nil, err
+	// }
+	// logger.Debug("connected via WebRTC")
+	// return conn, nil
 }
 
 func dialDirectGRPC(ctx context.Context, address string, opts DialOptions) (dialer.ClientConn, error) {
