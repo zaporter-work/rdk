@@ -12,7 +12,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const maxMessageSize = 1 << 24
+// MaxMessageSize is the maximum size a gRPC message can be.
+var MaxMessageSize = 1 << 24
 
 type baseChannel struct {
 	mu           sync.Mutex
