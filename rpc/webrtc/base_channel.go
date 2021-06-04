@@ -12,6 +12,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const maxMessageSize = 1 << 24
+
 type baseChannel struct {
 	mu           sync.Mutex
 	peerConn     *webrtc.PeerConnection
@@ -128,13 +130,14 @@ func (ch *baseChannel) onChannelError(err error) {
 	}
 }
 
+const maxDataChannelSize = 16384
+
 func (ch *baseChannel) write(msg proto.Message) error {
 	data, err := proto.Marshal(msg)
 	if err != nil {
 		return err
 	}
-	err = ch.dataChannel.Send(data)
-	if err != nil {
+	if err := ch.dataChannel.Send(data); err != nil {
 		if strings.Contains(err.Error(), "sending payload data in non-established state") {
 			return io.ErrClosedPipe
 		}
