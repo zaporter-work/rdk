@@ -125,3 +125,13 @@ func TestServer(t *testing.T) {
 	err = <-errChan
 	test.That(t, err, test.ShouldBeNil)
 }
+
+func TestContextHost(t *testing.T) {
+	ctx := context.Background()
+	someHost := "myhost"
+	ctx = ContextWithHost(ctx, someHost)
+	someHost2 := ContextHost(context.Background())
+	test.That(t, someHost2, test.ShouldEqual, "")
+	someHost2 = ContextHost(ctx)
+	test.That(t, someHost2, test.ShouldEqual, someHost)
+}

@@ -5,7 +5,6 @@ import (
 	"context"
 	"net"
 	"net/http"
-	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -192,14 +191,41 @@ func (ss *simpleServer) getRequestType(r *http.Request) requestType {
 	return requestTypeNone
 }
 
+func requestWithHost(r *http.Request) *http.Request {
+	if r.Host == "" {
+		return r
+	}
+	host := strings.Split(r.Host, ":")[0]
+	return r.WithContext(ContextWithHost(r.Context(), host))
+}
+
+type ctxKey int
+
+const ctxKeyHost = ctxKey(iota)
+
+// ContextWithHost attaches a host name to the given context.
+func ContextWithHost(ctx context.Context, host string) context.Context {
+	return context.WithValue(ctx, ctxKeyHost, host)
+}
+
+// ContextHost returns a host name. It may be nil if the value was never set.
+func ContextHost(ctx context.Context) string {
+	host := ctx.Value(ctxKeyHost)
+	if host == nil {
+		return ""
+	}
+	return host.(string)
+}
+
 func (ss *simpleServer) GatewayHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ss.grpcGatewayHandler.ServeHTTP(w, r)
+		ss.grpcGatewayHandler.ServeHTTP(w, requestWithHost(r))
 	})
 }
 
 func (ss *simpleServer) GRPCHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r = requestWithHost(r)
 		switch ss.getRequestType(r) {
 		case requestTypeGRPC:
 			ss.grpcServer.ServeHTTP(w, r)
@@ -215,6 +241,7 @@ func (ss *simpleServer) GRPCHandler() http.Handler {
 // in a scenario where all gRPC is served from the root path due to limitations of normal
 // gRPC being served from a non-root path.
 func (ss *simpleServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	r = requestWithHost(r)
 	switch ss.getRequestType(r) {
 	case requestTypeGRPC:
 		ss.grpcServer.ServeHTTP(w, r)
@@ -257,7 +284,6 @@ func (ss *simpleServer) Start() error {
 
 	errMu.Lock()
 	defer errMu.Unlock()
-	debug.PrintStack()
 	return err
 }
 

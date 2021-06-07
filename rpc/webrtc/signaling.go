@@ -32,9 +32,6 @@ type SignalingServer struct {
 
 // NewSignalingServer makes a new signaling server that uses an in memory
 // call queue.
-// TODO(https://github.com/viamrobotics/core/issues/79): abstraction to be able to use
-// MongoDB as a distributed call queue. This will enable many signaling services to
-// run acting as effectively operators on as switchboard.
 func NewSignalingServer() *SignalingServer {
 	return &SignalingServer{callQueue: make(chan callOffer)}
 }
@@ -164,6 +161,7 @@ func (ans *SignalingAnswerer) Start() error {
 				return
 			default:
 			}
+			// TODO(erd): check error to see if it is terminal
 			if err := ans.answer(); err != nil && utils.FilterOutError(err, context.Canceled) != nil {
 				ans.logger.Errorw("error answering", "error", err)
 			}

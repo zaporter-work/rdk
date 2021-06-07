@@ -37,7 +37,8 @@ var (
 
 // Arguments for the command.
 type Arguments struct {
-	Port utils.NetPortFlag `flag:"0"`
+	Port             utils.NetPortFlag `flag:"0"`
+	SignalingAddress string            `flag:"signaling_address,default="`
 }
 
 func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) error {
@@ -49,17 +50,20 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) error
 		argsParsed.Port = utils.NetPortFlag(defaultPort)
 	}
 
-	return runServer(ctx, int(argsParsed.Port), logger)
+	return runServer(ctx, int(argsParsed.Port), argsParsed.SignalingAddress, logger)
 }
 
-func runServer(ctx context.Context, port int, logger golog.Logger) (err error) {
+func runServer(ctx context.Context, port int, signalingAddress string, logger golog.Logger) (err error) {
 	listener, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
 	if err != nil {
 		return err
 	}
 
 	rpcServer, err := rpcserver.NewWithOptions(
-		rpcserver.Options{WebRTC: rpcserver.WebRTCOptions{Enable: true}},
+		rpcserver.Options{WebRTC: rpcserver.WebRTCOptions{
+			Enable:           true,
+			SignalingAddress: signalingAddress,
+		}},
 		logger,
 	)
 	if err != nil {
