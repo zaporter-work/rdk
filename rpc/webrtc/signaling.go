@@ -134,7 +134,7 @@ func NewSignalingAnswerer(address string, server *Server, logger golog.Logger) *
 // Start connects to the signaling service and listens forever until instructed to stop
 // via Stop.
 func (ans *SignalingAnswerer) Start() error {
-	setupCtx, timeoutCancel := context.WithTimeout(ans.closeCtx, 20*time.Second)
+	setupCtx, timeoutCancel := context.WithTimeout(ans.closeCtx, 2*time.Second)
 	defer timeoutCancel()
 
 	var conn dialer.ClientConn

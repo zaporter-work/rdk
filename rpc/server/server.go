@@ -5,6 +5,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -237,7 +238,6 @@ func (ss *simpleServer) Start() error {
 			err = multierr.Combine(err, serveErr)
 			errMu.Unlock()
 		}
-
 	})
 
 	if ss.webrtcAnswerer == nil {
@@ -245,7 +245,7 @@ func (ss *simpleServer) Start() error {
 	}
 
 	errMu.Lock()
-	if startErr := ss.webrtcAnswerer.Start(); err != nil && utils.FilterOutError(startErr, context.Canceled) != nil {
+	if startErr := ss.webrtcAnswerer.Start(); startErr != nil && utils.FilterOutError(startErr, context.Canceled) != nil {
 		err = multierr.Combine(err, startErr)
 	}
 	capErr := err
@@ -257,6 +257,7 @@ func (ss *simpleServer) Start() error {
 
 	errMu.Lock()
 	defer errMu.Unlock()
+	debug.PrintStack()
 	return err
 }
 
