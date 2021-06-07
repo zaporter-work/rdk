@@ -506,6 +506,7 @@ type ArmPosition struct {
 	// Theta is defined as rotation between two planes: the plane defined by the origin, the point (0,0,1), and the rx,ry,rz
 	// point, and the plane defined by the origin, the rx,ry,rz point, and the new local Z axis. So if theta is kept at
 	// zero as the north/south pole is circled, the Roll will correct itself to remain in-line.
+	// Theta in pb.ArmPosition should be degrees. It will be converted to radians in the internal OrientationVec.
 	OX    float64 `protobuf:"fixed64,4,opt,name=o_x,json=oX,proto3" json:"o_x,omitempty"`
 	OY    float64 `protobuf:"fixed64,5,opt,name=o_y,json=oY,proto3" json:"o_y,omitempty"`
 	OZ    float64 `protobuf:"fixed64,6,opt,name=o_z,json=oZ,proto3" json:"o_z,omitempty"`
