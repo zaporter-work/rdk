@@ -37,7 +37,7 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 
 	if addr := net.ParseIP(host); addr == nil {
 		localHost := fmt.Sprintf("local.%s", host)
-		if _, err := net.LookupHost(localHost); err == nil {
+		if _, err := lookupHost(ctx, localHost); err == nil {
 			localAddress := localHost
 			if port != "" {
 				localAddress = fmt.Sprintf("%s:%s", localHost, port)
@@ -63,6 +63,13 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 	}
 	logger.Debug("connected via WebRTC")
 	return conn, nil
+}
+
+func lookupHost(ctx context.Context, host string) (addrs []string, err error) {
+	if ctxResolver := dialer.ContextResolver(ctx); ctxResolver != nil {
+		return ctxResolver.LookupHost(ctx, host)
+	}
+	return net.DefaultResolver.LookupHost(ctx, host)
 }
 
 func dialDirectGRPC(ctx context.Context, address string, opts DialOptions) (dialer.ClientConn, error) {

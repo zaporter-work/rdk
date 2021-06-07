@@ -3,6 +3,7 @@ package dialer
 
 import (
 	"context"
+	"net"
 	"sync"
 
 	"go.uber.org/multierr"
@@ -29,7 +30,10 @@ type ClientConn interface {
 
 type ctxKey int
 
-const ctxKeyDialer = ctxKey(iota)
+const (
+	ctxKeyDialer = ctxKey(iota)
+	ctxKeyResolver
+)
 
 // ContextWithDialer attaches a Dialer to the given context.
 func ContextWithDialer(ctx context.Context, d Dialer) context.Context {
@@ -43,6 +47,20 @@ func ContextDialer(ctx context.Context) Dialer {
 		return nil
 	}
 	return dialer.(Dialer)
+}
+
+// ContextWithResolver attaches a Resolver to the given context.
+func ContextWithResolver(ctx context.Context, r *net.Resolver) context.Context {
+	return context.WithValue(ctx, ctxKeyResolver, r)
+}
+
+// ContextResolver returns a Resolver. It may be nil if the value was never set.
+func ContextResolver(ctx context.Context) *net.Resolver {
+	resolver := ctx.Value(ctxKeyResolver)
+	if resolver == nil {
+		return nil
+	}
+	return resolver.(*net.Resolver)
 }
 
 type cachedDialer struct {

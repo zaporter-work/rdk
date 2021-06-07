@@ -59,7 +59,7 @@ func TestClientServer(t *testing.T) {
 	test.That(t, resp.Message, test.ShouldEqual, "hello")
 
 	// big message
-	bigZ := strings.Repeat("z", 1<<23)
+	bigZ := strings.Repeat("z", 1<<18)
 	resp, err = echoClient.Echo(context.Background(), &echopb.EchoRequest{Message: bigZ})
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, resp.Message, test.ShouldEqual, bigZ)
