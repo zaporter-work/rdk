@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"time"
 
 	"github.com/edaniels/golog"
 
@@ -44,16 +45,20 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 	if addr := net.ParseIP(host); addr == nil {
 		localHost := fmt.Sprintf("local.%s", host)
 		if _, err := lookupHost(ctx, localHost); err == nil {
-			localAddress := localHost
-			if port != "" {
+			var localAddress string
+			if port == "" {
+				localAddress = fmt.Sprintf("%s:80", localHost)
+			} else {
 				localAddress = fmt.Sprintf("%s:%s", localHost, port)
 			}
 			// TODO(erd): This needs to authenticate the server so we don't have a confused
 			// deputy.
-			if conn, err := dialer.DialDirectGRPC(ctx, localAddress, true); err == nil {
+			localCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+			defer cancel()
+			if conn, err := dialer.DialDirectGRPC(localCtx, localAddress, true); err == nil {
 				logger.Debugw("connected directly via local host", "address", localAddress)
 				return conn, nil
-			} else if ctx.Err() != nil {
+			} else if ctx.Err() != nil { // do not care about local timeout
 				return nil, ctx.Err()
 			}
 		} else if ctx.Err() != nil {
