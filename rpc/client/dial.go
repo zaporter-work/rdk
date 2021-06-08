@@ -50,10 +50,14 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 			}
 			// TODO(erd): This needs to authenticate the server so we don't have a confused
 			// deputy.
-			if conn, err := dialer.DialDirectGRPC(ctx, localAddress, opts.Insecure); err == nil {
+			if conn, err := dialer.DialDirectGRPC(ctx, localAddress, true); err == nil {
 				logger.Debugw("connected directly via local host", "address", localAddress)
 				return conn, nil
+			} else if ctx.Err() != nil {
+				return nil, ctx.Err()
 			}
+		} else if ctx.Err() != nil {
+			return nil, ctx.Err()
 		}
 	}
 
@@ -62,6 +66,9 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 		conn, err := rpcwebrtc.Dial(ctx, webrtcAddress, opts.Insecure, logger)
 		if err != nil && !errors.Is(err, rpcwebrtc.ErrNoSignaler) {
 			return nil, err
+		}
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
 		}
 		logger.Debug("connected via WebRTC")
 		return conn, nil

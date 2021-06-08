@@ -197,10 +197,9 @@ func (ans *SignalingAnswerer) Start() error {
 				return
 			default:
 			}
-			// TODO(erd): check error to see if it is terminal
 			if err := ans.answer(); err != nil && utils.FilterOutError(err, context.Canceled) != nil {
 				ans.logger.Errorw("error answering", "error", err)
-				if s, ok := status.FromError(err); ok && s.Code() == codes.Internal {
+				if s, ok := status.FromError(err); ok && (s.Code() == codes.Internal || s.Code() == codes.DeadlineExceeded) {
 					return
 				}
 			}
