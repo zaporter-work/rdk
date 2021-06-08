@@ -200,18 +200,15 @@ func (ans *SignalingAnswerer) Start() error {
 			if err := ans.answer(); err != nil && utils.FilterOutError(err, context.Canceled) != nil {
 				ans.logger.Errorw("error answering", "error", err)
 				if s, ok := status.FromError(err); ok && (s.Code() == codes.Internal || s.Code() == codes.DeadlineExceeded) {
-					if s.Message() == "downstream duration timeout" {
-						ans.logger.Info("reconnecting answer client")
-						answerClient, err := client.Answer(answerCtx)
-						if err != nil {
-							ans.logger.Errorw("error reconnecting answer client", "error", err)
-							return
-						}
-						ans.logger.Info("reconnected answer client")
-						ans.client = answerClient
-						continue
+					ans.logger.Info("reconnecting answer client")
+					answerClient, err := client.Answer(answerCtx)
+					if err != nil {
+						ans.logger.Errorw("error reconnecting answer client", "error", err)
+						return
 					}
-					return
+					ans.logger.Info("reconnected answer client")
+					ans.client = answerClient
+					continue
 				}
 			}
 		}
