@@ -8,6 +8,7 @@ import (
 	"github.com/edaniels/golog"
 	"github.com/pion/webrtc/v3"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 
@@ -35,6 +36,7 @@ func TestServerChannel(t *testing.T) {
 		&webrtcpb.SignalingService_ServiceDesc,
 		signalServer,
 	)
+	signalServer.callQueue["yeehaw"] = make(chan callOffer)
 
 	serverCh := NewServerChannel(server, pc2, dc2, logger)
 	defer func() {
@@ -151,6 +153,9 @@ func TestServerChannel(t *testing.T) {
 		Id: 3,
 	}, &webrtcpb.RequestHeaders{
 		Method: "/proto.rpc.webrtc.v1.SignalingService/Call",
+		Metadata: metadataToProto(metadata.MD{
+			"host": []string{"yeehaw"},
+		}),
 	}), test.ShouldBeNil)
 
 	test.That(t, clientCh.writeMessage(&webrtcpb.Stream{
@@ -199,6 +204,9 @@ func TestServerChannel(t *testing.T) {
 		Id: 4,
 	}, &webrtcpb.RequestHeaders{
 		Method: "/proto.rpc.webrtc.v1.SignalingService/Call",
+		Metadata: metadataToProto(metadata.MD{
+			"host": []string{"yeehaw"},
+		}),
 	}), test.ShouldBeNil)
 
 	reqMd, err := proto.Marshal(&webrtcpb.CallRequest{Sdp: "hello"})
@@ -215,7 +223,7 @@ func TestServerChannel(t *testing.T) {
 		Eos: true,
 	}), test.ShouldBeNil)
 
-	offer := <-signalServer.callQueue
+	offer := <-signalServer.callQueue["yeehaw"]
 	offer.response <- callAnswer{sdp: "world"}
 
 	<-messagesRead
@@ -244,6 +252,9 @@ func TestServerChannel(t *testing.T) {
 		Id: 5,
 	}, &webrtcpb.RequestHeaders{
 		Method: "/proto.rpc.webrtc.v1.SignalingService/Call",
+		Metadata: metadataToProto(metadata.MD{
+			"host": []string{"yeehaw"},
+		}),
 	}), test.ShouldBeNil)
 
 	test.That(t, clientCh.writeMessage(&webrtcpb.Stream{
@@ -257,7 +268,7 @@ func TestServerChannel(t *testing.T) {
 		Eos: true,
 	}), test.ShouldBeNil)
 
-	offer = <-signalServer.callQueue
+	offer = <-signalServer.callQueue["yeehaw"]
 	offer.response <- callAnswer{err: errors.New("ohno")}
 
 	<-messagesRead

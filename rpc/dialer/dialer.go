@@ -3,12 +3,14 @@ package dialer
 
 import (
 	"context"
+	"crypto/tls"
 	"net"
 	"sync"
 
 	"go.uber.org/multierr"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 )
 
@@ -210,4 +212,18 @@ func (rcv *refCountedValue) Deref() bool {
 		return true
 	}
 	return false
+}
+
+// DialDirectGRPC dials a gRPC server directly.
+func DialDirectGRPC(ctx context.Context, address string, insecure bool) (ClientConn, error) {
+	dialOpts := []grpc.DialOption{grpc.WithBlock(), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1 << 24))}
+	if insecure {
+		dialOpts = append(dialOpts, grpc.WithInsecure())
+	} else {
+		dialOpts = append(dialOpts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
+	}
+	if ctxDialer := ContextDialer(ctx); ctxDialer != nil {
+		return ctxDialer.Dial(ctx, address, dialOpts...)
+	}
+	return grpc.DialContext(ctx, address, dialOpts...)
 }

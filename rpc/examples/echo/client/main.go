@@ -23,7 +23,9 @@ var logger = rlog.Logger.Named("client")
 
 // Arguments for the command.
 type Arguments struct {
-	ServerAddress string `flag:"0,default=localhost:8080"`
+	Host            string `flag:"host,default=local"`
+	SignalingServer string `flag:"signaling_server,default=localhost:8080"`
+	Insecure        bool   `flag:"insecure"`
 }
 
 func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err error) {
@@ -32,7 +34,10 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		return err
 	}
 
-	cc, err := rpcclient.Dial(ctx, argsParsed.ServerAddress, rpcclient.DialOptions{}, logger)
+	cc, err := rpcclient.Dial(ctx, argsParsed.Host, rpcclient.DialOptions{
+		SignalingServer: argsParsed.SignalingServer,
+		Insecure:        argsParsed.Insecure,
+	}, logger)
 	if err != nil {
 		return err
 	}

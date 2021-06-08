@@ -9,16 +9,20 @@ import (
 	"strings"
 
 	"github.com/edaniels/golog"
-	"google.golang.org/grpc"
 
+	"go.viam.com/core/rpc"
 	"go.viam.com/core/rpc/dialer"
 	rpcwebrtc "go.viam.com/core/rpc/webrtc"
 )
 
 // DialOptions are extra dial time options.
 type DialOptions struct {
-	// Secure determines if the RPC connection is TLS based.
-	Secure bool
+	// Insecure determines if the RPC connection is TLS based.
+	Insecure bool
+
+	// Signaling server specifies the signaling server to
+	// contact on behalf of this client for WebRTC communications.
+	SignalingServer string
 }
 
 // Dial attempts to make the most convenient connection to the given address. It first tries a direct
@@ -33,6 +37,8 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		host = address
 	}
 
 	if addr := net.ParseIP(host); addr == nil {
@@ -44,25 +50,30 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 			}
 			// TODO(erd): This needs to authenticate the server so we don't have a confused
 			// deputy.
-			if conn, err := dialDirectGRPC(ctx, localAddress, opts); err == nil {
+			if conn, err := dialer.DialDirectGRPC(ctx, localAddress, opts.Insecure); err == nil {
 				logger.Debugw("connected directly via local host", "address", localAddress)
 				return conn, nil
 			}
 		}
 	}
 
-	conn, err := rpcwebrtc.Dial(ctx, address, logger)
-	if err != nil {
-		if errors.Is(err, rpcwebrtc.ErrNoSignaler) {
-			if conn, err := dialDirectGRPC(ctx, address, opts); err == nil {
-				logger.Debugw("connected directly", "address", address)
-				return conn, nil
-			}
+	if opts.SignalingServer != "" {
+		webrtcAddress := rpc.HostURI(opts.SignalingServer, address)
+		conn, err := rpcwebrtc.Dial(ctx, webrtcAddress, opts.Insecure, logger)
+		if err != nil && !errors.Is(err, rpcwebrtc.ErrNoSignaler) {
+			return nil, err
 		}
+		logger.Debug("connected via WebRTC")
+		return conn, nil
+	}
+
+	conn, err := dialer.DialDirectGRPC(ctx, address, opts.Insecure)
+	if err != nil {
 		return nil, err
 	}
-	logger.Debug("connected via WebRTC")
+	logger.Debugw("connected directly", "address", address)
 	return conn, nil
+
 }
 
 func lookupHost(ctx context.Context, host string) (addrs []string, err error) {
@@ -70,16 +81,4 @@ func lookupHost(ctx context.Context, host string) (addrs []string, err error) {
 		return ctxResolver.LookupHost(ctx, host)
 	}
 	return net.DefaultResolver.LookupHost(ctx, host)
-}
-
-func dialDirectGRPC(ctx context.Context, address string, opts DialOptions) (dialer.ClientConn, error) {
-	dialOpts := []grpc.DialOption{grpc.WithBlock(), grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1 << 24))}
-	// if this is secure, there's no way via DialOptions to set credentials yet
-	if !opts.Secure {
-		dialOpts = append(dialOpts, grpc.WithInsecure())
-	}
-	if ctxDialer := dialer.ContextDialer(ctx); ctxDialer != nil {
-		return ctxDialer.Dial(ctx, address, dialOpts...)
-	}
-	return grpc.DialContext(ctx, address, dialOpts...)
 }

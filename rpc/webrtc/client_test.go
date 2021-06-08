@@ -13,6 +13,7 @@ import (
 
 	echopb "go.viam.com/core/proto/rpc/examples/echo/v1"
 	webrtcpb "go.viam.com/core/proto/rpc/webrtc/v1"
+	"go.viam.com/core/rpc"
 	echoserver "go.viam.com/core/rpc/examples/echo/server"
 	rpcwebrtc "go.viam.com/core/rpc/webrtc"
 	"go.viam.com/core/testutils"
@@ -34,7 +35,7 @@ func TestClientServer(t *testing.T) {
 		serveDone <- grpcServer.Serve(grpcListener)
 	}()
 
-	answerer := rpcwebrtc.NewSignalingAnswerer("foo", nil, logger)
+	answerer := rpcwebrtc.NewSignalingAnswerer("foo", "yeehaw", nil, true, logger)
 	go func() {
 		time.Sleep(time.Second)
 		answerer.Stop()
@@ -44,10 +45,10 @@ func TestClientServer(t *testing.T) {
 	webrtcServer := rpcwebrtc.NewServer(logger)
 	webrtcServer.RegisterService(&echopb.EchoService_ServiceDesc, &echoserver.Server{})
 
-	answerer = rpcwebrtc.NewSignalingAnswerer(grpcListener.Addr().String(), webrtcServer, logger)
+	answerer = rpcwebrtc.NewSignalingAnswerer(grpcListener.Addr().String(), "yeehaw", webrtcServer, true, logger)
 	test.That(t, answerer.Start(), test.ShouldBeNil)
 
-	cc, err := rpcwebrtc.Dial(context.Background(), grpcListener.Addr().String(), logger)
+	cc, err := rpcwebrtc.Dial(context.Background(), rpc.HostURI(grpcListener.Addr().String(), "yeehaw"), true, logger)
 	test.That(t, err, test.ShouldBeNil)
 	defer func() {
 		test.That(t, cc.Close(), test.ShouldBeNil)

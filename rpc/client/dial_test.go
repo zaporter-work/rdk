@@ -26,13 +26,13 @@ func TestDial(t *testing.T) {
 	logger := golog.NewTestLogger(t)
 
 	// pure failure cases
-	_, err := client.Dial(context.Background(), "::", client.DialOptions{}, logger)
+	_, err := client.Dial(context.Background(), "::", client.DialOptions{Insecure: true}, logger)
 	test.That(t, err, test.ShouldNotBeNil)
 	test.That(t, err.Error(), test.ShouldContainSubstring, "too many")
 
 	ctx1, cancel1 := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel1()
-	_, err = client.Dial(ctx1, "127.0.0.1:1", client.DialOptions{}, logger)
+	_, err = client.Dial(ctx1, "127.0.0.1:1", client.DialOptions{Insecure: true}, logger)
 	test.That(t, err, test.ShouldResemble, context.DeadlineExceeded)
 	cancel1()
 
@@ -58,7 +58,7 @@ func TestDial(t *testing.T) {
 		errChan <- rpcServer.Serve(httpListener)
 	}()
 
-	conn, err := client.Dial(context.Background(), httpListener.Addr().String(), client.DialOptions{}, logger)
+	conn, err := client.Dial(context.Background(), httpListener.Addr().String(), client.DialOptions{Insecure: true}, logger)
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, conn.Close(), test.ShouldBeNil)
 
@@ -66,7 +66,11 @@ func TestDial(t *testing.T) {
 	err = <-errChan
 	test.That(t, err, test.ShouldBeNil)
 
-	rpcServer, err = server.NewWithOptions(server.Options{server.WebRTCOptions{Enable: true}}, logger)
+	rpcServer, err = server.NewWithOptions(server.Options{server.WebRTCOptions{
+		Enable:        true,
+		Insecure:      true,
+		SignalingHost: "yeehaw",
+	}}, logger)
 	test.That(t, err, test.ShouldBeNil)
 
 	err = rpcServer.RegisterServiceServer(
@@ -85,7 +89,14 @@ func TestDial(t *testing.T) {
 		errChan <- rpcServer.Serve(httpListener)
 	}()
 
-	conn, err = client.Dial(context.Background(), httpListener.Addr().String(), client.DialOptions{}, logger)
+	conn, err = client.Dial(context.Background(), httpListener.Addr().String(), client.DialOptions{Insecure: true}, logger)
+	test.That(t, err, test.ShouldBeNil)
+	test.That(t, conn.Close(), test.ShouldBeNil)
+
+	conn, err = client.Dial(context.Background(), "yeehaw", client.DialOptions{
+		SignalingServer: httpListener.Addr().String(),
+		Insecure:        true,
+	}, logger)
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, conn.Close(), test.ShouldBeNil)
 
@@ -135,7 +146,7 @@ func TestDial(t *testing.T) {
 	}
 	ctx := dialer.ContextWithResolver(context.Background(), resolver)
 	ctx = dialer.ContextWithDialer(ctx, &staticDialer{httpListener.Addr().String()})
-	conn, err = client.Dial(ctx, fmt.Sprintf("something:%d", httpPort), client.DialOptions{}, logger)
+	conn, err = client.Dial(ctx, fmt.Sprintf("something:%d", httpPort), client.DialOptions{Insecure: true}, logger)
 	test.That(t, err, test.ShouldBeNil)
 	test.That(t, conn.Close(), test.ShouldBeNil)
 

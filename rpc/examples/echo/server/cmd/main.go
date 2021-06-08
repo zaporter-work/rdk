@@ -39,6 +39,8 @@ var (
 type Arguments struct {
 	Port             utils.NetPortFlag `flag:"0"`
 	SignalingAddress string            `flag:"signaling_address,default="`
+	SignalingHost    string            `flag:"signaling_host,default=local"`
+	Insecure         bool              `flag:"insecure"`
 }
 
 func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) error {
@@ -49,11 +51,26 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) error
 	if argsParsed.Port == 0 {
 		argsParsed.Port = utils.NetPortFlag(defaultPort)
 	}
+	if argsParsed.SignalingAddress == "" {
+		argsParsed.Insecure = true
+	}
 
-	return runServer(ctx, int(argsParsed.Port), argsParsed.SignalingAddress, logger)
+	return runServer(
+		ctx,
+		int(argsParsed.Port),
+		argsParsed.SignalingAddress, argsParsed.SignalingHost,
+		argsParsed.Insecure,
+		logger,
+	)
 }
 
-func runServer(ctx context.Context, port int, signalingAddress string, logger golog.Logger) (err error) {
+func runServer(
+	ctx context.Context,
+	port int,
+	signalingAddress, signalingHost string,
+	insecure bool,
+	logger golog.Logger,
+) (err error) {
 	listener, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
 	if err != nil {
 		return err
@@ -62,7 +79,10 @@ func runServer(ctx context.Context, port int, signalingAddress string, logger go
 	rpcServer, err := rpcserver.NewWithOptions(
 		rpcserver.Options{WebRTC: rpcserver.WebRTCOptions{
 			Enable:           true,
+			EnableSignaling:  true,
+			Insecure:         insecure,
 			SignalingAddress: signalingAddress,
+			SignalingHost:    signalingHost,
 		}},
 		logger,
 	)

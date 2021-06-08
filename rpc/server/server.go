@@ -3,6 +3,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"strings"
@@ -96,6 +97,9 @@ type WebRTCOptions struct {
 	// ports on the host which may not be expected.
 	Enable bool
 
+	// Insecure determines if communications are expected to be insecure or not.
+	Insecure bool
+
 	// EnableSignaling controls if this server will provide SDP signaling
 	// assistance.
 	EnableSignaling bool
@@ -105,6 +109,9 @@ type WebRTCOptions struct {
 	// it will connect to the server's internal address acting as
 	// an answerer for itself.
 	SignalingAddress string
+
+	// SignalingHost specifies what host is being listened for.
+	SignalingHost string
 }
 
 // NewWithListener returns a new server ready to be started that
@@ -135,6 +142,7 @@ func NewWithListener(
 	}
 
 	if opts.WebRTC.EnableSignaling || (opts.WebRTC.Enable && opts.WebRTC.SignalingAddress == "") {
+		logger.Info("will run local signaling service")
 		if err := server.RegisterServiceServer(
 			context.Background(),
 			&webrtcpb.SignalingService_ServiceDesc,
@@ -151,7 +159,18 @@ func NewWithListener(
 		if address == "" {
 			address = grpcListener.Addr().String()
 		}
-		server.webrtcAnswerer = rpcwebrtc.NewSignalingAnswerer(address, server.webrtcServer, logger)
+		signalingHost := opts.WebRTC.SignalingHost
+		if signalingHost == "" {
+			signalingHost = "local"
+		}
+		logger.Infow("will run signaling answerer", "address", address, "host", signalingHost)
+		server.webrtcAnswerer = rpcwebrtc.NewSignalingAnswerer(
+			address,
+			signalingHost,
+			server.webrtcServer,
+			opts.WebRTC.Insecure,
+			logger,
+		)
 	}
 
 	return server, nil
@@ -196,25 +215,7 @@ func requestWithHost(r *http.Request) *http.Request {
 		return r
 	}
 	host := strings.Split(r.Host, ":")[0]
-	return r.WithContext(ContextWithHost(r.Context(), host))
-}
-
-type ctxKey int
-
-const ctxKeyHost = ctxKey(iota)
-
-// ContextWithHost attaches a host name to the given context.
-func ContextWithHost(ctx context.Context, host string) context.Context {
-	return context.WithValue(ctx, ctxKeyHost, host)
-}
-
-// ContextHost returns a host name. It may be nil if the value was never set.
-func ContextHost(ctx context.Context) string {
-	host := ctx.Value(ctxKeyHost)
-	if host == nil {
-		return ""
-	}
-	return host.(string)
+	return r.WithContext(rpc.ContextWithHost(r.Context(), host))
 }
 
 func (ss *simpleServer) GatewayHandler() http.Handler {
@@ -273,7 +274,7 @@ func (ss *simpleServer) Start() error {
 
 	errMu.Lock()
 	if startErr := ss.webrtcAnswerer.Start(); startErr != nil && utils.FilterOutError(startErr, context.Canceled) != nil {
-		err = multierr.Combine(err, startErr)
+		err = multierr.Combine(err, fmt.Errorf("error starting WebRTC answerer: %w", startErr))
 	}
 	capErr := err
 	errMu.Unlock()

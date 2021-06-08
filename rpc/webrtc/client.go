@@ -5,14 +5,15 @@ package rpcwebrtc
 import (
 	"context"
 	"errors"
+	"net/url"
 	"time"
 
 	"github.com/edaniels/golog"
 	gwebrtc "github.com/edaniels/gostream/webrtc"
 	"github.com/pion/webrtc/v3"
 	"go.uber.org/multierr"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	webrtcpb "go.viam.com/core/proto/rpc/webrtc/v1"
@@ -25,24 +26,20 @@ var ErrNoSignaler = errors.New("no signaler present")
 
 // Dial connects to the signaling service at the given address and attempts to establish
 // a WebRTC connection with the corresponding peer reflected in the address.
-func Dial(ctx context.Context, address string, logger golog.Logger) (ch *ClientChannel, err error) {
+func Dial(ctx context.Context, address string, insecure bool, logger golog.Logger) (ch *ClientChannel, err error) {
+	var host string
+	if u, err := url.Parse(address); err == nil {
+		address = u.Host
+		host = u.Query().Get("host")
+	}
 	dialCtx, timeoutCancel := context.WithTimeout(ctx, 20*time.Second)
 	defer timeoutCancel()
 
 	logger.Debugw("connecting to signaling server", "address", address)
 
-	var conn dialer.ClientConn
-	{
-		var err error
-		dialOpts := []grpc.DialOption{grpc.WithBlock(), grpc.WithInsecure()}
-		if ctxDialer := dialer.ContextDialer(dialCtx); ctxDialer != nil {
-			conn, err = ctxDialer.Dial(dialCtx, address, dialOpts...)
-		} else {
-			conn, err = grpc.DialContext(dialCtx, address, dialOpts...)
-		}
-		if err != nil {
-			return nil, err
-		}
+	conn, err := dialer.DialDirectGRPC(dialCtx, address, insecure)
+	if err != nil {
+		return nil, err
 	}
 	defer func() {
 		err = multierr.Combine(err, conn.Close())
@@ -68,7 +65,9 @@ func Dial(ctx context.Context, address string, logger golog.Logger) (ch *ClientC
 		return nil, err
 	}
 
-	answerResp, err := signalingClient.Call(ctx, &webrtcpb.CallRequest{Sdp: encodedSDP})
+	md := metadata.New(map[string]string{"host": host})
+	callCtx := metadata.NewOutgoingContext(ctx, md)
+	answerResp, err := signalingClient.Call(callCtx, &webrtcpb.CallRequest{Sdp: encodedSDP})
 	if err != nil {
 		if s, ok := status.FromError(err); ok && s.Code() == codes.Unimplemented {
 			return nil, ErrNoSignaler

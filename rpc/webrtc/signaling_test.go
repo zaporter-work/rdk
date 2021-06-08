@@ -9,9 +9,11 @@ import (
 	"github.com/edaniels/golog"
 	"go.viam.com/test"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	echopb "go.viam.com/core/proto/rpc/examples/echo/v1"
 	webrtcpb "go.viam.com/core/proto/rpc/webrtc/v1"
+	"go.viam.com/core/rpc"
 	echoserver "go.viam.com/core/rpc/examples/echo/server"
 	rpcwebrtc "go.viam.com/core/rpc/webrtc"
 	"go.viam.com/core/testutils"
@@ -33,7 +35,7 @@ func TestSignaling(t *testing.T) {
 		serveDone <- grpcServer.Serve(grpcListener)
 	}()
 
-	answerer := rpcwebrtc.NewSignalingAnswerer("foo", nil, logger)
+	answerer := rpcwebrtc.NewSignalingAnswerer("foo", "yeehaw", nil, true, logger)
 	go func() {
 		time.Sleep(time.Second)
 		answerer.Stop()
@@ -43,7 +45,7 @@ func TestSignaling(t *testing.T) {
 	webrtcServer := rpcwebrtc.NewServer(logger)
 	webrtcServer.RegisterService(&echopb.EchoService_ServiceDesc, &echoserver.Server{})
 
-	answerer = rpcwebrtc.NewSignalingAnswerer(grpcListener.Addr().String(), webrtcServer, logger)
+	answerer = rpcwebrtc.NewSignalingAnswerer(grpcListener.Addr().String(), "yeehaw", webrtcServer, true, logger)
 	test.That(t, answerer.Start(), test.ShouldBeNil)
 
 	cc, err := grpc.Dial(grpcListener.Addr().String(), grpc.WithBlock(), grpc.WithInsecure())
@@ -55,13 +57,20 @@ func TestSignaling(t *testing.T) {
 
 	_, err = signalClient.Call(context.Background(), &webrtcpb.CallRequest{})
 	test.That(t, err, test.ShouldNotBeNil)
+	test.That(t, err.Error(), test.ShouldContainSubstring, "expected host")
+
+	md := metadata.New(map[string]string{"host": "yeehaw"})
+	callCtx := metadata.NewOutgoingContext(context.Background(), md)
+
+	_, err = signalClient.Call(callCtx, &webrtcpb.CallRequest{})
+	test.That(t, err, test.ShouldNotBeNil)
 	test.That(t, err.Error(), test.ShouldContainSubstring, "unexpected")
 
-	_, err = signalClient.Call(context.Background(), &webrtcpb.CallRequest{Sdp: "thing"})
+	_, err = signalClient.Call(callCtx, &webrtcpb.CallRequest{Sdp: "thing"})
 	test.That(t, err, test.ShouldNotBeNil)
 	test.That(t, err.Error(), test.ShouldContainSubstring, "illegal")
 
-	ch, err := rpcwebrtc.Dial(context.Background(), grpcListener.Addr().String(), logger)
+	ch, err := rpcwebrtc.Dial(context.Background(), rpc.HostURI(grpcListener.Addr().String(), "yeehaw"), true, logger)
 	test.That(t, err, test.ShouldBeNil)
 	defer func() {
 		test.That(t, ch.Close(), test.ShouldBeNil)

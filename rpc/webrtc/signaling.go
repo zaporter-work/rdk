@@ -10,8 +10,8 @@ import (
 	"github.com/edaniels/golog"
 	gwebrtc "github.com/edaniels/gostream/webrtc"
 	"go.uber.org/multierr"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	webrtcpb "go.viam.com/core/proto/rpc/webrtc/v1"
@@ -21,19 +21,23 @@ import (
 
 // A SignalingServer implements a signaling service for WebRTC by exchanging
 // SDPs (https://webrtcforthecurious.com/docs/02-signaling/#what-is-the-session-description-protocol-sdp)
-// via gRPC. The service consists of a many-to-one interaction where there are many callers
-// and a single answerer. The callers provide an SDP to the service which asks a waiting
-// answerer to provide an SDP in exchange in order to establish a P2P connection between
+// via gRPC. The service consists of a many-to-many interaction where there are many callers
+// and many answerers. The callers provide an SDP to the service which asks a corresponding
+// waiting answerer to provide an SDP in exchange in order to establish a P2P connection between
 // the two parties.
 type SignalingServer struct {
+	mu sync.Mutex // may need something faster in the future
 	webrtcpb.UnimplementedSignalingServiceServer
-	callQueue chan callOffer
+	callQueue map[string]chan callOffer
 }
 
 // NewSignalingServer makes a new signaling server that uses an in memory
-// call queue.
+// call queue and looks routes based on a given robot host.
+// TODO(https://github.com/viamrobotics/core/issues/79): abstraction to be able to use
+// MongoDB as a distributed call queue. This will enable many signaling services to
+// run acting as effectively operators on as switchboard.
 func NewSignalingServer() *SignalingServer {
-	return &SignalingServer{callQueue: make(chan callOffer)}
+	return &SignalingServer{callQueue: map[string]chan callOffer{}}
 }
 
 // callOffer is the offer to start a call where information about the caller
@@ -50,14 +54,39 @@ type callAnswer struct {
 	err error
 }
 
+func (srv *SignalingServer) getOrMakeQueue(ctx context.Context) (chan callOffer, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok || len(md["host"]) == 0 {
+		return nil, errors.New("expected host to be set in metadata")
+	}
+	host := md["host"][0]
+	// TODO(erd): Verify robot exists for host
+	if host == "" {
+		return nil, errors.New("expected non-empty host")
+	}
+	srv.mu.Lock()
+	queue, ok := srv.callQueue[host]
+	if !ok {
+		// TODO(erd): release over time
+		queue = make(chan callOffer)
+		srv.callQueue[host] = queue
+	}
+	srv.mu.Unlock()
+	return queue, nil
+}
+
 // Call is a request/offer to start a caller with the connected answerer.
 func (srv *SignalingServer) Call(ctx context.Context, req *webrtcpb.CallRequest) (*webrtcpb.CallResponse, error) {
+	queue, err := srv.getOrMakeQueue(ctx)
+	if err != nil {
+		return nil, err
+	}
 	response := make(chan callAnswer)
 	offer := callOffer{sdp: req.Sdp, response: response}
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
-	case srv.callQueue <- offer:
+	case queue <- offer:
 		select {
 		case <-ctx.Done():
 			return nil, ctx.Err()
@@ -73,11 +102,15 @@ func (srv *SignalingServer) Call(ctx context.Context, req *webrtcpb.CallRequest)
 // Answer listens on call/offer queue forever responding with SDPs to agreed to calls.
 // TODO(erd): This should be authenticated to internal servers only with client certificates.
 func (srv *SignalingServer) Answer(server webrtcpb.SignalingService_AnswerServer) error {
+	queue, err := srv.getOrMakeQueue(server.Context())
+	if err != nil {
+		return err
+	}
 	for {
 		select {
 		case <-server.Context().Done():
 			return server.Context().Err()
-		case offer := <-srv.callQueue:
+		case offer := <-queue:
 			if err := server.Send(&webrtcpb.AnswerRequest{Sdp: offer.sdp}); err != nil {
 				return err
 			}
@@ -105,8 +138,10 @@ func (srv *SignalingServer) Answer(server webrtcpb.SignalingService_AnswerServer
 // data channels.
 type SignalingAnswerer struct {
 	address                 string
+	host                    string
 	client                  webrtcpb.SignalingService_AnswerClient
 	server                  *Server
+	insecure                bool
 	activeBackgroundWorkers sync.WaitGroup
 	cancelBackgroundWorkers func()
 	closeCtx                context.Context
@@ -117,11 +152,13 @@ type SignalingAnswerer struct {
 // address. Note that using this assumes that the connection at the given address is secure and
 // assumed that all calls are authenticated. Random ports will be opened on this host to establish
 // connections as a means to service ICE (https://webrtcforthecurious.com/docs/03-connecting/#how-does-it-work).
-func NewSignalingAnswerer(address string, server *Server, logger golog.Logger) *SignalingAnswerer {
+func NewSignalingAnswerer(address, host string, server *Server, insecure bool, logger golog.Logger) *SignalingAnswerer {
 	closeCtx, cancel := context.WithCancel(context.Background())
 	return &SignalingAnswerer{
 		address:                 address,
+		host:                    host,
 		server:                  server,
+		insecure:                insecure,
 		cancelBackgroundWorkers: cancel,
 		closeCtx:                closeCtx,
 		logger:                  logger,
@@ -131,23 +168,18 @@ func NewSignalingAnswerer(address string, server *Server, logger golog.Logger) *
 // Start connects to the signaling service and listens forever until instructed to stop
 // via Stop.
 func (ans *SignalingAnswerer) Start() error {
-	setupCtx, timeoutCancel := context.WithTimeout(ans.closeCtx, 2*time.Second)
+	setupCtx, timeoutCancel := context.WithTimeout(ans.closeCtx, 20*time.Second)
 	defer timeoutCancel()
 
-	var conn dialer.ClientConn
-	var err error
-	dialOpts := []grpc.DialOption{grpc.WithBlock(), grpc.WithInsecure()}
-	if ctxDialer := dialer.ContextDialer(setupCtx); ctxDialer != nil {
-		conn, err = ctxDialer.Dial(setupCtx, ans.address, dialOpts...)
-	} else {
-		conn, err = grpc.DialContext(setupCtx, ans.address, dialOpts...)
-	}
+	conn, err := dialer.DialDirectGRPC(setupCtx, ans.address, ans.insecure)
 	if err != nil {
 		return err
 	}
 
 	client := webrtcpb.NewSignalingServiceClient(conn)
-	answerClient, err := client.Answer(ans.closeCtx)
+	md := metadata.New(map[string]string{"host": ans.host})
+	answerCtx := metadata.NewOutgoingContext(ans.closeCtx, md)
+	answerClient, err := client.Answer(answerCtx)
 	if err != nil {
 		return multierr.Combine(err, conn.Close())
 	}
@@ -164,6 +196,9 @@ func (ans *SignalingAnswerer) Start() error {
 			// TODO(erd): check error to see if it is terminal
 			if err := ans.answer(); err != nil && utils.FilterOutError(err, context.Canceled) != nil {
 				ans.logger.Errorw("error answering", "error", err)
+				if s, ok := status.FromError(err); ok && s.Code() == codes.Internal {
+					return
+				}
 			}
 		}
 	}, func() {

@@ -13,6 +13,7 @@ import (
 	"github.com/edaniels/golog"
 
 	pb "go.viam.com/core/proto/rpc/examples/echo/v1"
+	"go.viam.com/core/rpc"
 	echoserver "go.viam.com/core/rpc/examples/echo/server"
 	rpcwebrtc "go.viam.com/core/rpc/webrtc"
 
@@ -23,7 +24,11 @@ import (
 
 func TestServer(t *testing.T) {
 	logger := golog.NewTestLogger(t)
-	rpcServer, err := NewWithOptions(Options{WebRTC: WebRTCOptions{Enable: true}}, logger)
+	rpcServer, err := NewWithOptions(Options{WebRTC: WebRTCOptions{
+		Enable:        true,
+		Insecure:      true,
+		SignalingHost: "yeehaw",
+	}}, logger)
 	test.That(t, err, test.ShouldBeNil)
 
 	es := echoserver.Server{}
@@ -104,7 +109,11 @@ func TestServer(t *testing.T) {
 	es.SetFail(false)
 
 	// WebRTC
-	rtcConn, err := rpcwebrtc.Dial(context.Background(), httpListener.Addr().String(), logger)
+	_, err = rpcwebrtc.Dial(context.Background(), httpListener.Addr().String(), true, logger)
+	test.That(t, err, test.ShouldNotBeNil)
+	test.That(t, err.Error(), test.ShouldContainSubstring, "non-empty host")
+
+	rtcConn, err := rpcwebrtc.Dial(context.Background(), rpc.HostURI(httpListener.Addr().String(), "yeehaw"), true, logger)
 	test.That(t, err, test.ShouldBeNil)
 	defer func() {
 		test.That(t, rtcConn.Close(), test.ShouldBeNil)
@@ -124,14 +133,4 @@ func TestServer(t *testing.T) {
 	test.That(t, rpcServer.Stop(), test.ShouldBeNil)
 	err = <-errChan
 	test.That(t, err, test.ShouldBeNil)
-}
-
-func TestContextHost(t *testing.T) {
-	ctx := context.Background()
-	someHost := "myhost"
-	ctx = ContextWithHost(ctx, someHost)
-	someHost2 := ContextHost(context.Background())
-	test.That(t, someHost2, test.ShouldEqual, "")
-	someHost2 = ContextHost(ctx)
-	test.That(t, someHost2, test.ShouldEqual, someHost)
 }
