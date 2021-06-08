@@ -66,9 +66,17 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 		}
 	}
 
-	if opts.SignalingServer != "" {
-		webrtcAddress := rpc.HostURI(opts.SignalingServer, address)
-		conn, err := rpcwebrtc.Dial(ctx, webrtcAddress, opts.Insecure, logger)
+	signalingServer := opts.SignalingServer
+	signalingInsecure := opts.Insecure
+	// TODO(erd): Use SRV records to get signaling server.
+	if signalingServer == "" && strings.HasSuffix(address, "viam.cloud") && !strings.HasPrefix(address, "local.") {
+		signalingServer = "app.viam.com:443"
+		signalingInsecure = false
+	}
+
+	if signalingServer != "" {
+		webrtcAddress := rpc.HostURI(signalingServer, address)
+		conn, err := rpcwebrtc.Dial(ctx, webrtcAddress, signalingInsecure, logger)
 		if err != nil && !errors.Is(err, rpcwebrtc.ErrNoSignaler) {
 			return nil, err
 		}
