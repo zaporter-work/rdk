@@ -57,9 +57,9 @@ func TestSignaling(t *testing.T) {
 
 	_, err = signalClient.Call(context.Background(), &webrtcpb.CallRequest{})
 	test.That(t, err, test.ShouldNotBeNil)
-	test.That(t, err.Error(), test.ShouldContainSubstring, "expected host")
+	test.That(t, err.Error(), test.ShouldContainSubstring, "expected rpc-host")
 
-	md := metadata.New(map[string]string{"host": "yeehaw"})
+	md := metadata.New(map[string]string{"rpc-host": "yeehaw"})
 	callCtx := metadata.NewOutgoingContext(context.Background(), md)
 
 	_, err = signalClient.Call(callCtx, &webrtcpb.CallRequest{})

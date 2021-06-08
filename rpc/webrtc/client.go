@@ -65,7 +65,7 @@ func Dial(ctx context.Context, address string, insecure bool, logger golog.Logge
 		return nil, err
 	}
 
-	md := metadata.New(map[string]string{"host": host})
+	md := metadata.New(map[string]string{RPCHostMetadataField: host})
 	callCtx := metadata.NewOutgoingContext(ctx, md)
 	answerResp, err := signalingClient.Call(callCtx, &webrtcpb.CallRequest{Sdp: encodedSDP})
 	if err != nil {

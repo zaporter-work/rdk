@@ -3,6 +3,7 @@ package rpcwebrtc
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"sync"
 	"time"
@@ -54,15 +55,18 @@ type callAnswer struct {
 	err error
 }
 
+// RPCHostMetadataField is the identifier of a host.
+const RPCHostMetadataField = "rpc-host"
+
 func (srv *SignalingServer) getOrMakeQueue(ctx context.Context) (chan callOffer, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok || len(md["host"]) == 0 {
-		return nil, errors.New("expected host to be set in metadata")
+	if !ok || len(md[RPCHostMetadataField]) == 0 {
+		return nil, fmt.Errorf("expected %s to be set in metadata", RPCHostMetadataField)
 	}
-	host := md["host"][0]
+	host := md[RPCHostMetadataField][0]
 	// TODO(erd): Verify robot exists for host
 	if host == "" {
-		return nil, errors.New("expected non-empty host")
+		return nil, fmt.Errorf("expected non-empty %s", RPCHostMetadataField)
 	}
 	srv.mu.Lock()
 	queue, ok := srv.callQueue[host]
@@ -177,7 +181,7 @@ func (ans *SignalingAnswerer) Start() error {
 	}
 
 	client := webrtcpb.NewSignalingServiceClient(conn)
-	md := metadata.New(map[string]string{"host": ans.host})
+	md := metadata.New(map[string]string{RPCHostMetadataField: ans.host})
 	answerCtx := metadata.NewOutgoingContext(ans.closeCtx, md)
 	answerClient, err := client.Answer(answerCtx)
 	if err != nil {

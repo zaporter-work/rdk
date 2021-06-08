@@ -111,7 +111,7 @@ func TestServer(t *testing.T) {
 	// WebRTC
 	_, err = rpcwebrtc.Dial(context.Background(), httpListener.Addr().String(), true, logger)
 	test.That(t, err, test.ShouldNotBeNil)
-	test.That(t, err.Error(), test.ShouldContainSubstring, "non-empty host")
+	test.That(t, err.Error(), test.ShouldContainSubstring, "non-empty rpc-host")
 
 	rtcConn, err := rpcwebrtc.Dial(context.Background(), rpc.HostURI(httpListener.Addr().String(), "yeehaw"), true, logger)
 	test.That(t, err, test.ShouldBeNil)

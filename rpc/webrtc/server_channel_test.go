@@ -154,7 +154,7 @@ func TestServerChannel(t *testing.T) {
 	}, &webrtcpb.RequestHeaders{
 		Method: "/proto.rpc.webrtc.v1.SignalingService/Call",
 		Metadata: metadataToProto(metadata.MD{
-			"host": []string{"yeehaw"},
+			"rpc-host": []string{"yeehaw"},
 		}),
 	}), test.ShouldBeNil)
 
@@ -205,7 +205,7 @@ func TestServerChannel(t *testing.T) {
 	}, &webrtcpb.RequestHeaders{
 		Method: "/proto.rpc.webrtc.v1.SignalingService/Call",
 		Metadata: metadataToProto(metadata.MD{
-			"host": []string{"yeehaw"},
+			"rpc-host": []string{"yeehaw"},
 		}),
 	}), test.ShouldBeNil)
 
@@ -253,7 +253,7 @@ func TestServerChannel(t *testing.T) {
 	}, &webrtcpb.RequestHeaders{
 		Method: "/proto.rpc.webrtc.v1.SignalingService/Call",
 		Metadata: metadataToProto(metadata.MD{
-			"host": []string{"yeehaw"},
+			"rpc-host": []string{"yeehaw"},
 		}),
 	}), test.ShouldBeNil)
 
