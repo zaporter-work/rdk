@@ -23,6 +23,15 @@ type RobotServiceStatusStream = {
   readonly responseType: typeof proto_api_v1_robot_pb.StatusStreamResponse;
 };
 
+type RobotServiceConfig = {
+  readonly methodName: string;
+  readonly service: typeof RobotService;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof proto_api_v1_robot_pb.ConfigRequest;
+  readonly responseType: typeof proto_api_v1_robot_pb.ConfigResponse;
+};
+
 type RobotServiceDoAction = {
   readonly methodName: string;
   readonly service: typeof RobotService;
@@ -288,6 +297,7 @@ export class RobotService {
   static readonly serviceName: string;
   static readonly Status: RobotServiceStatus;
   static readonly StatusStream: RobotServiceStatusStream;
+  static readonly Config: RobotServiceConfig;
   static readonly DoAction: RobotServiceDoAction;
   static readonly ArmCurrentPosition: RobotServiceArmCurrentPosition;
   static readonly ArmMoveToPosition: RobotServiceArmMoveToPosition;
@@ -361,6 +371,15 @@ export class RobotServiceClient {
     callback: (error: ServiceError|null, responseMessage: proto_api_v1_robot_pb.StatusResponse|null) => void
   ): UnaryResponse;
   statusStream(requestMessage: proto_api_v1_robot_pb.StatusStreamRequest, metadata?: grpc.Metadata): ResponseStream<proto_api_v1_robot_pb.StatusStreamResponse>;
+  config(
+    requestMessage: proto_api_v1_robot_pb.ConfigRequest,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: proto_api_v1_robot_pb.ConfigResponse|null) => void
+  ): UnaryResponse;
+  config(
+    requestMessage: proto_api_v1_robot_pb.ConfigRequest,
+    callback: (error: ServiceError|null, responseMessage: proto_api_v1_robot_pb.ConfigResponse|null) => void
+  ): UnaryResponse;
   doAction(
     requestMessage: proto_api_v1_robot_pb.DoActionRequest,
     metadata: grpc.Metadata,

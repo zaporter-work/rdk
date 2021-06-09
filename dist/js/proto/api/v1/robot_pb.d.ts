@@ -126,6 +126,78 @@ export namespace Status {
   }
 }
 
+export class ComponentConfig extends jspb.Message {
+  getName(): string;
+  setName(value: string): void;
+
+  getType(): string;
+  setType(value: string): void;
+
+  getParent(): string;
+  setParent(value: string): void;
+
+  hasTranslation(): boolean;
+  clearTranslation(): void;
+  getTranslation(): ArmPosition | undefined;
+  setTranslation(value?: ArmPosition): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ComponentConfig.AsObject;
+  static toObject(includeInstance: boolean, msg: ComponentConfig): ComponentConfig.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ComponentConfig, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ComponentConfig;
+  static deserializeBinaryFromReader(message: ComponentConfig, reader: jspb.BinaryReader): ComponentConfig;
+}
+
+export namespace ComponentConfig {
+  export type AsObject = {
+    name: string,
+    type: string,
+    parent: string,
+    translation?: ArmPosition.AsObject,
+  }
+}
+
+export class ConfigRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ConfigRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ConfigRequest): ConfigRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ConfigRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ConfigRequest;
+  static deserializeBinaryFromReader(message: ConfigRequest, reader: jspb.BinaryReader): ConfigRequest;
+}
+
+export namespace ConfigRequest {
+  export type AsObject = {
+  }
+}
+
+export class ConfigResponse extends jspb.Message {
+  clearComponentsList(): void;
+  getComponentsList(): Array<ComponentConfig>;
+  setComponentsList(value: Array<ComponentConfig>): void;
+  addComponents(value?: ComponentConfig, index?: number): ComponentConfig;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ConfigResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ConfigResponse): ConfigResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ConfigResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ConfigResponse;
+  static deserializeBinaryFromReader(message: ConfigResponse, reader: jspb.BinaryReader): ConfigResponse;
+}
+
+export namespace ConfigResponse {
+  export type AsObject = {
+    componentsList: Array<ComponentConfig.AsObject>,
+  }
+}
+
 export class DoActionRequest extends jspb.Message {
   getName(): string;
   setName(value: string): void;
