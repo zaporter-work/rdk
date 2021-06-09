@@ -64,6 +64,7 @@ RUN apt-get install -y \
     docker-ce-cli \
     containerd.io \
     nodejs
+RUN npm install -g ts-protoc-gen
 
 WORKDIR /opt/build
 

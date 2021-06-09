@@ -1,7 +1,7 @@
 {
-  "name": "core-rpc-echo-example",
+  "name": "core-rpc",
   "version": "0.1.0",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "dependencies": {
     "google-protobuf": "~3.14.0",
     "@improbable-eng/grpc-web": "^0.13.0"
