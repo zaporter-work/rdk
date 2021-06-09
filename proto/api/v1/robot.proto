@@ -25,6 +25,15 @@ service RobotService {
 		};
 	}
 
+    // Config gets the config from a server
+    // It is only partial a config, including the pieces relevant to remote robots,
+    // And not the pieces relevant to local configuration (pins, security keys, etc...)
+    rpc Config(ConfigRequest) returns (ConfigResponse) {
+		option (google.api.http) = {
+			get: "/v1/config"
+		};	
+    }
+
 	// DoAction runs an action on the underlying robot.
 	rpc DoAction(DoActionRequest) returns (DoActionResponse) {
 		option (google.api.http) = {
@@ -278,6 +287,19 @@ message Status {
 	map<string, bool> cameras = 5;
 	map<string, bool> lidars = 6;
 	map<string, SensorStatus> sensors = 7;
+}
+
+message ComponentConfig {
+  string name = 1;
+  string type = 2;
+  string parent = 3;
+  ArmPosition translation = 4;
+}
+
+message ConfigRequest {}
+
+message ConfigResponse {
+  repeated ComponentConfig components = 1;  
 }
 
 message DoActionRequest {
