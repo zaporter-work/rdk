@@ -17,9 +17,13 @@ export async function newPeerConnectionForClient(): Promise<ReadyPeer> {
 	const result = new Promise<ReadyPeer>(resolve => {
 		pResolve = resolve;
 	})
-	const dataChannel = peerConnection.createDataChannel("data", { negotiated: true, id: 0 });
+	const dataChannel = peerConnection.createDataChannel("data", {
+		id: 0,
+		negotiated: true,
+		ordered: true
+	});
 	dataChannel.binaryType = "arraybuffer";
-	
+
 	peerConnection.onicecandidate = async event => {
 		if (event.candidate !== null) {
 			return;
