@@ -35,9 +35,7 @@ export async function dial(signalingAddress: string, host: string): Promise<Clie
 	const { pc, dc } = await newPeerConnectionForClient();
 
 	const encodedSDP = btoa(JSON.stringify(pc.localDescription));
-	console.log("sig call start")
 	const callResponse = await signalCall(signalingAddress, host, encodedSDP);
-	console.log("sig call done")
 	const remoteSDP = new RTCSessionDescription(JSON.parse(atob(callResponse.getSdp())));
 	pc.setRemoteDescription(remoteSDP);
 
