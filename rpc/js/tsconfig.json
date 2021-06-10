@@ -18,7 +18,7 @@
     ],
     "baseUrl": "./",
     "paths": {
-      "proto/*": ["../../../dist/js/proto/*"]
+      "proto/*": ["../../../dist/js/proto/*", "../../dist/js/proto/*"]
     }
   }
 }
