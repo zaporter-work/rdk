@@ -152,13 +152,13 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
-/***/ "./src/client.js":
-/*!***********************!*\
-  !*** ./src/client.js ***!
-  \***********************/
+/***/ "./src/control.js":
+/*!************************!*\
+  !*** ./src/control.js ***!
+  \************************/
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("const { grpc } = __webpack_require__(/*! @improbable-eng/grpc-web */ \"./node_modules/@improbable-eng/grpc-web/dist/grpc-web-client.umd.js\");\nwindow.robotApi = __webpack_require__(/*! proto/api/v1/robot_pb.js */ \"../../dist/js/proto/api/v1/robot_pb.js\");\nconst { RobotServiceClient } = __webpack_require__(/*! proto/api/v1/robot_pb_service.js */ \"../../dist/js/proto/api/v1/robot_pb_service.js\");\n\nconst url = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`;\nwindow.robotService = new RobotServiceClient(url);\n\nwindow.THREE = __webpack_require__(/*! three/build/three.module.js */ \"./node_modules/three/build/three.module.js\")\nwindow.pcdLib = __webpack_require__(/*! three/examples/jsm/loaders/PCDLoader.js */ \"./node_modules/three/examples/jsm/loaders/PCDLoader.js\")\nwindow.orbitLib = __webpack_require__(/*! three/examples/jsm/controls/OrbitControls.js */ \"./node_modules/three/examples/jsm/controls/OrbitControls.js\")\n\n\n\n//# sourceURL=webpack://core-web/./src/client.js?");
+eval("const { grpc } = __webpack_require__(/*! @improbable-eng/grpc-web */ \"./node_modules/@improbable-eng/grpc-web/dist/grpc-web-client.umd.js\");\nwindow.robotApi = __webpack_require__(/*! proto/api/v1/robot_pb.js */ \"../../dist/js/proto/api/v1/robot_pb.js\");\nconst { RobotServiceClient } = __webpack_require__(/*! proto/api/v1/robot_pb_service.js */ \"../../dist/js/proto/api/v1/robot_pb_service.js\");\n\nconst url = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`;\nwindow.robotService = new RobotServiceClient(url);\n\nwindow.THREE = __webpack_require__(/*! three/build/three.module.js */ \"./node_modules/three/build/three.module.js\")\nwindow.pcdLib = __webpack_require__(/*! three/examples/jsm/loaders/PCDLoader.js */ \"./node_modules/three/examples/jsm/loaders/PCDLoader.js\")\nwindow.orbitLib = __webpack_require__(/*! three/examples/jsm/controls/OrbitControls.js */ \"./node_modules/three/examples/jsm/controls/OrbitControls.js\")\n\n\n\n//# sourceURL=webpack://core-web/./src/control.js?");
 
 /***/ })
 
@@ -234,7 +234,7 @@ eval("const { grpc } = __webpack_require__(/*! @improbable-eng/grpc-web */ \"./n
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/client.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/control.js");
 /******/ 	
 /******/ })()
 ;
