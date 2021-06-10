@@ -21,6 +21,7 @@ import (
 	"go.viam.com/core/utils"
 	"go.viam.com/core/vision/segmentation"
 	"go.viam.com/core/web"
+	webserver "go.viam.com/core/web/server"
 
 	_ "go.viam.com/core/base/impl"
 	_ "go.viam.com/core/board/detector"
@@ -355,5 +356,5 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	options := web.NewOptions()
 	options.AutoTile = false
 	options.Pprof = true
-	return web.RunWeb(ctx, myRobot, options, logger)
+	return webserver.RunWeb(ctx, myRobot, options, logger)
 }

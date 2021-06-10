@@ -25,6 +25,7 @@ import (
 	"go.viam.com/core/serial"
 	"go.viam.com/core/utils"
 	"go.viam.com/core/web"
+	webserver "go.viam.com/core/web/server"
 
 	_ "go.viam.com/core/board/detector"
 
@@ -352,5 +353,5 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		recordDepthWorker(ctx, myRobot.SensorByName("depth1"))
 	}, activeBackgroundWorkers.Done)
 
-	return web.RunWeb(ctx, myRobot, web.NewOptions(), logger)
+	return webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger)
 }

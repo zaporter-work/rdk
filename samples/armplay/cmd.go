@@ -15,6 +15,7 @@ import (
 	robotimpl "go.viam.com/core/robot/impl"
 	"go.viam.com/core/utils"
 	"go.viam.com/core/web"
+	webserver "go.viam.com/core/web/server"
 
 	_ "go.viam.com/core/board/detector"         // load boards
 	_ "go.viam.com/core/robots/eva"             // load arm
@@ -143,5 +144,5 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	}
 	defer myRobot.Close()
 
-	return web.RunWeb(ctx, myRobot, web.NewOptions(), logger)
+	return webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger)
 }
