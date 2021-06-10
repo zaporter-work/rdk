@@ -205,10 +205,10 @@ const (
 )
 
 func (ss *simpleServer) getRequestType(r *http.Request) requestType {
-	if r.ProtoMajor == 2 && strings.HasPrefix(r.Header.Get("Content-Type"), "application/grpc") {
-		return requestTypeGRPC
-	} else if ss.grpcWebServer.IsAcceptableGrpcCorsRequest(r) || ss.grpcWebServer.IsGrpcWebRequest(r) {
+	if ss.grpcWebServer.IsAcceptableGrpcCorsRequest(r) || ss.grpcWebServer.IsGrpcWebRequest(r) {
 		return requestTypeGRPCWeb
+	} else if r.ProtoMajor == 2 && strings.HasPrefix(r.Header.Get("Content-Type"), "application/grpc") {
+		return requestTypeGRPC
 	}
 	return requestTypeNone
 }
