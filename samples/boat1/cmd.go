@@ -362,7 +362,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		recordDepthWorker(ctx, myRobot.SensorByName("depth1"))
 	}, activeBackgroundWorkers.Done)
 
-	if err := webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger); err != nil && !errors.Is(err, context.Canceled) {
+	if err := webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger); err != nil {
 		logger.Errorw("error running web", "error", err)
 		cancel()
 		return err
