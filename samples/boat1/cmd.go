@@ -207,7 +207,7 @@ func storeAll(docs []SavedDepth) error {
 
 var currentLocation nmea.GLL
 
-func trackGPS() {
+func trackGPS(ctx context.Context) {
 	dev, err := serial.Open("/dev/ttyAMA1")
 	if err != nil {
 		rlog.Logger.Fatalf("canot open gps serial %s", err)
@@ -216,6 +216,12 @@ func trackGPS() {
 
 	r := bufio.NewReader(dev)
 	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		line, err := r.ReadString('\n')
 		if err != nil {
 			rlog.Logger.Fatalf("can't read gps serial %s", err)
@@ -347,7 +353,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	activeBackgroundWorkers.Add(2)
 	defer activeBackgroundWorkers.Wait()
 	utils.ManagedGo(func() {
-		trackGPS()
+		trackGPS(ctx)
 	}, activeBackgroundWorkers.Done)
 	utils.ManagedGo(func() {
 		recordDepthWorker(ctx, myRobot.SensorByName("depth1"))
