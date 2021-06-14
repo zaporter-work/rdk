@@ -349,6 +349,9 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 
 	myRobot.AddBase(boat, config.Component{Name: "boatbot"})
 
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	var activeBackgroundWorkers sync.WaitGroup
 	activeBackgroundWorkers.Add(2)
 	defer activeBackgroundWorkers.Wait()
@@ -359,5 +362,9 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		recordDepthWorker(ctx, myRobot.SensorByName("depth1"))
 	}, activeBackgroundWorkers.Done)
 
-	return webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger)
+	if err := webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger); err != nil {
+		cancel()
+		return err
+	}
+	return nil
 }
