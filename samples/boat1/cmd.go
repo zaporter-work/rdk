@@ -49,6 +49,9 @@ type Boat struct {
 	throttle, direction, mode, aSwitch board.DigitalInterrupt
 	rightVertical, rightHorizontal     board.DigitalInterrupt
 	activeBackgroundWorkers            *sync.WaitGroup
+
+	cancel    func()
+	cancelCtx context.Context
 }
 
 // MoveStraight TODO
@@ -92,6 +95,7 @@ func (b *Boat) Stop(ctx context.Context) error {
 // Close TODO
 func (b *Boat) Close() error {
 	defer b.activeBackgroundWorkers.Wait()
+	b.cancel()
 	return b.Stop(context.Background())
 }
 
@@ -100,6 +104,11 @@ func (b *Boat) StartRC(ctx context.Context) {
 	b.activeBackgroundWorkers.Add(1)
 	utils.ManagedGo(func() {
 		for {
+			select {
+			case <-b.cancelCtx.Done():
+				return
+			default:
+			}
 			if !utils.SelectContextOrWait(ctx, 10*time.Millisecond) {
 				return
 			}
@@ -295,7 +304,8 @@ func recordDepthWorker(ctx context.Context, depthSensor sensor.Sensor) {
 
 // NewBoat TODO
 func NewBoat(r robot.Robot) (*Boat, error) {
-	b := &Boat{activeBackgroundWorkers: &sync.WaitGroup{}}
+	cancelCtx, cancel := context.WithCancel(context.Background())
+	b := &Boat{activeBackgroundWorkers: &sync.WaitGroup{}, cancelCtx: cancelCtx, cancel: cancel}
 	b.theBoard = r.BoardByName("local")
 	if b.theBoard == nil {
 		return nil, errors.New("cannot find board")
@@ -362,7 +372,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		recordDepthWorker(ctx, myRobot.SensorByName("depth1"))
 	}, activeBackgroundWorkers.Done)
 
-	if err := webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger); err != nil {
+	if err := webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger); err != nil && !errors.Is(err, context.Canceled) {
 		logger.Errorw("error running web", "error", err)
 		cancel()
 		return err
