@@ -5,13 +5,13 @@ interface ReadyPeer {
 
 export async function newPeerConnectionForClient(): Promise<ReadyPeer> {
 	const peerConnection = new RTCPeerConnection({
-		// TODO(https://github.com/viamrobotics/core/issues/81): Use Viam STUN/TURN.
 		iceServers: [
 			{
-				urls: 'stun:stun.erdaniels.com'
+				urls: 'stun:stun.viam.cloud'
 			},
 			{
-				urls: 'turn:stun.erdaniels.com',
+				urls: 'turn:stun.viam.cloud',
+				// TODO(erd): needs real creds so as to not be abused
 				username: "username",
 				credentialType: "password",
 				credential: "password"
