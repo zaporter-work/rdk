@@ -201,7 +201,7 @@ func (ans *SignalingAnswerer) Start() error {
 			}
 			if err := ans.answer(); err != nil && utils.FilterOutError(err, context.Canceled) != nil {
 				ans.logger.Errorw("error answering", "error", err)
-				ans.logger.Debug("reconnecting answer client", "in", answererReconnectWait.String())
+				ans.logger.Debugw("reconnecting answer client", "in", answererReconnectWait.String())
 				if !utils.SelectContextOrWait(ans.closeCtx, answererReconnectWait) {
 					return
 				}
