@@ -169,6 +169,8 @@ func NewSignalingAnswerer(address, host string, server *Server, insecure bool, l
 	}
 }
 
+const answererReconnectWait = time.Second
+
 // Start connects to the signaling service and listens forever until instructed to stop
 // via Stop.
 func (ans *SignalingAnswerer) Start() error {
@@ -199,17 +201,18 @@ func (ans *SignalingAnswerer) Start() error {
 			}
 			if err := ans.answer(); err != nil && utils.FilterOutError(err, context.Canceled) != nil {
 				ans.logger.Errorw("error answering", "error", err)
-				if s, ok := status.FromError(err); ok && (s.Code() == codes.Unknown || s.Code() == codes.Internal || s.Code() == codes.DeadlineExceeded) {
-					ans.logger.Debug("reconnecting answer client")
-					answerClient, err := client.Answer(answerCtx)
-					if err != nil {
-						ans.logger.Errorw("error reconnecting answer client", "error", err)
-						return
-					}
-					ans.logger.Debug("reconnected answer client")
-					ans.client = answerClient
-					continue
+				ans.logger.Debug("reconnecting answer client", "in", answererReconnectWait.String())
+				if !utils.SelectContextOrWait(ans.closeCtx, answererReconnectWait) {
+					return
 				}
+				answerClient, err := client.Answer(answerCtx)
+				if err != nil {
+					ans.logger.Errorw("error reconnecting answer client", "error", err)
+					return
+				}
+				ans.logger.Debug("reconnected answer client")
+				ans.client = answerClient
+				continue
 			}
 		}
 	}, func() {
