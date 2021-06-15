@@ -40,6 +40,9 @@ export class ClientStream extends BaseStream implements grpc.Transport {
 	}
 
 	public finishSend() {
+		if (!this.opts.methodDefinition.requestStream) {
+			return
+		}
 		this.writeMessage(true, undefined);
 	}
 
