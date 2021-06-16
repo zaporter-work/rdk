@@ -14,6 +14,8 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
+
+	"go.viam.com/core/rpc"
 )
 
 // A Dialer is responsible for making connections to gRPC endpoints.
@@ -221,7 +223,9 @@ func DialDirectGRPC(ctx context.Context, address string, insecure bool) (ClientC
 	dialOpts := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1 << 24)),
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{Time: 10 * time.Second}),
+		grpc.WithKeepaliveParams(keepalive.ClientParameters{
+			Time: rpc.KeepAliveTime + 5*time.Second, // add a little buffer so as to not annoy the server ping strike system
+		}),
 	}
 	if insecure {
 		dialOpts = append(dialOpts, grpc.WithInsecure())

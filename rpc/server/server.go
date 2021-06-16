@@ -23,6 +23,7 @@ import (
 	"go.uber.org/multierr"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -128,7 +129,9 @@ func NewWithListener(
 	opts Options,
 	logger golog.Logger,
 ) (Server, error) {
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+		MinTime: rpc.KeepAliveTime,
+	}))
 	reflection.Register(grpcServer)
 	grpcWebServer := grpcweb.WrapServer(grpcServer, grpcweb.WithOriginFunc(func(origin string) bool {
 		// TODO(erd): limit this to some base url
