@@ -90,8 +90,11 @@ func (srv *Server) NewChannel(peerConn *webrtc.PeerConnection, dataChannel *webr
 
 func (srv *Server) removePeer(peerConn *webrtc.PeerConnection) {
 	srv.mu.Lock()
+	defer srv.mu.Unlock()
 	delete(srv.peerConns, peerConn)
-	srv.mu.Unlock()
+	if err := peerConn.Close(); err != nil {
+		srv.logger.Errorw("error closing peer connection on removal", "error", err)
+	}
 }
 
 type (

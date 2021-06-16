@@ -269,7 +269,7 @@ func (ans *SignalingAnswerer) answer() (err error) {
 	}
 	var successful bool
 	defer func() {
-		if !successful {
+		if !(successful && err == nil) {
 			err = multierr.Combine(err, pc.Close())
 		}
 	}()

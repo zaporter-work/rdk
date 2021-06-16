@@ -66,6 +66,12 @@ type Server interface {
 	// This is useful in a scenario where all gRPC is served from the root path due to
 	// limitations of normal gRPC being served from a non-root path.
 	http.Handler
+
+	// SignalingAddr returns the WebRTC signaling address in use.
+	SignalingAddr() string
+
+	// SignalingHost returns the host WebRTC communications are happening on behalf of.
+	SignalingHost() string
 }
 
 type simpleServer struct {
@@ -77,6 +83,8 @@ type simpleServer struct {
 	httpServer           *http.Server
 	webrtcServer         *rpcwebrtc.Server
 	webrtcAnswerer       *rpcwebrtc.SignalingAnswerer
+	signalingAddr        string
+	signalingHost        string
 	serviceServerCancels []func()
 	serviceServers       []interface{}
 	secure               bool
@@ -161,10 +169,12 @@ func NewWithListener(
 		if address == "" {
 			address = grpcListener.Addr().String()
 		}
+		server.signalingAddr = address
 		signalingHost := opts.WebRTC.SignalingHost
 		if signalingHost == "" {
 			signalingHost = "local"
 		}
+		server.signalingHost = signalingHost
 		logger.Infow("will run signaling answerer", "address", address, "host", signalingHost)
 		server.webrtcAnswerer = rpcwebrtc.NewSignalingAnswerer(
 			address,
@@ -319,6 +329,14 @@ func (ss *simpleServer) Serve(listener net.Listener) error {
 	err = multierr.Combine(err, startErr)
 	errMu.Unlock()
 	return err
+}
+
+func (ss *simpleServer) SignalingAddr() string {
+	return ss.signalingAddr
+}
+
+func (ss *simpleServer) SignalingHost() string {
+	return ss.signalingHost
 }
 
 func (ss *simpleServer) Stop() (err error) {
