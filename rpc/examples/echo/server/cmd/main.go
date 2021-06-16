@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"time"
 
 	"github.com/go-errors/errors"
 
@@ -22,8 +21,6 @@ import (
 	"go.uber.org/multierr"
 	"goji.io"
 	"goji.io/pat"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 )
 
 func main() {
@@ -108,14 +105,12 @@ func runServer(
 	mux.Handle(pat.New("/api/*"), http.StripPrefix("/api", rpcServer.GatewayHandler()))
 	mux.Handle(pat.New("/*"), rpcServer.GRPCHandler())
 
-	h2s := &http2.Server{}
-	httpServer := &http.Server{
-		Addr:           listener.Addr().String(),
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-		Handler:        h2c.NewHandler(mux, h2s),
+	httpServer, err := utils.NewPlainTextHTTP2Server(mux)
+	if err != nil {
+		return err
 	}
+	httpServer.Addr = listener.Addr().String()
+
 	utils.PanicCapturingGo(func() {
 		<-ctx.Done()
 		defer func() {

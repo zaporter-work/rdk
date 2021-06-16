@@ -46,6 +46,7 @@ func NewSignalingServer() *SignalingServer {
 type callOffer struct {
 	sdp      string
 	response chan<- callAnswer
+	discard  chan struct{} // used to stop a response to a call offer.
 }
 
 // callAnswer is the response to an offer. An agreement to start the call
@@ -86,13 +87,14 @@ func (srv *SignalingServer) Call(ctx context.Context, req *webrtcpb.CallRequest)
 		return nil, err
 	}
 	response := make(chan callAnswer)
-	offer := callOffer{sdp: req.Sdp, response: response}
+	offer := callOffer{sdp: req.Sdp, response: response, discard: make(chan struct{})}
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	case queue <- offer:
 		select {
 		case <-ctx.Done():
+			close(offer.discard)
 			return nil, ctx.Err()
 		case answer := <-response:
 			if answer.err != nil {
@@ -105,7 +107,7 @@ func (srv *SignalingServer) Call(ctx context.Context, req *webrtcpb.CallRequest)
 
 // Answer listens on call/offer queue forever responding with SDPs to agreed to calls.
 // TODO(erd): This should be authenticated to internal servers only with client certificates.
-func (srv *SignalingServer) Answer(server webrtcpb.SignalingService_AnswerServer) error {
+func (srv *SignalingServer) Answer(server webrtcpb.SignalingService_AnswerServer) (err error) {
 	queue, err := srv.getOrMakeQueue(server.Context())
 	if err != nil {
 		return err
@@ -115,23 +117,29 @@ func (srv *SignalingServer) Answer(server webrtcpb.SignalingService_AnswerServer
 		case <-server.Context().Done():
 			return server.Context().Err()
 		case offer := <-queue:
-			if err := server.Send(&webrtcpb.AnswerRequest{Sdp: offer.sdp}); err != nil {
-				return err
-			}
-			answer, err := server.Recv()
-			if err != nil {
-				offer.response <- callAnswer{err: err}
-				return err
-			}
-			respStatus := status.FromProto(answer.Status)
-			if respStatus.Code() != codes.OK {
-				offer.response <- callAnswer{err: respStatus.Err()}
-				continue
-			}
+			ans, cont := func() (callAnswer, bool) {
+				if err := server.Send(&webrtcpb.AnswerRequest{Sdp: offer.sdp}); err != nil {
+					return callAnswer{err: err}, false
+				}
+				answer, err := server.Recv()
+				if err != nil {
+					return callAnswer{err: err}, false
+				}
+				respStatus := status.FromProto(answer.Status)
+				if respStatus.Code() != codes.OK {
+					return callAnswer{err: respStatus.Err()}, true
+				}
+				return callAnswer{sdp: answer.Sdp}, true
+			}()
+
 			select {
-			case offer.response <- callAnswer{sdp: answer.Sdp}:
+			case offer.response <- ans:
+			case <-offer.discard:
 			case <-server.Context().Done():
 				return server.Context().Err()
+			}
+			if !cont {
+				return
 			}
 		}
 	}
@@ -201,18 +209,20 @@ func (ans *SignalingAnswerer) Start() error {
 			}
 			if err := ans.answer(); err != nil && utils.FilterOutError(err, context.Canceled) != nil {
 				ans.logger.Errorw("error answering", "error", err)
-				ans.logger.Debugw("reconnecting answer client", "in", answererReconnectWait.String())
-				if !utils.SelectContextOrWait(ans.closeCtx, answererReconnectWait) {
-					return
+				for {
+					ans.logger.Debugw("reconnecting answer client", "in", answererReconnectWait.String())
+					if !utils.SelectContextOrWait(ans.closeCtx, answererReconnectWait) {
+						return
+					}
+					answerClient, err := client.Answer(answerCtx)
+					if err != nil {
+						ans.logger.Errorw("error reconnecting answer client", "error", err)
+						continue
+					}
+					ans.logger.Debug("reconnected answer client")
+					ans.client = answerClient
+					break
 				}
-				answerClient, err := client.Answer(answerCtx)
-				if err != nil {
-					ans.logger.Errorw("error reconnecting answer client", "error", err)
-					return
-				}
-				ans.logger.Debug("reconnected answer client")
-				ans.client = answerClient
-				continue
 			}
 		}
 	}, func() {

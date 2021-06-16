@@ -21,7 +21,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"go.uber.org/multierr"
-	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -294,9 +293,15 @@ func (ss *simpleServer) Start() error {
 func (ss *simpleServer) Serve(listener net.Listener) error {
 	var handler http.Handler = ss
 	if !ss.secure {
-		h2s := &http2.Server{}
+		http2Server, err := utils.NewHTTP2Server()
+		if err != nil {
+			return err
+		}
+		ss.httpServer.RegisterOnShutdown(func() {
+			utils.UncheckedErrorFunc(http2Server.Close)
+		})
 		ss.httpServer.Addr = listener.Addr().String()
-		handler = h2c.NewHandler(ss, h2s)
+		handler = h2c.NewHandler(ss, http2Server.HTTP2)
 	}
 	ss.httpServer.Addr = listener.Addr().String()
 	ss.httpServer.Handler = handler
