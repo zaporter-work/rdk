@@ -182,22 +182,40 @@ const answererReconnectWait = time.Second
 // Start connects to the signaling service and listens forever until instructed to stop
 // via Stop.
 func (ans *SignalingAnswerer) Start() error {
-	setupCtx, timeoutCancel := context.WithTimeout(ans.closeCtx, 20*time.Second)
-	defer timeoutCancel()
+	var connInUse dialer.ClientConn
+	var connMu sync.Mutex
+	connect := func() error {
+		connMu.Lock()
+		conn := connInUse
+		connMu.Unlock()
+		if conn != nil {
+			if err := conn.Close(); err != nil {
+				ans.logger.Errorw("error closing existing signaling connection", "error", err)
+			}
+		}
+		setupCtx, timeoutCancel := context.WithTimeout(ans.closeCtx, 5*time.Second)
+		defer timeoutCancel()
+		conn, err := dialer.DialDirectGRPC(setupCtx, ans.address, ans.insecure)
+		if err != nil {
+			return err
+		}
+		connMu.Lock()
+		connInUse = conn
+		connMu.Unlock()
 
-	conn, err := dialer.DialDirectGRPC(setupCtx, ans.address, ans.insecure)
-	if err != nil {
+		client := webrtcpb.NewSignalingServiceClient(conn)
+		md := metadata.New(map[string]string{RPCHostMetadataField: ans.host})
+		answerCtx := metadata.NewOutgoingContext(ans.closeCtx, md)
+		answerClient, err := client.Answer(answerCtx)
+		if err != nil {
+			return multierr.Combine(err, conn.Close())
+		}
+		ans.client = answerClient
+		return nil
+	}
+	if err := connect(); err != nil {
 		return err
 	}
-
-	client := webrtcpb.NewSignalingServiceClient(conn)
-	md := metadata.New(map[string]string{RPCHostMetadataField: ans.host})
-	answerCtx := metadata.NewOutgoingContext(ans.closeCtx, md)
-	answerClient, err := client.Answer(answerCtx)
-	if err != nil {
-		return multierr.Combine(err, conn.Close())
-	}
-	ans.client = answerClient
 
 	ans.activeBackgroundWorkers.Add(1)
 	utils.ManagedGo(func() {
@@ -214,13 +232,11 @@ func (ans *SignalingAnswerer) Start() error {
 					if !utils.SelectContextOrWait(ans.closeCtx, answererReconnectWait) {
 						return
 					}
-					answerClient, err := client.Answer(answerCtx)
-					if err != nil {
+					if err := connect(); err != nil {
 						ans.logger.Errorw("error reconnecting answer client", "error", err)
 						continue
 					}
 					ans.logger.Debug("reconnected answer client")
-					ans.client = answerClient
 					break
 				}
 			}
@@ -228,6 +244,9 @@ func (ans *SignalingAnswerer) Start() error {
 	}, func() {
 		defer ans.activeBackgroundWorkers.Done()
 		defer func() {
+			connMu.Lock()
+			conn := connInUse
+			connMu.Unlock()
 			if err := conn.Close(); err != nil {
 				ans.logger.Errorw("error closing signaling connection", "error", err)
 			}

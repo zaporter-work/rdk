@@ -64,6 +64,9 @@ func newBaseChannel(
 		case webrtc.ICEConnectionStateDisconnected,
 			webrtc.ICEConnectionStateFailed,
 			webrtc.ICEConnectionStateClosed:
+			if connID == "" { // make sure we've gathered information before
+				return
+			}
 			logger.Debugw("connection state changed",
 				"conn_id", connID,
 				"conn_state", connectionState.String(),
