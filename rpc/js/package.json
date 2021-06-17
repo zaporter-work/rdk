@@ -4,7 +4,7 @@
   "license": "MIT",
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.13.0",
-    "google-protobuf": "~3.14.0"
+    "google-protobuf": "^3.14.0"
   },
   "devDependencies": {
     "@types/google-protobuf": "^3.7.4",
