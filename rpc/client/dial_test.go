@@ -66,7 +66,7 @@ func TestDial(t *testing.T) {
 	err = <-errChan
 	test.That(t, err, test.ShouldBeNil)
 
-	rpcServer, err = server.NewWithOptions(server.Options{server.WebRTCOptions{
+	rpcServer, err = server.NewWithOptions(server.Options{WebRTC: server.WebRTCOptions{
 		Enable:        true,
 		Insecure:      true,
 		SignalingHost: "yeehaw",

@@ -95,7 +95,9 @@ type simpleServer struct {
 
 // Options change the runtime behavior of the server.
 type Options struct {
-	WebRTC WebRTCOptions
+	WebRTC            WebRTCOptions
+	UnaryInterceptor  grpc.UnaryServerInterceptor
+	StreamInterceptor grpc.StreamServerInterceptor
 }
 
 // WebRTCOptions control how WebRTC is utilized in a server.
@@ -129,9 +131,18 @@ func NewWithListener(
 	opts Options,
 	logger golog.Logger,
 ) (Server, error) {
-	grpcServer := grpc.NewServer(grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
-		MinTime: rpc.KeepAliveTime,
-	}))
+	serverOpts := []grpc.ServerOption{
+		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+			MinTime: rpc.KeepAliveTime,
+		}),
+	}
+	if opts.UnaryInterceptor != nil {
+		serverOpts = append(serverOpts, grpc.UnaryInterceptor(opts.UnaryInterceptor))
+	}
+	if opts.StreamInterceptor != nil {
+		serverOpts = append(serverOpts, grpc.StreamInterceptor(opts.StreamInterceptor))
+	}
+	grpcServer := grpc.NewServer(serverOpts...)
 	reflection.Register(grpcServer)
 	grpcWebServer := grpcweb.WrapServer(grpcServer, grpcweb.WithOriginFunc(func(origin string) bool {
 		return true
@@ -166,7 +177,11 @@ func NewWithListener(
 	}
 
 	if opts.WebRTC.Enable {
-		server.webrtcServer = rpcwebrtc.NewServer(logger)
+		server.webrtcServer = rpcwebrtc.NewServerWithInterceptors(
+			logger,
+			opts.UnaryInterceptor,
+			opts.StreamInterceptor,
+		)
 		address := opts.WebRTC.SignalingAddress
 		if address == "" {
 			address = grpcListener.Addr().String()

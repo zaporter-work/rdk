@@ -27,15 +27,30 @@ type Server struct {
 	peerConns               map[*webrtc.PeerConnection]struct{}
 	activeBackgroundWorkers sync.WaitGroup
 	callTickets             chan struct{}
+
+	unaryInt  grpc.UnaryServerInterceptor
+	streamInt grpc.StreamServerInterceptor
 }
 
 // NewServer makes a new server with no registered services.
 func NewServer(logger golog.Logger) *Server {
+	return NewServerWithInterceptors(logger, nil, nil)
+}
+
+// NewServerWithInterceptors makes a new server with no registered services that will
+// use the given interceptors.
+func NewServerWithInterceptors(
+	logger golog.Logger,
+	unaryInt grpc.UnaryServerInterceptor,
+	streamInt grpc.StreamServerInterceptor,
+) *Server {
 	srv := &Server{
 		handlers:    map[string]handlerFunc{},
 		logger:      logger,
 		peerConns:   map[*webrtc.PeerConnection]struct{}{},
 		callTickets: make(chan struct{}, DefaultMaxGRPCCalls),
+		unaryInt:    unaryInt,
+		streamInt:   streamInt,
 	}
 	srv.ctx, srv.cancel = context.WithCancel(context.Background())
 	return srv
@@ -65,11 +80,11 @@ func (srv *Server) Stop() {
 func (srv *Server) RegisterService(sd *grpc.ServiceDesc, ss interface{}) {
 	for _, desc := range sd.Methods {
 		path := fmt.Sprintf("/%v/%v", sd.ServiceName, desc.MethodName)
-		srv.handlers[path] = unaryHandler(ss, methodHandler(desc.Handler))
+		srv.handlers[path] = srv.unaryHandler(ss, methodHandler(desc.Handler))
 	}
 	for _, desc := range sd.Streams {
 		path := fmt.Sprintf("/%v/%v", sd.ServiceName, desc.StreamName)
-		srv.handlers[path] = streamHandler(ss, desc.Handler)
+		srv.handlers[path] = srv.streamHandler(ss, path, desc)
 	}
 }
 
@@ -102,11 +117,9 @@ type (
 	methodHandler func(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error)
 )
 
-func unaryHandler(srv interface{}, handler methodHandler) handlerFunc {
+func (srv *Server) unaryHandler(ss interface{}, handler methodHandler) handlerFunc {
 	return func(s *ServerStream) error {
-		// TODO(https://github.com/viamrobotics/core/issues/80): interceptors
-		var interceptor grpc.UnaryServerInterceptor = nil
-		response, err := handler(srv, s.ctx, s.RecvMsg, interceptor)
+		response, err := handler(ss, s.ctx, s.RecvMsg, srv.unaryInt)
 		if err != nil {
 			return s.closeWithSendError(err)
 		}
@@ -114,9 +127,19 @@ func unaryHandler(srv interface{}, handler methodHandler) handlerFunc {
 	}
 }
 
-func streamHandler(srv interface{}, handler grpc.StreamHandler) handlerFunc {
+func (srv *Server) streamHandler(ss interface{}, method string, desc grpc.StreamDesc) handlerFunc {
 	return func(s *ServerStream) error {
-		err := handler(srv, s)
+		var err error
+		if srv.streamInt == nil {
+			err = desc.Handler(ss, s)
+		} else {
+			info := &grpc.StreamServerInfo{
+				FullMethod:     method,
+				IsClientStream: desc.ClientStreams,
+				IsServerStream: desc.ServerStreams,
+			}
+			err = srv.streamInt(ss, s, info, desc.Handler)
+		}
 		if errors.Is(err, io.EOF) {
 			return nil
 		}
