@@ -8,6 +8,8 @@ import (
 	gwebrtc "github.com/edaniels/gostream/webrtc"
 	"github.com/pion/webrtc/v3"
 	"go.uber.org/multierr"
+
+	"go.viam.com/core/utils"
 )
 
 // DefaultWebRTCConfiguration is the standard configuration used for WebRTC peers.
@@ -38,6 +40,7 @@ func newPeerConnectionForClient(ctx context.Context, logger golog.Logger) (pc *w
 	if err != nil {
 		return pc, nil, err
 	}
+	dataChannel.OnError(initialDataChannelOnError(pc, logger))
 
 	offer, err := pc.CreateOffer(nil)
 	if err != nil {
@@ -90,6 +93,7 @@ func newPeerConnectionForServer(ctx context.Context, sdp string, logger golog.Lo
 	if err != nil {
 		return pc, dataChannel, err
 	}
+	dataChannel.OnError(initialDataChannelOnError(pc, logger))
 
 	offer := webrtc.SessionDescription{}
 	if err := gwebrtc.DecodeSDP(sdp, &offer); err != nil {
@@ -160,4 +164,11 @@ func getPeerConnectionStats(peerConnection *webrtc.PeerConnection) peerConnectio
 		connInfo[candidateType] = candidateStats.IP
 	}
 	return peerConnectionStats{connID, connInfo}
+}
+
+func initialDataChannelOnError(pc *webrtc.PeerConnection, logger golog.Logger) func(err error) {
+	return func(err error) {
+		logger.Errorw("premature data channel error before WebRTC channel association", "error", err)
+		utils.UncheckedError(pc.Close())
+	}
 }
