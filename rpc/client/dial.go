@@ -68,7 +68,7 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 
 	signalingServer := opts.SignalingServer
 	signalingInsecure := opts.Insecure
-	// TODO(erd): Use SRV records to get signaling server.
+	// TODO(https://github.com/viamrobotics/core/issues/100): Use SRV records to get signaling server.
 	if signalingServer == "" && strings.HasSuffix(address, "viam.cloud") && !strings.HasPrefix(address, "local.") {
 		signalingServer = "app.viam.com:443"
 		signalingInsecure = false
