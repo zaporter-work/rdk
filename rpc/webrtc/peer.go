@@ -2,6 +2,7 @@ package rpcwebrtc
 
 import (
 	"context"
+	"io"
 
 	"github.com/edaniels/golog"
 	"github.com/edaniels/gostream"
@@ -166,7 +167,7 @@ func getPeerConnectionStats(peerConnection *webrtc.PeerConnection) peerConnectio
 	return peerConnectionStats{connID, connInfo}
 }
 
-func initialDataChannelOnError(pc *webrtc.PeerConnection, logger golog.Logger) func(err error) {
+func initialDataChannelOnError(pc io.Closer, logger golog.Logger) func(err error) {
 	return func(err error) {
 		logger.Errorw("premature data channel error before WebRTC channel association", "error", err)
 		utils.UncheckedError(pc.Close())
