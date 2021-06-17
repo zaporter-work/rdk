@@ -51,7 +51,7 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 			} else {
 				localAddress = fmt.Sprintf("%s:%s", localHost, port)
 			}
-			// TODO(erd): This needs to authenticate the server so we don't have a confused
+			// TODO(https://github.com/viamrobotics/core/issues/103): This needs to authenticate the server so we don't have a confused
 			// deputy.
 			localCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 			defer cancel()
