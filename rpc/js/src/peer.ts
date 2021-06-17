@@ -11,7 +11,7 @@ export async function newPeerConnectionForClient(): Promise<ReadyPeer> {
 			},
 			{
 				urls: 'turn:stun.viam.cloud',
-				// TODO(erd): needs real creds so as to not be abused
+				// TODO(https://github.com/viamrobotics/core/issues/101): needs real creds so as to not be abused
 				username: "username",
 				credentialType: "password",
 				credential: "password"
