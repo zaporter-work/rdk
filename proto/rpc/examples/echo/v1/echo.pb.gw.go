@@ -290,7 +290,7 @@ func RegisterEchoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 }
 
 var (
-	pattern_EchoService_Echo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"rpc", "examples", "echo", "v1"}, ""))
+	pattern_EchoService_Echo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 2}, []string{"rpc", "examples", "echo", "v1"}, ""))
 
 	pattern_EchoService_EchoMultiple_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"proto.rpc.examples.echo.v1.EchoService", "EchoMultiple"}, ""))
 

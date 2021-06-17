@@ -91,7 +91,7 @@ func TestServer(t *testing.T) {
 	test.That(t, string(rd), test.ShouldResemble, "")
 
 	// JSON
-	httpURL = fmt.Sprintf("http://%s/v1/echo", httpListener.Addr().String())
+	httpURL = fmt.Sprintf("http://%s/rpc/examples/echo/v1/echo", httpListener.Addr().String())
 	httpResp2, err := http.Post(httpURL, "application/json", strings.NewReader(`{"message": "world"}`))
 	test.That(t, err, test.ShouldBeNil)
 	defer httpResp2.Body.Close()

@@ -32,7 +32,7 @@ message EchoBiDiResponse {
 service EchoService {
   rpc Echo(EchoRequest) returns (EchoResponse) {
     option (google.api.http) = {
-  		post: "/rpc/examples/echo/v1"
+  		post: "/rpc/examples/echo/v1/echo"
   		body: "*"
   	};
   }
