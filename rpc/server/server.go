@@ -134,7 +134,6 @@ func NewWithListener(
 	}))
 	reflection.Register(grpcServer)
 	grpcWebServer := grpcweb.WrapServer(grpcServer, grpcweb.WithOriginFunc(func(origin string) bool {
-		// TODO(erd): limit this to some base url
 		return true
 	}))
 	grpcGatewayHandler := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.HTTPBodyMarshaler{rpc.JSONPB}))
