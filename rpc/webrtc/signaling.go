@@ -65,7 +65,7 @@ func (srv *SignalingServer) getOrMakeQueue(ctx context.Context) (chan callOffer,
 		return nil, fmt.Errorf("expected %s to be set in metadata", RPCHostMetadataField)
 	}
 	host := md[RPCHostMetadataField][0]
-	// TODO(erd): Verify robot exists for host
+	// TODO(https://github.com/viamrobotics/core/issues/102): Verify robot exists for host
 	if host == "" {
 		return nil, fmt.Errorf("expected non-empty %s", RPCHostMetadataField)
 	}
