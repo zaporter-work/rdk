@@ -16,6 +16,7 @@ import (
 
 	webrtcpb "go.viam.com/core/proto/rpc/webrtc/v1"
 	"go.viam.com/core/testutils"
+	"go.viam.com/core/utils"
 )
 
 func TestServerChannel(t *testing.T) {
@@ -36,7 +37,7 @@ func TestServerChannel(t *testing.T) {
 		&webrtcpb.SignalingService_ServiceDesc,
 		signalServer,
 	)
-	signalServer.callQueue["yeehaw"] = make(chan callOffer)
+	signalServer.callQueue["yeehaw"] = utils.NewRefCountedValue(make(chan callOffer))
 
 	serverCh := NewServerChannel(server, pc2, dc2, logger)
 	defer func() {
@@ -223,7 +224,7 @@ func TestServerChannel(t *testing.T) {
 		Eos: true,
 	}), test.ShouldBeNil)
 
-	offer := <-signalServer.callQueue["yeehaw"]
+	offer := <-signalServer.callQueue["yeehaw"].Ref().(chan callOffer)
 	offer.response <- callAnswer{sdp: "world"}
 
 	<-messagesRead
@@ -268,7 +269,7 @@ func TestServerChannel(t *testing.T) {
 		Eos: true,
 	}), test.ShouldBeNil)
 
-	offer = <-signalServer.callQueue["yeehaw"]
+	offer = <-signalServer.callQueue["yeehaw"].Ref().(chan callOffer)
 	offer.response <- callAnswer{err: errors.New("ohno")}
 
 	<-messagesRead
