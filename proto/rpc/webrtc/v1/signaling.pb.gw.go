@@ -240,7 +240,7 @@ func RegisterSignalingServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 }
 
 var (
-	pattern_SignalingService_Call_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "call"}, ""))
+	pattern_SignalingService_Call_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"rpc", "webrtc", "v1", "call"}, ""))
 
 	pattern_SignalingService_Answer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"proto.rpc.webrtc.v1.SignalingService", "Answer"}, ""))
 )

@@ -1175,35 +1175,35 @@ func RegisterSlamServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 }
 
 var (
-	pattern_SlamService_Save_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "save"}, ""))
+	pattern_SlamService_Save_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "save"}, ""))
 
-	pattern_SlamService_Stats_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "stats"}, ""))
+	pattern_SlamService_Stats_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "stats"}, ""))
 
-	pattern_SlamService_Calibrate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "calibrate"}, ""))
+	pattern_SlamService_Calibrate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "calibrate"}, ""))
 
-	pattern_SlamService_MoveRobot_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "move_robot"}, ""))
+	pattern_SlamService_MoveRobot_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "move_robot"}, ""))
 
-	pattern_SlamService_MoveRobotForward_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "move_robot_forward"}, ""))
+	pattern_SlamService_MoveRobotForward_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "move_robot_forward"}, ""))
 
-	pattern_SlamService_MoveRobotBackward_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "move_robot_forward"}, ""))
+	pattern_SlamService_MoveRobotBackward_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "move_robot_forward"}, ""))
 
-	pattern_SlamService_TurnRobotTo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "turn_robot_to"}, ""))
+	pattern_SlamService_TurnRobotTo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "turn_robot_to"}, ""))
 
-	pattern_SlamService_UpdateRobotDeviceOffset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "upate_robot_device_offset"}, ""))
+	pattern_SlamService_UpdateRobotDeviceOffset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "upate_robot_device_offset"}, ""))
 
-	pattern_SlamService_StartLidar_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "start_lidar"}, ""))
+	pattern_SlamService_StartLidar_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "start_lidar"}, ""))
 
-	pattern_SlamService_StopLidar_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "stop_lidar"}, ""))
+	pattern_SlamService_StopLidar_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "stop_lidar"}, ""))
 
-	pattern_SlamService_GetLidarSeed_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "get_lidar_seed"}, ""))
+	pattern_SlamService_GetLidarSeed_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "get_lidar_seed"}, ""))
 
-	pattern_SlamService_SetLidarSeed_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "set_lidar_seed"}, ""))
+	pattern_SlamService_SetLidarSeed_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "set_lidar_seed"}, ""))
 
-	pattern_SlamService_SetClientZoom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "set_client_zoom"}, ""))
+	pattern_SlamService_SetClientZoom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "set_client_zoom"}, ""))
 
-	pattern_SlamService_SetClientLidarViewMode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "set_client_lidar_view_mode"}, ""))
+	pattern_SlamService_SetClientLidarViewMode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "set_client_lidar_view_mode"}, ""))
 
-	pattern_SlamService_SetClientClickMode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "set_client_click_mode"}, ""))
+	pattern_SlamService_SetClientClickMode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"slam", "v1", "set_client_click_mode"}, ""))
 )
 
 var (

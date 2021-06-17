@@ -12,7 +12,6 @@ import (
 
 // DefaultWebRTCConfiguration is the standard configuration used for WebRTC peers.
 var DefaultWebRTCConfiguration = webrtc.Configuration{
-	// TODO(https://github.com/viamrobotics/core/issues/81): Use Viam STUN/TURN.
 	ICEServers: gostream.DefaultICEServers,
 }
 

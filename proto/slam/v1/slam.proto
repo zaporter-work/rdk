@@ -132,78 +132,78 @@ message SetClientClickModeResponse {}
 service SlamService {
 	rpc Save(SaveRequest) returns (SaveResponse) {
 	    option (google.api.http) = {
-			post: "/v1/save"
+			post: "/slam/v1/save"
 		};
 	}
 	rpc Stats(StatsRequest) returns (StatsResponse) {
 	    option (google.api.http) = {
-			get: "/v1/stats"
+			get: "/slam/v1/stats"
 		};
 	}
 	rpc Calibrate(CalibrateRequest) returns (CalibrateResponse) {
 	    option (google.api.http) = {
-			post: "/v1/calibrate"
+			post: "/slam/v1/calibrate"
 		};
 	}
 	rpc MoveRobot(MoveRobotRequest) returns (MoveRobotResponse) {
 	    option (google.api.http) = {
-			post: "/v1/move_robot"
+			post: "/slam/v1/move_robot"
 			body: "*"
 		};
 	}
 	rpc MoveRobotForward(MoveRobotForwardRequest) returns (MoveRobotForwardResponse) {
 	    option (google.api.http) = {
-			post: "/v1/move_robot_forward"
+			post: "/slam/v1/move_robot_forward"
 		};
 	}
 	rpc MoveRobotBackward(MoveRobotBackwardRequest) returns (MoveRobotBackwardResponse) {
 	    option (google.api.http) = {
-			post: "/v1/move_robot_forward"
+			post: "/slam/v1/move_robot_forward"
 		};
 	}
 	rpc TurnRobotTo(TurnRobotToRequest) returns (TurnRobotToResponse) {
 	    option (google.api.http) = {
-			post: "/v1/turn_robot_to"
+			post: "/slam/v1/turn_robot_to"
 		};
 	}
 	rpc UpdateRobotDeviceOffset(UpdateRobotDeviceOffsetRequest) returns (UpdateRobotDeviceOffsetResponse) {
 	    option (google.api.http) = {
-			post: "/v1/upate_robot_device_offset"
+			post: "/slam/v1/upate_robot_device_offset"
 		};
 	}
 	rpc StartLidar(StartLidarRequest) returns (StartLidarResponse) {
 	    option (google.api.http) = {
-			post: "/v1/start_lidar"
+			post: "/slam/v1/start_lidar"
 		};
 	}
 	rpc StopLidar(StopLidarRequest) returns (StopLidarResponse) {
 	    option (google.api.http) = {
-			post: "/v1/stop_lidar"
+			post: "/slam/v1/stop_lidar"
 		};
 	}
 	rpc GetLidarSeed(GetLidarSeedRequest) returns (GetLidarSeedResponse) {
 	    option (google.api.http) = {
-			get: "/v1/get_lidar_seed"
+			get: "/slam/v1/get_lidar_seed"
 		};
 	}
 	rpc SetLidarSeed(SetLidarSeedRequest) returns (SetLidarSeedResponse) {
 	    option (google.api.http) = {
-			put: "/v1/set_lidar_seed"
+			put: "/slam/v1/set_lidar_seed"
 		};
 	}
 	rpc SetClientZoom(SetClientZoomRequest) returns (SetClientZoomResponse) {
 	    option (google.api.http) = {
-			put: "/v1/set_client_zoom"
+			put: "/slam/v1/set_client_zoom"
 		};
 	}
 	rpc SetClientLidarViewMode(SetClientLidarViewModeRequest) returns (SetClientLidarViewModeResponse) {
 	    option (google.api.http) = {
-			put: "/v1/set_client_lidar_view_mode"
+			put: "/slam/v1/set_client_lidar_view_mode"
 		};
 	}
 	rpc SetClientClickMode(SetClientClickModeRequest) returns (SetClientClickModeResponse) {
 	    option (google.api.http) = {
-			put: "/v1/set_client_click_mode"
+			put: "/slam/v1/set_client_click_mode"
 		};
 	}
 }

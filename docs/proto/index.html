@@ -3401,7 +3401,7 @@ the request.</p></td>
               <tr>
                 <td>Status</td>
                 <td>GET</td>
-                <td>/v1/status</td>
+                <td>/api/v1/status</td>
                 <td></td>
               </tr>
               
@@ -3411,7 +3411,7 @@ the request.</p></td>
               <tr>
                 <td>StatusStream</td>
                 <td>GET</td>
-                <td>/v1/status_stream</td>
+                <td>/api/v1/status_stream</td>
                 <td></td>
               </tr>
               
@@ -3421,7 +3421,7 @@ the request.</p></td>
               <tr>
                 <td>Config</td>
                 <td>GET</td>
-                <td>/v1/config</td>
+                <td>/api/v1/config</td>
                 <td></td>
               </tr>
               
@@ -3431,7 +3431,7 @@ the request.</p></td>
               <tr>
                 <td>DoAction</td>
                 <td>POST</td>
-                <td>/v1/do_action</td>
+                <td>/api/v1/do_action</td>
                 <td></td>
               </tr>
               
@@ -3441,7 +3441,7 @@ the request.</p></td>
               <tr>
                 <td>ArmCurrentPosition</td>
                 <td>GET</td>
-                <td>/v1/arm/{name}/current_position</td>
+                <td>/api/v1/arm/{name}/current_position</td>
                 <td></td>
               </tr>
               
@@ -3451,7 +3451,7 @@ the request.</p></td>
               <tr>
                 <td>ArmMoveToPosition</td>
                 <td>PUT</td>
-                <td>/v1/arm/{name}/move_to_position</td>
+                <td>/api/v1/arm/{name}/move_to_position</td>
                 <td></td>
               </tr>
               
@@ -3461,7 +3461,7 @@ the request.</p></td>
               <tr>
                 <td>ArmCurrentJointPositions</td>
                 <td>GET</td>
-                <td>/v1/arm/{name}/current_joint_positions</td>
+                <td>/api/v1/arm/{name}/current_joint_positions</td>
                 <td></td>
               </tr>
               
@@ -3471,7 +3471,7 @@ the request.</p></td>
               <tr>
                 <td>ArmMoveToJointPositions</td>
                 <td>PUT</td>
-                <td>/v1/arm/{name}/move_to_joint_positions</td>
+                <td>/api/v1/arm/{name}/move_to_joint_positions</td>
                 <td></td>
               </tr>
               
@@ -3481,7 +3481,7 @@ the request.</p></td>
               <tr>
                 <td>BaseMoveStraight</td>
                 <td>POST</td>
-                <td>/v1/base/{name}/move_straight</td>
+                <td>/api/v1/base/{name}/move_straight</td>
                 <td></td>
               </tr>
               
@@ -3491,7 +3491,7 @@ the request.</p></td>
               <tr>
                 <td>BaseSpin</td>
                 <td>POST</td>
-                <td>/v1/base/{name}/spin</td>
+                <td>/api/v1/base/{name}/spin</td>
                 <td></td>
               </tr>
               
@@ -3501,7 +3501,7 @@ the request.</p></td>
               <tr>
                 <td>BaseStop</td>
                 <td>POST</td>
-                <td>/v1/base/{name}/stop</td>
+                <td>/api/v1/base/{name}/stop</td>
                 <td></td>
               </tr>
               
@@ -3511,7 +3511,7 @@ the request.</p></td>
               <tr>
                 <td>GripperOpen</td>
                 <td>PUT</td>
-                <td>/v1/gripper/{name}/open</td>
+                <td>/api/v1/gripper/{name}/open</td>
                 <td></td>
               </tr>
               
@@ -3521,7 +3521,7 @@ the request.</p></td>
               <tr>
                 <td>GripperGrab</td>
                 <td>PUT</td>
-                <td>/v1/gripper/{name}/grab</td>
+                <td>/api/v1/gripper/{name}/grab</td>
                 <td></td>
               </tr>
               
@@ -3531,7 +3531,7 @@ the request.</p></td>
               <tr>
                 <td>CameraFrame</td>
                 <td>GET</td>
-                <td>/v1/camera/{name}/frame</td>
+                <td>/api/v1/camera/{name}/frame</td>
                 <td></td>
               </tr>
               
@@ -3541,7 +3541,7 @@ the request.</p></td>
               <tr>
                 <td>CameraRenderFrame</td>
                 <td>GET</td>
-                <td>/v1/camera/{name}/render_frame</td>
+                <td>/api/v1/camera/{name}/render_frame</td>
                 <td></td>
               </tr>
               
@@ -3551,7 +3551,7 @@ the request.</p></td>
               <tr>
                 <td>PointCloud</td>
                 <td>GET</td>
-                <td>/v1/camera/{name}/pointcloud</td>
+                <td>/api/v1/camera/{name}/pointcloud</td>
                 <td></td>
               </tr>
               
@@ -3561,7 +3561,7 @@ the request.</p></td>
               <tr>
                 <td>LidarInfo</td>
                 <td>GET</td>
-                <td>/v1/lidar/{name}/info</td>
+                <td>/api/v1/lidar/{name}/info</td>
                 <td></td>
               </tr>
               
@@ -3571,7 +3571,7 @@ the request.</p></td>
               <tr>
                 <td>LidarStart</td>
                 <td>POST</td>
-                <td>/v1/lidar/{name}/start</td>
+                <td>/api/v1/lidar/{name}/start</td>
                 <td></td>
               </tr>
               
@@ -3581,7 +3581,7 @@ the request.</p></td>
               <tr>
                 <td>LidarStop</td>
                 <td>POST</td>
-                <td>/v1/lidar/{name}/stop</td>
+                <td>/api/v1/lidar/{name}/stop</td>
                 <td></td>
               </tr>
               
@@ -3591,7 +3591,7 @@ the request.</p></td>
               <tr>
                 <td>LidarScan</td>
                 <td>POST</td>
-                <td>/v1/lidar/{name}/scan</td>
+                <td>/api/v1/lidar/{name}/scan</td>
                 <td></td>
               </tr>
               
@@ -3601,7 +3601,7 @@ the request.</p></td>
               <tr>
                 <td>LidarRange</td>
                 <td>GET</td>
-                <td>/v1/lidar/{name}/range</td>
+                <td>/api/v1/lidar/{name}/range</td>
                 <td></td>
               </tr>
               
@@ -3611,7 +3611,7 @@ the request.</p></td>
               <tr>
                 <td>LidarBounds</td>
                 <td>GET</td>
-                <td>/v1/lidar/{name}/bounds</td>
+                <td>/api/v1/lidar/{name}/bounds</td>
                 <td></td>
               </tr>
               
@@ -3621,7 +3621,7 @@ the request.</p></td>
               <tr>
                 <td>LidarAngularResolution</td>
                 <td>GET</td>
-                <td>/v1/lidar/{name}/angular_resolution</td>
+                <td>/api/v1/lidar/{name}/angular_resolution</td>
                 <td></td>
               </tr>
               
@@ -3631,7 +3631,7 @@ the request.</p></td>
               <tr>
                 <td>BoardStatus</td>
                 <td>GET</td>
-                <td>/v1/board/{name}/status</td>
+                <td>/api/v1/board/{name}/status</td>
                 <td></td>
               </tr>
               
@@ -3641,7 +3641,7 @@ the request.</p></td>
               <tr>
                 <td>BoardMotorGo</td>
                 <td>PUT</td>
-                <td>/v1/board/{board_name}/motor/{motor_name}/go</td>
+                <td>/api/v1/board/{board_name}/motor/{motor_name}/go</td>
                 <td></td>
               </tr>
               
@@ -3651,7 +3651,7 @@ the request.</p></td>
               <tr>
                 <td>BoardMotorGoFor</td>
                 <td>PUT</td>
-                <td>/v1/board/{board_name}/motor/{motor_name}/go_for</td>
+                <td>/api/v1/board/{board_name}/motor/{motor_name}/go_for</td>
                 <td></td>
               </tr>
               
@@ -3661,7 +3661,7 @@ the request.</p></td>
               <tr>
                 <td>BoardServoMove</td>
                 <td>PUT</td>
-                <td>/v1/board/{board_name}/servo/{servo_name}/move</td>
+                <td>/api/v1/board/{board_name}/servo/{servo_name}/move</td>
                 <td></td>
               </tr>
               
@@ -3671,7 +3671,7 @@ the request.</p></td>
               <tr>
                 <td>SensorReadings</td>
                 <td>GET</td>
-                <td>/v1/sensors/sensor/{name}/readings</td>
+                <td>/api/v1/sensors/sensor/{name}/readings</td>
                 <td></td>
               </tr>
               
@@ -3681,7 +3681,7 @@ the request.</p></td>
               <tr>
                 <td>CompassHeading</td>
                 <td>GET</td>
-                <td>/v1/sensors/compass/{name}/heading</td>
+                <td>/api/v1/sensors/compass/{name}/heading</td>
                 <td></td>
               </tr>
               
@@ -3691,7 +3691,7 @@ the request.</p></td>
               <tr>
                 <td>CompassStartCalibration</td>
                 <td>POST</td>
-                <td>/v1/sensors/compass/{name}/start_calibration</td>
+                <td>/api/v1/sensors/compass/{name}/start_calibration</td>
                 <td></td>
               </tr>
               
@@ -3701,7 +3701,7 @@ the request.</p></td>
               <tr>
                 <td>CompassStopCalibration</td>
                 <td>POST</td>
-                <td>/v1/sensors/compass/{name}/stop_calibration</td>
+                <td>/api/v1/sensors/compass/{name}/stop_calibration</td>
                 <td></td>
               </tr>
               
@@ -3711,7 +3711,7 @@ the request.</p></td>
               <tr>
                 <td>CompassMark</td>
                 <td>POST</td>
-                <td>/v1/sensors/compass/{name}/mark</td>
+                <td>/api/v1/sensors/compass/{name}/mark</td>
                 <td></td>
               </tr>
               
@@ -3930,7 +3930,7 @@ the request.</p></td>
               <tr>
                 <td>Echo</td>
                 <td>POST</td>
-                <td>/v1/echo</td>
+                <td>/rpc/examples/echo/v1</td>
                 <td>*</td>
               </tr>
               
@@ -4491,7 +4491,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>Call</td>
                 <td>POST</td>
-                <td>/v1/call</td>
+                <td>/rpc/webrtc/v1/call</td>
                 <td></td>
               </tr>
               
@@ -5297,7 +5297,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>Save</td>
                 <td>POST</td>
-                <td>/v1/save</td>
+                <td>/slam/v1/save</td>
                 <td></td>
               </tr>
               
@@ -5307,7 +5307,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>Stats</td>
                 <td>GET</td>
-                <td>/v1/stats</td>
+                <td>/slam/v1/stats</td>
                 <td></td>
               </tr>
               
@@ -5317,7 +5317,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>Calibrate</td>
                 <td>POST</td>
-                <td>/v1/calibrate</td>
+                <td>/slam/v1/calibrate</td>
                 <td></td>
               </tr>
               
@@ -5327,7 +5327,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>MoveRobot</td>
                 <td>POST</td>
-                <td>/v1/move_robot</td>
+                <td>/slam/v1/move_robot</td>
                 <td>*</td>
               </tr>
               
@@ -5337,7 +5337,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>MoveRobotForward</td>
                 <td>POST</td>
-                <td>/v1/move_robot_forward</td>
+                <td>/slam/v1/move_robot_forward</td>
                 <td></td>
               </tr>
               
@@ -5347,7 +5347,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>MoveRobotBackward</td>
                 <td>POST</td>
-                <td>/v1/move_robot_forward</td>
+                <td>/slam/v1/move_robot_forward</td>
                 <td></td>
               </tr>
               
@@ -5357,7 +5357,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>TurnRobotTo</td>
                 <td>POST</td>
-                <td>/v1/turn_robot_to</td>
+                <td>/slam/v1/turn_robot_to</td>
                 <td></td>
               </tr>
               
@@ -5367,7 +5367,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>UpdateRobotDeviceOffset</td>
                 <td>POST</td>
-                <td>/v1/upate_robot_device_offset</td>
+                <td>/slam/v1/upate_robot_device_offset</td>
                 <td></td>
               </tr>
               
@@ -5377,7 +5377,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>StartLidar</td>
                 <td>POST</td>
-                <td>/v1/start_lidar</td>
+                <td>/slam/v1/start_lidar</td>
                 <td></td>
               </tr>
               
@@ -5387,7 +5387,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>StopLidar</td>
                 <td>POST</td>
-                <td>/v1/stop_lidar</td>
+                <td>/slam/v1/stop_lidar</td>
                 <td></td>
               </tr>
               
@@ -5397,7 +5397,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>GetLidarSeed</td>
                 <td>GET</td>
-                <td>/v1/get_lidar_seed</td>
+                <td>/slam/v1/get_lidar_seed</td>
                 <td></td>
               </tr>
               
@@ -5407,7 +5407,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>SetLidarSeed</td>
                 <td>PUT</td>
-                <td>/v1/set_lidar_seed</td>
+                <td>/slam/v1/set_lidar_seed</td>
                 <td></td>
               </tr>
               
@@ -5417,7 +5417,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>SetClientZoom</td>
                 <td>PUT</td>
-                <td>/v1/set_client_zoom</td>
+                <td>/slam/v1/set_client_zoom</td>
                 <td></td>
               </tr>
               
@@ -5427,7 +5427,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>SetClientLidarViewMode</td>
                 <td>PUT</td>
-                <td>/v1/set_client_lidar_view_mode</td>
+                <td>/slam/v1/set_client_lidar_view_mode</td>
                 <td></td>
               </tr>
               
@@ -5437,7 +5437,7 @@ and responds with answers.</p></td>
               <tr>
                 <td>SetClientClickMode</td>
                 <td>PUT</td>
-                <td>/v1/set_client_click_mode</td>
+                <td>/slam/v1/set_client_click_mode</td>
                 <td></td>
               </tr>
               

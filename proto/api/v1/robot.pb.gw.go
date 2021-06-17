@@ -3256,69 +3256,69 @@ func RegisterRobotServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
-	pattern_RobotService_Status_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "status"}, ""))
+	pattern_RobotService_Status_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "status"}, ""))
 
-	pattern_RobotService_StatusStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "status_stream"}, ""))
+	pattern_RobotService_StatusStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "status_stream"}, ""))
 
-	pattern_RobotService_Config_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "config"}, ""))
+	pattern_RobotService_Config_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "config"}, ""))
 
-	pattern_RobotService_DoAction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "do_action"}, ""))
+	pattern_RobotService_DoAction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "do_action"}, ""))
 
-	pattern_RobotService_ArmCurrentPosition_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "arm", "name", "current_position"}, ""))
+	pattern_RobotService_ArmCurrentPosition_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "arm", "name", "current_position"}, ""))
 
-	pattern_RobotService_ArmMoveToPosition_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "arm", "name", "move_to_position"}, ""))
+	pattern_RobotService_ArmMoveToPosition_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "arm", "name", "move_to_position"}, ""))
 
-	pattern_RobotService_ArmCurrentJointPositions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "arm", "name", "current_joint_positions"}, ""))
+	pattern_RobotService_ArmCurrentJointPositions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "arm", "name", "current_joint_positions"}, ""))
 
-	pattern_RobotService_ArmMoveToJointPositions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "arm", "name", "move_to_joint_positions"}, ""))
+	pattern_RobotService_ArmMoveToJointPositions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "arm", "name", "move_to_joint_positions"}, ""))
 
-	pattern_RobotService_BaseMoveStraight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "base", "name", "move_straight"}, ""))
+	pattern_RobotService_BaseMoveStraight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "base", "name", "move_straight"}, ""))
 
-	pattern_RobotService_BaseSpin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "base", "name", "spin"}, ""))
+	pattern_RobotService_BaseSpin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "base", "name", "spin"}, ""))
 
-	pattern_RobotService_BaseStop_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "base", "name", "stop"}, ""))
+	pattern_RobotService_BaseStop_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "base", "name", "stop"}, ""))
 
-	pattern_RobotService_GripperOpen_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "gripper", "name", "open"}, ""))
+	pattern_RobotService_GripperOpen_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "gripper", "name", "open"}, ""))
 
-	pattern_RobotService_GripperGrab_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "gripper", "name", "grab"}, ""))
+	pattern_RobotService_GripperGrab_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "gripper", "name", "grab"}, ""))
 
-	pattern_RobotService_CameraFrame_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "camera", "name", "frame"}, ""))
+	pattern_RobotService_CameraFrame_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "camera", "name", "frame"}, ""))
 
-	pattern_RobotService_CameraRenderFrame_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "camera", "name", "render_frame"}, ""))
+	pattern_RobotService_CameraRenderFrame_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "camera", "name", "render_frame"}, ""))
 
-	pattern_RobotService_PointCloud_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "camera", "name", "pointcloud"}, ""))
+	pattern_RobotService_PointCloud_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "camera", "name", "pointcloud"}, ""))
 
-	pattern_RobotService_LidarInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "lidar", "name", "info"}, ""))
+	pattern_RobotService_LidarInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "lidar", "name", "info"}, ""))
 
-	pattern_RobotService_LidarStart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "lidar", "name", "start"}, ""))
+	pattern_RobotService_LidarStart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "lidar", "name", "start"}, ""))
 
-	pattern_RobotService_LidarStop_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "lidar", "name", "stop"}, ""))
+	pattern_RobotService_LidarStop_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "lidar", "name", "stop"}, ""))
 
-	pattern_RobotService_LidarScan_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "lidar", "name", "scan"}, ""))
+	pattern_RobotService_LidarScan_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "lidar", "name", "scan"}, ""))
 
-	pattern_RobotService_LidarRange_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "lidar", "name", "range"}, ""))
+	pattern_RobotService_LidarRange_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "lidar", "name", "range"}, ""))
 
-	pattern_RobotService_LidarBounds_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "lidar", "name", "bounds"}, ""))
+	pattern_RobotService_LidarBounds_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "lidar", "name", "bounds"}, ""))
 
-	pattern_RobotService_LidarAngularResolution_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "lidar", "name", "angular_resolution"}, ""))
+	pattern_RobotService_LidarAngularResolution_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "lidar", "name", "angular_resolution"}, ""))
 
-	pattern_RobotService_BoardStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "board", "name", "status"}, ""))
+	pattern_RobotService_BoardStatus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "board", "name", "status"}, ""))
 
-	pattern_RobotService_BoardMotorGo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"v1", "board", "board_name", "motor", "motor_name", "go"}, ""))
+	pattern_RobotService_BoardMotorGo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"api", "v1", "board", "board_name", "motor", "motor_name", "go"}, ""))
 
-	pattern_RobotService_BoardMotorGoFor_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"v1", "board", "board_name", "motor", "motor_name", "go_for"}, ""))
+	pattern_RobotService_BoardMotorGoFor_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"api", "v1", "board", "board_name", "motor", "motor_name", "go_for"}, ""))
 
-	pattern_RobotService_BoardServoMove_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"v1", "board", "board_name", "servo", "servo_name", "move"}, ""))
+	pattern_RobotService_BoardServoMove_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"api", "v1", "board", "board_name", "servo", "servo_name", "move"}, ""))
 
-	pattern_RobotService_SensorReadings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "sensors", "sensor", "name", "readings"}, ""))
+	pattern_RobotService_SensorReadings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"api", "v1", "sensors", "sensor", "name", "readings"}, ""))
 
-	pattern_RobotService_CompassHeading_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "sensors", "compass", "name", "heading"}, ""))
+	pattern_RobotService_CompassHeading_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"api", "v1", "sensors", "compass", "name", "heading"}, ""))
 
-	pattern_RobotService_CompassStartCalibration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "sensors", "compass", "name", "start_calibration"}, ""))
+	pattern_RobotService_CompassStartCalibration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"api", "v1", "sensors", "compass", "name", "start_calibration"}, ""))
 
-	pattern_RobotService_CompassStopCalibration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "sensors", "compass", "name", "stop_calibration"}, ""))
+	pattern_RobotService_CompassStopCalibration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"api", "v1", "sensors", "compass", "name", "stop_calibration"}, ""))
 
-	pattern_RobotService_CompassMark_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "sensors", "compass", "name", "mark"}, ""))
+	pattern_RobotService_CompassMark_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"api", "v1", "sensors", "compass", "name", "mark"}, ""))
 )
 
 var (

@@ -15,7 +15,7 @@ service SignalingService {
 	// and in the case of TLS being used, SNI.
 	rpc Call(CallRequest) returns (CallResponse) {
 		option (google.api.http) = {
-			post: "/v1/call"
+			post: "/rpc/webrtc/v1/call"
 		};
 	}
 
