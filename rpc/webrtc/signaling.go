@@ -106,7 +106,7 @@ func (srv *SignalingServer) Call(ctx context.Context, req *webrtcpb.CallRequest)
 }
 
 // Answer listens on call/offer queue forever responding with SDPs to agreed to calls.
-// TODO(erd): This should be authenticated to internal servers only with client certificates.
+// TODO(https://github.com/viamrobotics/core/issues/104): This should be authorized for robots only.
 func (srv *SignalingServer) Answer(server webrtcpb.SignalingService_AnswerServer) (err error) {
 	queue, err := srv.getOrMakeQueue(server.Context())
 	if err != nil {
