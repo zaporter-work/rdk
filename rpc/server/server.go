@@ -169,7 +169,7 @@ func NewWithListener(
 		if err := server.RegisterServiceServer(
 			context.Background(),
 			&webrtcpb.SignalingService_ServiceDesc,
-			rpcwebrtc.NewSignalingServer(),
+			rpcwebrtc.NewSignalingServer(rpcwebrtc.NewMemoryCallQueue()),
 			webrtcpb.RegisterSignalingServiceHandlerFromEndpoint,
 		); err != nil {
 			return nil, err

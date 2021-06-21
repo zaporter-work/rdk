@@ -28,7 +28,7 @@ import (
 // the two parties.
 type SignalingServer struct {
 	webrtcpb.UnimplementedSignalingServiceServer
-	callQueue *MemoryCallQueue
+	callQueue CallQueue
 }
 
 // NewSignalingServer makes a new signaling server that uses an in memory
@@ -36,8 +36,8 @@ type SignalingServer struct {
 // TODO(https://github.com/viamrobotics/core/issues/79): abstraction to be able to use
 // MongoDB as a distributed call queue. This will enable many signaling services to
 // run acting as effectively operators on as switchboard.
-func NewSignalingServer() *SignalingServer {
-	return &SignalingServer{callQueue: NewMemoryCallQueue()}
+func NewSignalingServer(callQueue CallQueue) *SignalingServer {
+	return &SignalingServer{callQueue: callQueue}
 }
 
 // RPCHostMetadataField is the identifier of a host.
