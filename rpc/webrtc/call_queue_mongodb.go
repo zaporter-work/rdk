@@ -106,6 +106,7 @@ func (queue *MongoDBCallQueue) SendOffer(ctx context.Context, host, sdp string) 
 	defer csNextCancel()
 	defer func() { <-csNext }()
 
+	call.StartedAt = time.Now()
 	if _, err := queue.coll.InsertOne(ctx, call); err != nil {
 		return "", err
 	}
