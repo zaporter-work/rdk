@@ -144,5 +144,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	}
 	defer myRobot.Close()
 
-	return webserver.RunWeb(ctx, myRobot, web.NewOptions(), logger)
+	webOpts := web.NewOptions()
+	webOpts.Insecure = true
+	return webserver.RunWeb(ctx, myRobot, webOpts, logger)
 }
