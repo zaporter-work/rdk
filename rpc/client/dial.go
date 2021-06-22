@@ -29,7 +29,7 @@ type DialOptions struct {
 // Dial attempts to make the most convenient connection to the given address. It first tries a direct
 // connection if the address is an IP. It next tries to connect to the local version of the host followed
 // by a WebRTC brokered connection.
-// TODO(erd): figure out decent way to handle reconnect on connection termination
+// TODO(https://github.com/viamrobotics/core/issues/111): figure out decent way to handle reconnect on connection termination
 func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Logger) (dialer.ClientConn, error) {
 	var host string
 	var port string

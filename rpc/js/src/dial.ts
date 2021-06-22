@@ -31,7 +31,7 @@ async function signalCall(signalingAddress: string, host: string, sdp: string): 
 	return await result;
 }
 
-// TODO(erd): figure out decent way to handle reconnect on connection termination
+// TODO(https://github.com/viamrobotics/core/issues/111): figure out decent way to handle reconnect on connection termination
 export async function dial(signalingAddress: string, host: string): Promise<ClientChannel> {
 	const { pc, dc } = await newPeerConnectionForClient();
 
