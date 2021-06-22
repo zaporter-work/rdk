@@ -42,7 +42,7 @@ func Dial(ctx context.Context, address string, opts DialOptions, logger golog.Lo
 		host = address
 	}
 
-	if addr := net.ParseIP(host); addr == nil {
+	if addr := net.ParseIP(host); addr == nil && false {
 		localHost := fmt.Sprintf("local.%s", host)
 		if _, err := lookupHost(ctx, localHost); err == nil {
 			var localAddress string
