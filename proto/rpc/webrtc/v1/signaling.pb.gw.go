@@ -131,7 +131,7 @@ func RegisterSignalingServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.rpc.webrtc.v1.SignalingService/Call")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.rpc.webrtc.v1.SignalingService/Call", runtime.WithHTTPPathPattern("/rpc/webrtc/v1/call"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -200,7 +200,7 @@ func RegisterSignalingServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/proto.rpc.webrtc.v1.SignalingService/Call")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/proto.rpc.webrtc.v1.SignalingService/Call", runtime.WithHTTPPathPattern("/rpc/webrtc/v1/call"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -220,7 +220,7 @@ func RegisterSignalingServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/proto.rpc.webrtc.v1.SignalingService/Answer")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/proto.rpc.webrtc.v1.SignalingService/Answer", runtime.WithHTTPPathPattern("/proto.rpc.webrtc.v1.SignalingService/Answer"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

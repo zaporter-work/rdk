@@ -17,8 +17,10 @@ import (
 
 	"go.uber.org/multierr"
 
+	goutils "go.viam.com/utils"
+	"go.viam.com/utils/artifact"
+
 	"go.viam.com/core/arm"
-	"go.viam.com/core/artifact"
 	"go.viam.com/core/camera"
 	"go.viam.com/core/config"
 	"go.viam.com/core/gripper"
@@ -173,8 +175,8 @@ func movePiece(ctx context.Context, boardState boardStateGuesser, robot robot.Ro
 			return err
 		}
 
-		utils.PanicCapturingGo(func() {
-			if !utils.SelectContextOrWait(ctx, 200*time.Millisecond) {
+		goutils.PanicCapturingGo(func() {
+			if !goutils.SelectContextOrWait(ctx, 200*time.Millisecond) {
 				return
 			}
 			myGripper.Open(ctx)
@@ -281,7 +283,7 @@ func getWristPicCorners(ctx context.Context, wristCam gostream.ImageSource, debu
 	imageSize.Y = imgBounds.Max.Y
 
 	// wait, cause this camera sucks
-	if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
+	if !goutils.SelectContextOrWait(ctx, 500*time.Millisecond) {
 		return nil, imageSize, ctx.Err()
 	}
 	img, release, err = wristCam.Next(ctx)
@@ -407,7 +409,7 @@ func lookForBoard(ctx context.Context, myArm arm.Arm, myRobot robot.Robot) error
 
 func adjustArmInsideSquare(ctx context.Context, robot robot.Robot) error {
 	// wait for camera to focus
-	if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
+	if !goutils.SelectContextOrWait(ctx, 500*time.Millisecond) {
 		return ctx.Err()
 	}
 
@@ -470,7 +472,7 @@ func adjustArmInsideSquare(ctx context.Context, robot robot.Robot) error {
 		}
 
 		// wait for camera to focus
-		if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
+		if !goutils.SelectContextOrWait(ctx, 500*time.Millisecond) {
 			return ctx.Err()
 		}
 	}
@@ -478,7 +480,7 @@ func adjustArmInsideSquare(ctx context.Context, robot robot.Robot) error {
 }
 
 func main() {
-	utils.ContextualMain(mainWithArgs, logger)
+	goutils.ContextualMain(mainWithArgs, logger)
 }
 
 func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err error) {
@@ -543,7 +545,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 		err = moveTo(ctx, myArm, "c3", 0)
 		if err == nil {
 			// wait for camera to focus
-			if !utils.SelectContextOrWait(ctx, 500*time.Millisecond) {
+			if !goutils.SelectContextOrWait(ctx, 500*time.Millisecond) {
 				return
 			}
 			err = adjustArmInsideSquare(ctx, myRobot)
@@ -561,7 +563,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	annotatedImageHolder := &imagesource.StaticSource{}
 	myRobot.AddCamera(&camera.ImageSource{annotatedImageHolder}, config.Component{})
 
-	utils.PanicCapturingGo(func() {
+	goutils.PanicCapturingGo(func() {
 		for {
 			img, release, err := webcam.Next(ctx)
 			func() {

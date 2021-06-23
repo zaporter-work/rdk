@@ -15,6 +15,8 @@ import (
 
 	"github.com/go-errors/errors"
 
+	"go.viam.com/utils"
+
 	"go.viam.com/core/board"
 	"go.viam.com/core/config"
 	pb "go.viam.com/core/proto/api/v1"
@@ -23,7 +25,6 @@ import (
 	robotimpl "go.viam.com/core/robot/impl"
 	"go.viam.com/core/sensor"
 	"go.viam.com/core/serial"
-	"go.viam.com/core/utils"
 	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
 

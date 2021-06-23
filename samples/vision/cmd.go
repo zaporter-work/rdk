@@ -11,8 +11,9 @@ import (
 	"syscall"
 	"time"
 
+	"go.viam.com/utils"
+
 	"go.viam.com/core/rimage"
-	"go.viam.com/core/utils"
 	"go.viam.com/core/vision/segmentation"
 
 	"github.com/disintegration/imaging"

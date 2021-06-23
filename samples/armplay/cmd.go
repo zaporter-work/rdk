@@ -8,12 +8,13 @@ import (
 
 	"github.com/go-errors/errors"
 
+	"go.viam.com/utils"
+
 	"go.viam.com/core/action"
 	"go.viam.com/core/config"
 	pb "go.viam.com/core/proto/api/v1"
 	"go.viam.com/core/robot"
 	robotimpl "go.viam.com/core/robot/impl"
-	"go.viam.com/core/utils"
 	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
 

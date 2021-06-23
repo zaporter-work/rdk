@@ -6,11 +6,12 @@ import (
 
 	"github.com/go-errors/errors"
 
+	"go.viam.com/utils"
+
 	"go.viam.com/core/action"
 	"go.viam.com/core/board"
 	pb "go.viam.com/core/proto/api/v1"
 	"go.viam.com/core/robot"
-	"go.viam.com/core/utils"
 )
 
 func init() {
