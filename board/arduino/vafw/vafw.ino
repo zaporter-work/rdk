@@ -1,5 +1,6 @@
 
 #include "buffer.h"
+#include "general.h"
 #include "motor.h"
 
 #define MAX_MOTORS 12
@@ -11,7 +12,7 @@ struct motorInfo {
         encB = 0;
     }
     Motor* motor;
-    int encA, encB;
+    PinNumber encA, encB;
 };
 
 motorInfo motors[MAX_MOTORS];
@@ -37,8 +38,8 @@ Motor* findMotor(const char* name) {
     return 0;
 }
 
-void configureMotorDC(Buffer* b, const char* name, int pwm, int pinA, int pinB,
-                      int encA, int encB) {
+void configureMotorDC(Buffer* b, const char* name, int pwm, PinNumber pinA,
+                      PinNumber pinB, PinNumber encA, PinNumber encB) {
     int motor = findEmptyMotor();
     if (motor < 0) {
         b->println("#not enough motor slots");
@@ -233,12 +234,12 @@ void loop() {
     }
 }
 
-void setupInterruptBasic(int pin, void (*ISR)(), int what) {
+void setupInterruptBasic(PinNumber pin, void (*ISR)(), int what) {
     pinMode(pin, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(pin), ISR, what);
 }
 
-void motorEncoder(int pin) {
+void motorEncoder(PinNumber pin) {
     for (int i = 0; i < MAX_MOTORS; i++) {
         if (motors[i].encA == pin) {
             motors[i].motor->encoder()->encoderTick(true);
@@ -259,7 +260,7 @@ void motorInt19() { motorEncoder(19); }
 void motorInt20() { motorEncoder(20); }
 void motorInt21() { motorEncoder(21); }
 
-bool setupInterruptForMotor(int pin) {
+bool setupInterruptForMotor(PinNumber pin) {
     switch (pin) {
         case 2:
             setupInterruptBasic(pin, motorInt2, CHANGE);
