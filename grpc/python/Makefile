@@ -8,5 +8,8 @@ buf:
 setup:
 	pip3 install grpclib protobuf
 
-run:
+run_server:
+	python3 server.py localhost 8080
+
+run_client:
 	python3 client.py localhost 8080
