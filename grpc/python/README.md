@@ -8,4 +8,10 @@
 
 ## Run
 
-* Run `make run`
+* Run `make buf`
+
+### Server
+* Run `make run_server`
+
+### Client
+* Run `make run_client`
