@@ -1,4 +1,4 @@
-# gRPC Server
+# gRPC Java
 
 ## Dependencies
 
