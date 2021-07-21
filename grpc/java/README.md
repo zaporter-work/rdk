@@ -1,8 +1,8 @@
-# gRPC Python
+# gRPC Server
 
 ## Dependencies
 
-* Python 3
+* JDK 8+
 * Core [Dependencies](../../README.md#dependencies)
 * Run `make setup`
 
