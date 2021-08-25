@@ -2,6 +2,7 @@
 #include "buffer.h"
 #include "general.h"
 #include "motor.h"
+#include "pwm.h"
 
 #define MAX_MOTORS 12
 
@@ -16,6 +17,8 @@ struct motorInfo {
 };
 
 motorInfo motors[MAX_MOTORS];
+
+PWM pwm;
 
 Buffer* buf1 = 0;
 Buffer* buf2 = 0;
@@ -270,6 +273,35 @@ void processBuffer(Buffer* b) {
         b->print("@");
         b->print(val);
         b->println("");
+        return;
+    }
+    if (const char* rest = isCommand(line, "set-pwm-freq")) {
+        int pin,freq;
+        int n = sscanf(rest,"%i %i",&pin,&freq);
+          if (n != 2) {
+            b->print(n);
+            b->println("");
+            b->println("#error parsing set-pwm-freq");
+            return;
+          }
+        if(!pwm.setPinFrequency(pin,freq)){
+            b->println("#couldn't set pwm freq for pin");
+            return;
+        }
+        b->print("@ok");
+        return;
+    }
+    if (const char* rest = isCommand(line, "set-pwm-duty")) {
+        int pin,duty;
+        int n = sscanf(rest,"%i %i",&pin,&duty);
+          if (n != 2) {
+            b->print(n);
+            b->println("");
+            b->println("#error parsing set-pwm-duty");
+            return;
+          }
+        pwm.analogWrite(pin,duty);
+        b->print("@ok");
         return;
     }
 
