@@ -66,6 +66,7 @@ bool PWMChannel16bits::setPWMFrequency(uint32_t frequency)
 	uint32_t top = 0;
 	uint16_t prescaler[] = {1,8,64,256,1024};
 	uint8_t n = 0;
+	if(!frequency) return false;
 	switch(_pwm_mode){
 	case PWM_FAST_PWM_MODE:
 	case PWM_PHASE_CORRECT_MODE:
