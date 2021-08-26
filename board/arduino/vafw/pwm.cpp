@@ -11,7 +11,7 @@ PWMChannel::PWMChannel() :
 	_pwm_mode(PWM_PHASE_FREQUENCY_CORRECT_MODE)
 {
 }
-
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega328P__)
 template <size_t N>
 PWMChannel16bits::PWMChannel16bits(volatile uint8_t *base_addr,volatile uint16_t *ocrn_addr,volatile uint16_t *icrn_addr, const int (&a)[N])
 	: _tccrnA((volatile union TCCRnA*)base_addr),
@@ -38,9 +38,9 @@ void PWMChannel16bits::setChannelDutyCycle(uint8_t channel, uint8_t duty_cycle)
 		return;
 	}
 	uint32_t ocrn = 0;
-	if(duty_cycle == 0) ocrn = 0;
-	else if (duty_cycle == 255) ocrn = _top;
-	else ocrn = (_top*((uint32_t)duty_cycle)) >> 8;
+	if(duty_cycle == 0) ocrn = 0; /*Corner cases*/
+	else if (duty_cycle == 255) ocrn = _top; /*Corner cases*/
+	else ocrn = (_top*((uint32_t)duty_cycle)) >> 8; /*To represent the range [0,icrn] in [0;255] we multiply by duty_cyle then divide by 256*/
 	switch(channel){
 	case PWM_CHANNEL_A:
 		_tccrnA->comn_A1 = 1;
@@ -72,7 +72,7 @@ bool PWMChannel16bits::setPWMFrequency(uint32_t frequency)
 	case PWM_PHASE_CORRECT_MODE:
 	case PWM_PHASE_FREQUENCY_CORRECT_MODE:
 		do{
-			top = BASE_CLK_FREQ/(2*prescaler[n]*frequency);
+			top = BASE_CLK_FREQ/(2*prescaler[n]*frequency); /* See datasheet for frequency equation */
 			if(top > 0x3 && top <= 0xFFFF) break;
 			++n;
 		}while(n < ARRAY_SIZE(prescaler));
@@ -176,6 +176,7 @@ PWM::PWM()
 	_channels[1] = new PWMChannel8bits(&TCCR2A,&OCR2A, {3});
 #endif
 }
+#endif
 bool PWM::setPinFrequency(uint8_t pin, uint32_t frequency)
 {
 #if defined(__AVR_ATmega2560__)
@@ -258,6 +259,6 @@ void PWM::analogWrite(uint8_t pin, uint8_t value)
 		::analogWrite(pin,value);
 	}
 #else
-	::analogWrite(pin,value);
+	::analogWrite(pin,value); /* Default to arduino analog write when pin is unhandeled */
 #endif
 }
