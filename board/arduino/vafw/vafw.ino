@@ -276,8 +276,8 @@ void processBuffer(Buffer* b) {
         return;
     }
     if (const char* rest = isCommand(line, "set-pwm-freq")) {
-        int pin,freq;
-        int n = sscanf(rest,"%i %i",&pin,&freq);
+        uint32_t pin,freq;
+        int n = sscanf(rest,"%lu %lu",&pin,&freq);
           if (n != 2) {
             b->print(n);
             b->println("");
@@ -292,8 +292,8 @@ void processBuffer(Buffer* b) {
         return;
     }
     if (const char* rest = isCommand(line, "set-pwm-duty")) {
-        int pin,duty;
-        int n = sscanf(rest,"%i %i",&pin,&duty);
+        uint16_t pin,duty;
+        int n = sscanf(rest,"%u %u",&pin,&duty);
           if (n != 2) {
             b->print(n);
             b->println("");
