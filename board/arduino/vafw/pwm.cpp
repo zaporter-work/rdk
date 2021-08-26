@@ -25,6 +25,13 @@ PWMChannel16bits::PWMChannel16bits(volatile uint8_t *base_addr,volatile uint16_t
 {
 	_frequency = 0;
 	_top = 0;
+	_tccrnA->reg = 0;
+	_tccrnB->reg = 0;
+	*_ocrnA = 0;
+	*_ocrnB = 0;
+#if defined(__AVR_ATmega2560__)
+	*_ocrnC = 0;
+#endif
 	for(int i : a)
 	{
 		pinMode(i, OUTPUT);
@@ -102,6 +109,8 @@ PWMChannel8bits::PWMChannel8bits(volatile uint8_t *base_addr,volatile uint8_t *o
 {
 	_tccrnA->reg = 0;
 	_tccrnB->reg = 0;
+	*_ocrnA = 0;
+	*_ocrnB = 0;
 	_frequency = 0;
 	_top = 0;
 	for(int i : a)
