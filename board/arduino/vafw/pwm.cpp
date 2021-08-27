@@ -4,6 +4,7 @@
 	((sizeof(a) / sizeof(*(a))) /						\
 	 static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
 
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega328P__)
 PWMChannel::PWMChannel() :
 	_prescaler(0),
 	_frequency(0),
@@ -11,7 +12,7 @@ PWMChannel::PWMChannel() :
 	_pwm_mode(PWM_PHASE_FREQUENCY_CORRECT_MODE)
 {
 }
-#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega328P__)
+
 template <size_t N>
 PWMChannel16bits::PWMChannel16bits(volatile uint8_t *base_addr,volatile uint16_t *ocrn_addr,volatile uint16_t *icrn_addr, const int (&a)[N])
 	: _tccrnA((volatile union TCCRnA*)base_addr),
@@ -172,7 +173,7 @@ bool PWMChannel8bits::setPWMFrequency(uint32_t frequency)
 	}
 	return false;
 }
-
+#endif
 PWM::PWM()
 {
 #if defined(__AVR_ATmega2560__)
@@ -185,7 +186,7 @@ PWM::PWM()
 	_channels[1] = new PWMChannel8bits(&TCCR2A,&OCR2A, {3});
 #endif
 }
-#endif
+
 bool PWM::setPinFrequency(uint8_t pin, uint32_t frequency)
 {
 #if defined(__AVR_ATmega2560__)
