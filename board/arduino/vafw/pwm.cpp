@@ -94,6 +94,9 @@ bool PWMChannel16bits::setPWMFrequency(uint32_t frequency)
 			_tccrnA->wgmn0 = 0;
 			_top = top;
 			_frequency = frequency;
+			*_ocrnA = 0;
+			*_ocrnB = 0;
+			*_ocrnC = 0;
 			return true;
 		}
 		break;
@@ -167,6 +170,7 @@ bool PWMChannel8bits::setPWMFrequency(uint32_t frequency)
 			_tccrnA->wgmn0 = 1;
 			_top = top;
 			_frequency = frequency;
+			*_ocrnB = 0;
 			return true;
 		}
 		break;
