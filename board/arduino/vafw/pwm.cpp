@@ -134,11 +134,6 @@ void PWMChannel8bits::setChannelDutyCycle(uint8_t channel, uint8_t duty_cycle)
 	else if (duty_cycle == 255) ocrn = _top;
 	else ocrn = (_top*((uint32_t)duty_cycle)) >> 8;
 	switch(channel){
-	case PWM_CHANNEL_A:
-		_tccrnA->comn_A1 = 1;
-		_tccrnA->comn_A0 = 0;
-		*_ocrnA = ocrn & 0xFF;
-		break;
 	case PWM_CHANNEL_B:
 		_tccrnA->comn_B1 = 1;
 		_tccrnA->comn_B0 = 0;
@@ -254,6 +249,8 @@ void PWM::analogWrite(uint8_t pin, uint8_t value)
 	case 9:
 		_channels[3]->setChannelDutyCycle(PWM_CHANNEL_B,value);
 		break;
+	case 10:
+		break;
 	default:
 		::analogWrite(pin,value);
 		break;
@@ -268,6 +265,8 @@ void PWM::analogWrite(uint8_t pin, uint8_t value)
 		break;
 	case 3:
 		_channels[1]->setChannelDutyCycle(PWM_CHANNEL_B,value);
+		break;
+	case 11:
 		break;
 	default:
 		::analogWrite(pin,value);
