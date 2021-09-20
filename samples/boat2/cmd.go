@@ -29,7 +29,7 @@ import (
 	"github.com/adrianmo/go-nmea"
 	"github.com/edaniels/golog"
 
-	"github.com/kellydunn/golang-geo"
+	geo "github.com/kellydunn/golang-geo"
 )
 
 var logger = golog.NewDevelopmentLogger("boat2")
@@ -219,7 +219,7 @@ func runRC(ctx context.Context, myBoat *boat) {
 	}
 }
 
-var goal = geo.NewPoint(40.7453889, -74.011)
+//var goal = geo.NewPoint(40.7453889, -74.011)
 
 var path = []*geo.Point{}
 
@@ -270,7 +270,7 @@ func autoDrive(ctx context.Context, path []*geo.Point, myBoat *boat) error {
 	bearingToGoal = fixAngle(bearingToGoal)
 
 	if distance < .005 {
-		fmt.Printf("i made it!\n")
+		logger.Debug("i made it")
 		return nil
 	}
 
