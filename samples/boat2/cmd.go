@@ -30,6 +30,10 @@ import (
 	"github.com/edaniels/golog"
 
 	geo "github.com/kellydunn/golang-geo"
+
+	//"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var logger = golog.NewDevelopmentLogger("boat2")
@@ -78,6 +82,9 @@ type boat struct {
 	steeringRange            float64
 
 	myCompass compass.Compass
+
+	mongoClient *mongo.Client
+	waypoints   *mongo.Collection
 }
 
 func (b *boat) Off(ctx context.Context) error {
@@ -109,7 +116,19 @@ func (b *boat) Steer(ctx context.Context, dir float64) error {
 }
 
 func newBoat(ctx context.Context, myRobot robot.Robot) (*boat, error) {
+	var err error
 	b := &boat{myRobot: myRobot}
+
+	b.mongoClient, err = mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
+	if err != nil {
+		return nil, err
+	}
+	err = b.mongoClient.Connect(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	b.waypoints = b.mongoClient.Database("boat").Collection("waypoints")
 
 	bb, ok := myRobot.BoardByName("local")
 	if !ok {
@@ -134,7 +153,7 @@ func newBoat(ctx context.Context, myRobot robot.Robot) (*boat, error) {
 		return nil, errors.New("no thrust motor")
 	}
 
-	err := b.Off(ctx)
+	err = b.Off(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -218,10 +237,76 @@ func runRC(ctx context.Context, myBoat *boat) {
 	}
 }
 
-//var goal = geo.NewPoint(40.7453889, -74.011)
-var goal = geo.NewPoint(40.7449719, -74.0109809)
+//var poleAcross = geo.NewPoint(40.7453889, -74.011)
+//var outOfFinger = geo.NewPoint(40.7449719, -74.0109809)
+
+var waypoints = []waypoint{
+	{Lat: 40.745297, Long: -74.010916},
+	{Lat: 40.7448830, Long: -74.0109611},
+	{Lat: 40.7448805, Long: -74.0103623},
+	{Lat: 40.7452645, Long: -74.0102802}, // middle
+	{Lat: 40.7448805, Long: -74.0103623},
+	{Lat: 40.7448830, Long: -74.0109611},
+	{Lat: 40.745297, Long: -74.010916},
+}
 
 var path = []*geo.Point{}
+
+func (b *boat) waypointReached(ctx context.Context) error {
+	waypoints = waypoints[1:]
+	return nil
+	/*
+		wp, err := b.nextWaypoint(ctx)
+		if err != nil {
+			return fmt.Errorf("can't mark waypoint reached: %w", err)
+		}
+
+		//_, err = b.waypoints.DeleteOne(ctx, bson.M{"_id" : wp.ID}, bson.M{ "$set" : bson.M{ "visited" : true } })
+		_, err = b.waypoints.DeleteOne(ctx, bson.M{"_id" : wp.ID})
+		return err
+	*/
+}
+
+type waypoint struct {
+	ID      int
+	Visited bool
+	Order   int
+	Lat     float64
+	Long    float64
+}
+
+func (wp *waypoint) ToPoint() *geo.Point {
+	return geo.NewPoint(wp.Lat, wp.Long)
+}
+
+func (b *boat) nextWaypoint(ctx context.Context) (waypoint, error) {
+	if len(waypoints) == 0 {
+		return waypoint{}, errors.New("no more waypoint")
+	}
+	return waypoints[0], nil
+	/*
+		filter := bson.D{{ "visited" ,false }}
+		cursor, err :=
+			b.waypoints.Find(ctx, filter, options.Find().SetSort( bson.M{ "order" : -1 } ).SetLimit(1))
+		if err != nil {
+			return waypoint{}, fmt.Errorf("can't get next waypoint: %w", err)
+		}
+
+		all := []Waypoint{}
+		err = cursor.All(ctx, &all)
+		if err != nil {
+			return waypoint{}, fmt.Errorf("can't get next waypoint: %w", err)
+		}
+
+		fmt.Printf("hi %v\n", all)
+
+		if len(all) == 0 {
+			return Waypoint{}, errors.New("no more waypoint")
+		}
+
+		return all[0], nil
+	*/
+}
 
 func (b *boat) DirectionAndDistanceToGo(ctx context.Context) (float64, float64, error) {
 	if len(path) == 0 {
@@ -229,6 +314,13 @@ func (b *boat) DirectionAndDistanceToGo(ctx context.Context) (float64, float64, 
 	}
 
 	last := path[len(path)-1]
+
+	wp, err := b.nextWaypoint(ctx)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	goal := wp.ToPoint()
 
 	return fixAngle(last.BearingTo(goal)), last.GreatCircleDistance(goal), nil
 }
@@ -282,6 +374,7 @@ func autoDrive(ctx context.Context, myBoat *boat) {
 	}
 }
 
+// returns if at target
 func autoDriveOne(ctx context.Context, myBoat *boat) error {
 	if len(path) <= 1 {
 		return errors.New("no gps data")
@@ -299,7 +392,7 @@ func autoDriveOne(ctx context.Context, myBoat *boat) error {
 
 	if distanceToGoal < .005 {
 		logger.Debug("i made it")
-		return nil
+		return myBoat.waypointReached(ctx)
 	}
 
 	bearingDelta := computeBearing(bearingToGoal, currentHeading)
