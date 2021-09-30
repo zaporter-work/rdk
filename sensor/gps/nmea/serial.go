@@ -1,8 +1,9 @@
-package main
+package nmea
 
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"io"
 	"sync"
 
@@ -21,11 +22,11 @@ import (
 
 func init() {
 	registry.RegisterSensor(gps.Type, "nmea-serial", registry.Sensor{Constructor: func(ctx context.Context, r robot.Robot, config config.Component, logger golog.Logger) (sensor.Sensor, error) {
-		return newMyGPS(logger)
+		return newSerialNMEAGPS(config, logger)
 	}})
 }
 
-type myGPS struct {
+type serialNMEAGPS struct {
 	mu     sync.RWMutex
 	dev    io.ReadWriteCloser
 	logger golog.Logger
@@ -37,21 +38,27 @@ type myGPS struct {
 	activeBackgroundWorkers sync.WaitGroup
 }
 
-func newMyGPS(logger golog.Logger) (*myGPS, error) {
-	dev, err := serial.Open("/dev/ttyAMA0")
+const pathAttrName = "path"
+
+func newSerialNMEAGPS(config config.Component, logger golog.Logger) (*serialNMEAGPS, error) {
+	serialPath := config.Attributes.String(pathAttrName)
+	if serialPath == "" {
+		return nil, fmt.Errorf("expected non-empty string for %q", pathAttrName)
+	}
+	dev, err := serial.Open(serialPath)
 	if err != nil {
 		return nil, err
 	}
 
 	cancelCtx, cancelFunc := context.WithCancel(context.Background())
 
-	g := &myGPS{dev: dev, cancelCtx: cancelCtx, cancelFunc: cancelFunc}
+	g := &serialNMEAGPS{dev: dev, cancelCtx: cancelCtx, cancelFunc: cancelFunc}
 	g.Start()
 
 	return g, nil
 }
 
-func (g *myGPS) Start() {
+func (g *serialNMEAGPS) Start() {
 	g.activeBackgroundWorkers.Add(1)
 	utils.PanicCapturingGo(func() {
 		defer g.activeBackgroundWorkers.Done()
@@ -76,7 +83,7 @@ func (g *myGPS) Start() {
 
 			gll, ok := s.(nmea.GLL)
 			if ok {
-				now := ToPoint(gll)
+				now := toPoint(gll)
 				g.mu.Lock()
 				g.lastLocation = now
 				g.mu.Unlock()
@@ -85,7 +92,7 @@ func (g *myGPS) Start() {
 	})
 }
 
-func (g *myGPS) Readings(ctx context.Context) ([]interface{}, error) {
+func (g *serialNMEAGPS) Readings(ctx context.Context) ([]interface{}, error) {
 	lat, long, err := g.Location(ctx)
 	if err != nil {
 		return nil, err
@@ -93,19 +100,24 @@ func (g *myGPS) Readings(ctx context.Context) ([]interface{}, error) {
 	return []interface{}{lat, long}, nil
 }
 
-func (g *myGPS) Location(ctx context.Context) (lat float64, long float64, err error) {
+func (g *serialNMEAGPS) Location(ctx context.Context) (lat float64, long float64, err error) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 	return g.lastLocation.Lat(), g.lastLocation.Lng(), nil
 }
 
-func (g *myGPS) Close() error {
+func (g *serialNMEAGPS) Close() error {
 	g.cancelFunc()
 	g.activeBackgroundWorkers.Wait()
 	return g.dev.Close()
 }
 
 // Desc returns that this is a GPS.
-func (g *myGPS) Desc() sensor.Description {
+func (g *serialNMEAGPS) Desc() sensor.Description {
 	return sensor.Description{gps.Type, ""}
+}
+
+// toPoint converts a nmea.GLL to a geo.Point
+func toPoint(a nmea.GLL) *geo.Point {
+	return geo.NewPoint(a.Latitude, a.Longitude)
 }
