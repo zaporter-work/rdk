@@ -20,6 +20,7 @@ import (
 	"go.viam.com/core/registry"
 	"go.viam.com/core/robot"
 	robotimpl "go.viam.com/core/robot/impl"
+	"go.viam.com/core/services/navigation"
 	coreutils "go.viam.com/core/utils"
 	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
@@ -73,6 +74,8 @@ type boat struct {
 	squirt, steering, thrust motor.Motor
 	middle                   float64
 	steeringRange            float64
+
+	navService navigation.Service
 }
 
 func (b *boat) Stop(ctx context.Context) error {
@@ -117,6 +120,15 @@ func newBoat(ctx context.Context, r robot.Robot, c config.Component, logger golo
 		return nil, errors.New("no thrust motor")
 	}
 
+	navServiceTemp, ok := r.ServiceByName("navigation")
+	if !ok {
+		return nil, errors.New("no navigation service")
+	}
+	b.navService, ok = navServiceTemp.(navigation.Service)
+	if !ok {
+		return nil, errors.New("navigation service isn't a nav service")
+	}
+
 	err = b.Stop(ctx)
 	if err != nil {
 		return nil, err
@@ -156,15 +168,18 @@ func newBoat(ctx context.Context, r robot.Robot, c config.Component, logger golo
 }
 
 func (b *boat) MoveStraight(ctx context.Context, distanceMillis int, millisPerSec float64, block bool) (int, error) {
-	panic("TODO(erd->erh) implement me!!!")
+	return 0, b.thrust.Go(ctx, pb.DirectionRelative_DIRECTION_RELATIVE_FORWARD, 0.7)
 }
 
 func (b *boat) Spin(ctx context.Context, angleDeg float64, degsPerSec float64, block bool) (float64, error) {
-	panic("TODO(erd->erh) implement me!!!")
+	steeringDir := angleDeg / -180.0
+
+	logger.Debugf("steeringDir: %0.2f", steeringDir)
+
+	return 0, b.Steer(ctx, steeringDir)
 }
 
 func (b *boat) WidthMillis(ctx context.Context) (int, error) {
-	// TODO(erd->erh): does this matter?
 	return 600, nil
 }
 
@@ -186,7 +201,15 @@ func runRC(ctx context.Context, myBoat *boat) {
 		//logger.Debugf("vals: %v", vals)
 
 		if vals["mode"] <= 1 {
+			err = myBoat.navService.SetMode(ctx, navigation.ModeWaypoint)
+			if err != nil {
+				logger.Errorw("error setting mode: %w", err)
+			}
 			continue
+		}
+		err = myBoat.navService.SetMode(ctx, navigation.ModeManual)
+		if err != nil {
+			logger.Errorw("error setting mode: %w", err)
 		}
 
 		squirtPower := float32(vals["throttle"]) / 100.0
