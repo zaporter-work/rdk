@@ -130,6 +130,12 @@
             
         },
         {
+            "name" : "imu",
+            "type" : "sensor",
+            "subtype" : "imu",
+            "model" : "temp-imu"
+        },
+        {
             "name" : "base1",
             "type" : "base",
             "model" : "viam-boat2"
