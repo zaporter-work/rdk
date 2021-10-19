@@ -20,7 +20,7 @@ popd
 pushd third_party/abseil-cpp
 git checkout e1d388e7e74803050423d035e4374131b9b57919 # apple clang fix 
 popd
-mmkdir -p cmake/build
+mkdir -p cmake/build
 pushd cmake/build
 cmake -DgRPC_INSTALL=ON \
       -DgRPC_BUILD_TESTS=OFF \
