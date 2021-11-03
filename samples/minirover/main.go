@@ -25,10 +25,6 @@ import (
 	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
 
-	_ "go.viam.com/core/base/impl"
-	_ "go.viam.com/core/board/detector"
-	_ "go.viam.com/core/rimage/imagesource"
-
 	"github.com/edaniels/golog"
 	"github.com/edaniels/gostream"
 	"github.com/erh/egoutil"

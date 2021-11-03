@@ -35,8 +35,6 @@ import (
 	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
 
-	_ "go.viam.com/core/board/detector"
-
 	"github.com/edaniels/golog"
 )
 

@@ -27,9 +27,6 @@ import (
 	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
 
-	_ "go.viam.com/core/motor/tmcstepper"
-	_ "go.viam.com/core/robots/xarm"
-
 	"github.com/edaniels/golog"
 	"go.uber.org/multierr"
 )

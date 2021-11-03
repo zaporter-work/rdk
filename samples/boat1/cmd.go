@@ -31,8 +31,6 @@ import (
 	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
 
-	_ "go.viam.com/core/board/detector"
-
 	"github.com/adrianmo/go-nmea"
 	"github.com/edaniels/golog"
 	"go.uber.org/multierr"
