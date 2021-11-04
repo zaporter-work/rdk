@@ -16,6 +16,7 @@ import (
 	"go.viam.com/core/action"
 	"go.viam.com/core/component/arm"
 	"go.viam.com/core/motor"
+	"go.viam.com/core/services/web"
 
 	"go.viam.com/core/config"
 	"go.viam.com/core/gripper"
@@ -23,8 +24,6 @@ import (
 
 	"go.viam.com/core/robot"
 	robotimpl "go.viam.com/core/robot/impl"
-
-	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
 
 	"github.com/edaniels/golog"
@@ -328,15 +327,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 
 	webOpts := web.NewOptions()
 	webOpts.Insecure = true
-
-	err = webserver.RunWeb(ctx, myRobot, webOpts, logger)
-	if err != nil && !errors.Is(err, context.Canceled) {
-		logger.Errorw("error running web", "error", err)
-		cancel()
-		return err
-	}
-
-	return nil
+	return webserver.RunWeb(ctx, myRobot, webOpts, logger)
 }
 
 func (b *ResetBox) doGrab1(ctx context.Context, r robot.Robot) {

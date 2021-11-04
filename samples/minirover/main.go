@@ -20,9 +20,9 @@ import (
 	"go.viam.com/core/rimage"
 	"go.viam.com/core/robot"
 	robotimpl "go.viam.com/core/robot/impl"
+	"go.viam.com/core/services/web"
 	"go.viam.com/core/servo"
 	"go.viam.com/core/vision/segmentation"
-	"go.viam.com/core/web"
 	webserver "go.viam.com/core/web/server"
 
 	"github.com/edaniels/golog"
