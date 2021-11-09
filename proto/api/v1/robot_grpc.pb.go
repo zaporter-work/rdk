@@ -156,6 +156,9 @@ type RobotServiceClient interface {
 	InputControllerEventStream(ctx context.Context, in *InputControllerEventStreamRequest, opts ...grpc.CallOption) (RobotService_InputControllerEventStreamClient, error)
 	// ResourceRunCommand runs an arbitrary command on a resource if it supports it.
 	ResourceRunCommand(ctx context.Context, in *ResourceRunCommandRequest, opts ...grpc.CallOption) (*ResourceRunCommandResponse, error)
+	// Frame System Service
+	FrameServiceConfig(ctx context.Context, in *FrameServiceConfigRequest, opts ...grpc.CallOption) (*FrameServiceConfigResponse, error)
+	// Navigation Service
 	NavigationServiceMode(ctx context.Context, in *NavigationServiceModeRequest, opts ...grpc.CallOption) (*NavigationServiceModeResponse, error)
 	NavigationServiceSetMode(ctx context.Context, in *NavigationServiceSetModeRequest, opts ...grpc.CallOption) (*NavigationServiceSetModeResponse, error)
 	NavigationServiceLocation(ctx context.Context, in *NavigationServiceLocationRequest, opts ...grpc.CallOption) (*NavigationServiceLocationResponse, error)
@@ -838,6 +841,15 @@ func (c *robotServiceClient) ResourceRunCommand(ctx context.Context, in *Resourc
 	return out, nil
 }
 
+func (c *robotServiceClient) FrameServiceConfig(ctx context.Context, in *FrameServiceConfigRequest, opts ...grpc.CallOption) (*FrameServiceConfigResponse, error) {
+	out := new(FrameServiceConfigResponse)
+	err := c.cc.Invoke(ctx, "/proto.api.v1.RobotService/FrameServiceConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *robotServiceClient) NavigationServiceMode(ctx context.Context, in *NavigationServiceModeRequest, opts ...grpc.CallOption) (*NavigationServiceModeResponse, error) {
 	out := new(NavigationServiceModeResponse)
 	err := c.cc.Invoke(ctx, "/proto.api.v1.RobotService/NavigationServiceMode", in, out, opts...)
@@ -1086,6 +1098,9 @@ type RobotServiceServer interface {
 	InputControllerEventStream(*InputControllerEventStreamRequest, RobotService_InputControllerEventStreamServer) error
 	// ResourceRunCommand runs an arbitrary command on a resource if it supports it.
 	ResourceRunCommand(context.Context, *ResourceRunCommandRequest) (*ResourceRunCommandResponse, error)
+	// Frame System Service
+	FrameServiceConfig(context.Context, *FrameServiceConfigRequest) (*FrameServiceConfigResponse, error)
+	// Navigation Service
 	NavigationServiceMode(context.Context, *NavigationServiceModeRequest) (*NavigationServiceModeResponse, error)
 	NavigationServiceSetMode(context.Context, *NavigationServiceSetModeRequest) (*NavigationServiceSetModeResponse, error)
 	NavigationServiceLocation(context.Context, *NavigationServiceLocationRequest) (*NavigationServiceLocationResponse, error)
@@ -1305,6 +1320,9 @@ func (UnimplementedRobotServiceServer) InputControllerEventStream(*InputControll
 }
 func (UnimplementedRobotServiceServer) ResourceRunCommand(context.Context, *ResourceRunCommandRequest) (*ResourceRunCommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResourceRunCommand not implemented")
+}
+func (UnimplementedRobotServiceServer) FrameServiceConfig(context.Context, *FrameServiceConfigRequest) (*FrameServiceConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FrameServiceConfig not implemented")
 }
 func (UnimplementedRobotServiceServer) NavigationServiceMode(context.Context, *NavigationServiceModeRequest) (*NavigationServiceModeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NavigationServiceMode not implemented")
@@ -2534,6 +2552,24 @@ func _RobotService_ResourceRunCommand_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RobotService_FrameServiceConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FrameServiceConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RobotServiceServer).FrameServiceConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.api.v1.RobotService/FrameServiceConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RobotServiceServer).FrameServiceConfig(ctx, req.(*FrameServiceConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RobotService_NavigationServiceMode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NavigationServiceModeRequest)
 	if err := dec(in); err != nil {
@@ -3004,6 +3040,10 @@ var RobotService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResourceRunCommand",
 			Handler:    _RobotService_ResourceRunCommand_Handler,
+		},
+		{
+			MethodName: "FrameServiceConfig",
+			Handler:    _RobotService_FrameServiceConfig_Handler,
 		},
 		{
 			MethodName: "NavigationServiceMode",

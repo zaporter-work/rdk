@@ -4035,6 +4035,67 @@ proto.proto.api.v1.RobotServicePromiseClient.prototype.resourceRunCommand =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.proto.api.v1.FrameServiceConfigRequest,
+ *   !proto.proto.api.v1.FrameServiceConfigResponse>}
+ */
+const methodDescriptor_RobotService_FrameServiceConfig = new grpc.web.MethodDescriptor(
+  '/proto.api.v1.RobotService/FrameServiceConfig',
+  grpc.web.MethodType.UNARY,
+  proto.proto.api.v1.FrameServiceConfigRequest,
+  proto.proto.api.v1.FrameServiceConfigResponse,
+  /**
+   * @param {!proto.proto.api.v1.FrameServiceConfigRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.proto.api.v1.FrameServiceConfigResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.proto.api.v1.FrameServiceConfigRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.proto.api.v1.FrameServiceConfigResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.proto.api.v1.FrameServiceConfigResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.proto.api.v1.RobotServiceClient.prototype.frameServiceConfig =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/proto.api.v1.RobotService/FrameServiceConfig',
+      request,
+      metadata || {},
+      methodDescriptor_RobotService_FrameServiceConfig,
+      callback);
+};
+
+
+/**
+ * @param {!proto.proto.api.v1.FrameServiceConfigRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.proto.api.v1.FrameServiceConfigResponse>}
+ *     Promise that resolves to the response
+ */
+proto.proto.api.v1.RobotServicePromiseClient.prototype.frameServiceConfig =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/proto.api.v1.RobotService/FrameServiceConfig',
+      request,
+      metadata || {},
+      methodDescriptor_RobotService_FrameServiceConfig);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.proto.api.v1.NavigationServiceModeRequest,
  *   !proto.proto.api.v1.NavigationServiceModeResponse>}
  */
