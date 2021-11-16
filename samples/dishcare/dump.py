@@ -21,13 +21,13 @@ async def main(args: List[str]) -> int:
         async with Channel(grpc_addr, grpc_port) as channel:
             client = RobotServiceStub(channel)
 
+            print('Time\t\t\tTop\t\t\t\t\t\t\tBottom')
             while True:
                 async def getMatrix(name: str):
-                    now = time.time()
                     req = ForceMatrixMatrixRequest()
                     req.name = name
                     resp = await client.ForceMatrixMatrix(req)
-                    print(now, '\t', name, '\t[', end='')
+                    print('\t[', end='')
                     for rowNum in range(resp.matrix.rows):
                         print('[', end='')
                         for colNum in range(resp.matrix.cols):
@@ -38,9 +38,13 @@ async def main(args: List[str]) -> int:
                         print(']', end='')
                         if rowNum == resp.matrix.rows-1:
                             continue
-                    print(']')
+                        print(',', end='')
+                    print(']', end=' ')
+                now = time.time()
+                print(now, end='')
                 await getMatrix('matrix-top')
                 await getMatrix('matrix-bottom')
+                print()
     except Exception as e:
         print(e, file=sys.stderr)
         return 1
