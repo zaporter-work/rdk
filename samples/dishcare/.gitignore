@@ -1,0 +1,5 @@
+gen/*
+!gen/__init__.py
+
+viam.json
+viam.tgz
