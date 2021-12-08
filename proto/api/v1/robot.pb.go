@@ -1157,9 +1157,12 @@ type BaseMoveStraightRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name           string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	DistanceMillis int64   `protobuf:"varint,2,opt,name=distance_millis,json=distanceMillis,proto3" json:"distance_millis,omitempty"`
-	MillisPerSec   float64 `protobuf:"fixed64,3,opt,name=millis_per_sec,json=millisPerSec,proto3" json:"millis_per_sec,omitempty"`
+	// Name of a base
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Desired travel distance in millimeters
+	DistanceMillis int64 `protobuf:"varint,2,opt,name=distance_millis,json=distanceMillis,proto3" json:"distance_millis,omitempty"`
+	// Desired travel velocity in millimeters/second
+	MillisPerSec float64 `protobuf:"fixed64,3,opt,name=millis_per_sec,json=millisPerSec,proto3" json:"millis_per_sec,omitempty"`
 }
 
 func (x *BaseMoveStraightRequest) Reset() {
@@ -1220,9 +1223,12 @@ type BaseMoveStraightResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Success        bool   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Error          string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
-	DistanceMillis int64  `protobuf:"varint,3,opt,name=distance_millis,json=distanceMillis,proto3" json:"distance_millis,omitempty"`
+	// Returns true if robot completed the requested method
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// If success = false, this provides a description of the error
+	Error string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	// Returns the actual distance travelled by the robot as a result of this method call
+	DistanceMillis int64 `protobuf:"varint,3,opt,name=distance_millis,json=distanceMillis,proto3" json:"distance_millis,omitempty"`
 }
 
 func (x *BaseMoveStraightResponse) Reset() {
@@ -1283,10 +1289,14 @@ type BaseMoveArcRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name           string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	DistanceMillis int64   `protobuf:"varint,2,opt,name=distance_millis,json=distanceMillis,proto3" json:"distance_millis,omitempty"`
-	MillisPerSec   float64 `protobuf:"fixed64,3,opt,name=millis_per_sec,json=millisPerSec,proto3" json:"millis_per_sec,omitempty"`
-	AngleDeg       float64 `protobuf:"fixed64,4,opt,name=angle_deg,json=angleDeg,proto3" json:"angle_deg,omitempty"`
+	// Name of a base
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Desired travel distance in millimeters
+	DistanceMillis int64 `protobuf:"varint,2,opt,name=distance_millis,json=distanceMillis,proto3" json:"distance_millis,omitempty"`
+	// Desired speed in millimeters per second
+	MillisPerSec float64 `protobuf:"fixed64,3,opt,name=millis_per_sec,json=millisPerSec,proto3" json:"millis_per_sec,omitempty"`
+	// Desired angle in degrees
+	AngleDeg float64 `protobuf:"fixed64,4,opt,name=angle_deg,json=angleDeg,proto3" json:"angle_deg,omitempty"`
 }
 
 func (x *BaseMoveArcRequest) Reset() {
@@ -1354,7 +1364,9 @@ type BaseMoveArcResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Success        bool   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// Returns true if robot completed the requested method
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// If success = false, this provides a description of the error
 	Error          string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
 	DistanceMillis int64  `protobuf:"varint,3,opt,name=distance_millis,json=distanceMillis,proto3" json:"distance_millis,omitempty"`
 }
@@ -1417,8 +1429,11 @@ type BaseSpinRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name       string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	AngleDeg   float64 `protobuf:"fixed64,2,opt,name=angle_deg,json=angleDeg,proto3" json:"angle_deg,omitempty"`
+	// Name of a base
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Desired angle
+	AngleDeg float64 `protobuf:"fixed64,2,opt,name=angle_deg,json=angleDeg,proto3" json:"angle_deg,omitempty"`
+	// Desired angular velocity
 	DegsPerSec float64 `protobuf:"fixed64,3,opt,name=degs_per_sec,json=degsPerSec,proto3" json:"degs_per_sec,omitempty"`
 }
 
@@ -1480,8 +1495,11 @@ type BaseSpinResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Success  bool    `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Error    string  `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	// Returns true if robot completed the requested method
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// If success = false, this provides a description of the error
+	Error string `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	// Returns the actual distance travelled by the robot as a result of this method call
 	AngleDeg float64 `protobuf:"fixed64,3,opt,name=angle_deg,json=angleDeg,proto3" json:"angle_deg,omitempty"`
 }
 
@@ -1543,6 +1561,7 @@ type BaseStopRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of a base
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
@@ -1628,6 +1647,7 @@ type BaseWidthMillisRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of a base
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
@@ -1675,6 +1695,7 @@ type BaseWidthMillisResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Width of the base represented in millimeters
 	WidthMillis int64 `protobuf:"varint,1,opt,name=width_millis,json=widthMillis,proto3" json:"width_millis,omitempty"`
 }
 
@@ -4380,10 +4401,14 @@ type MotorStatus struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	On                bool             `protobuf:"varint,1,opt,name=on,proto3" json:"on,omitempty"`
-	PositionSupported bool             `protobuf:"varint,2,opt,name=position_supported,json=positionSupported,proto3" json:"position_supported,omitempty"`
-	Position          float64          `protobuf:"fixed64,3,opt,name=position,proto3" json:"position,omitempty"`
-	PidConfig         *structpb.Struct `protobuf:"bytes,4,opt,name=pid_config,json=pidConfig,proto3,oneof" json:"pid_config,omitempty"`
+	// To D0 (FA): Delete this field
+	On bool `protobuf:"varint,1,opt,name=on,proto3" json:"on,omitempty"`
+	// Returns true if the motor has position support
+	PositionSupported bool `protobuf:"varint,2,opt,name=position_supported,json=positionSupported,proto3" json:"position_supported,omitempty"`
+	// Returns current position of the motor relative to its home
+	Position float64 `protobuf:"fixed64,3,opt,name=position,proto3" json:"position,omitempty"`
+	// To Do (FA): Delete this field
+	PidConfig *structpb.Struct `protobuf:"bytes,4,opt,name=pid_config,json=pidConfig,proto3,oneof" json:"pid_config,omitempty"`
 }
 
 func (x *MotorStatus) Reset() {
@@ -4499,6 +4524,7 @@ type MotorGetPIDConfigRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of a motor
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
@@ -4593,6 +4619,7 @@ type MotorSetPIDConfigRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of a motor
 	Name      string           `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	PidConfig *structpb.Struct `protobuf:"bytes,2,opt,name=pid_config,json=pidConfig,proto3" json:"pid_config,omitempty"`
 }
@@ -4804,7 +4831,9 @@ type MotorPowerRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name     string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Name of a motor
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Percentage of motor's power, between 0-1
 	PowerPct float32 `protobuf:"fixed32,2,opt,name=power_pct,json=powerPct,proto3" json:"power_pct,omitempty"`
 }
 
@@ -4897,9 +4926,14 @@ type MotorGoRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name      string            `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Name of a motor
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Motor's travel direction
+	// To Do (FA): This will be deprecated, following Jeremy's PR 324
 	Direction DirectionRelative `protobuf:"varint,2,opt,name=direction,proto3,enum=proto.api.v1.DirectionRelative" json:"direction,omitempty"`
-	PowerPct  float32           `protobuf:"fixed32,3,opt,name=power_pct,json=powerPct,proto3" json:"power_pct,omitempty"`
+	// Percentage of motor's power, between 0-1
+	// To Do (FA): Following Jeremy's PR 324, this value can be between -1 and 1
+	PowerPct float32 `protobuf:"fixed32,3,opt,name=power_pct,json=powerPct,proto3" json:"power_pct,omitempty"`
 }
 
 func (x *MotorGoRequest) Reset() {
@@ -4998,10 +5032,15 @@ type MotorGoForRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name        string            `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Direction   DirectionRelative `protobuf:"varint,2,opt,name=direction,proto3,enum=proto.api.v1.DirectionRelative" json:"direction,omitempty"`
-	Rpm         float64           `protobuf:"fixed64,3,opt,name=rpm,proto3" json:"rpm,omitempty"`
-	Revolutions float64           `protobuf:"fixed64,4,opt,name=revolutions,proto3" json:"revolutions,omitempty"`
+	// Name of a motor
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Motor's travel direction
+	// To Do (FA): This will be deprecated, following Jeremy's PR 324
+	Direction DirectionRelative `protobuf:"varint,2,opt,name=direction,proto3,enum=proto.api.v1.DirectionRelative" json:"direction,omitempty"`
+	// Speed of motor travel in rotations per minute
+	Rpm float64 `protobuf:"fixed64,3,opt,name=rpm,proto3" json:"rpm,omitempty"`
+	// Number of revolutions relative to motor's start position
+	Revolutions float64 `protobuf:"fixed64,4,opt,name=revolutions,proto3" json:"revolutions,omitempty"`
 }
 
 func (x *MotorGoForRequest) Reset() {
@@ -5107,8 +5146,11 @@ type MotorGoToRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name     string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Rpm      float64 `protobuf:"fixed64,2,opt,name=rpm,proto3" json:"rpm,omitempty"`
+	// Name of a motor
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Speed of motor travel in rotations per minute
+	Rpm float64 `protobuf:"fixed64,2,opt,name=rpm,proto3" json:"rpm,omitempty"`
+	// Number of revolutions relative to motor's home home/zero
 	Position float64 `protobuf:"fixed64,3,opt,name=position,proto3" json:"position,omitempty"`
 }
 
@@ -5208,9 +5250,12 @@ type MotorGoTillStopRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name      string            `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Name of a motor
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Motor's travel direction
 	Direction DirectionRelative `protobuf:"varint,2,opt,name=direction,proto3,enum=proto.api.v1.DirectionRelative" json:"direction,omitempty"`
-	Rpm       float64           `protobuf:"fixed64,3,opt,name=rpm,proto3" json:"rpm,omitempty"`
+	// Speed of motor travel in rotations per minute
+	Rpm float64 `protobuf:"fixed64,3,opt,name=rpm,proto3" json:"rpm,omitempty"`
 }
 
 func (x *MotorGoTillStopRequest) Reset() {
@@ -5309,7 +5354,9 @@ type MotorZeroRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name   string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Name of a motor
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Motor position
 	Offset float64 `protobuf:"fixed64,2,opt,name=offset,proto3" json:"offset,omitempty"`
 }
 
@@ -5402,6 +5449,7 @@ type MotorPositionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of a motor
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
@@ -5449,6 +5497,7 @@ type MotorPositionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Current position of the motor relative to its home
 	Position float64 `protobuf:"fixed64,1,opt,name=position,proto3" json:"position,omitempty"`
 }
 
@@ -5496,6 +5545,7 @@ type MotorPositionSupportedRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of a motor
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
@@ -5543,6 +5593,7 @@ type MotorPositionSupportedResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Returns true if the motor supports reporting its position
 	Supported bool `protobuf:"varint,1,opt,name=supported,proto3" json:"supported,omitempty"`
 }
 
@@ -5590,6 +5641,7 @@ type MotorOffRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of a motor
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
@@ -5675,6 +5727,7 @@ type MotorIsOnRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// Name of a motor
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
 
@@ -5769,7 +5822,7 @@ type ResourceRunCommandRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Note(erd): okay in v1 because names are unique. v2 should be a VRN.
+	// Note(erd): okay in v1 because names are unique. v2 should be a VRN
 	ResourceName string           `protobuf:"bytes,1,opt,name=resource_name,json=resourceName,proto3" json:"resource_name,omitempty"`
 	CommandName  string           `protobuf:"bytes,2,opt,name=command_name,json=commandName,proto3" json:"command_name,omitempty"`
 	Args         *structpb.Struct `protobuf:"bytes,3,opt,name=args,proto3" json:"args,omitempty"`
