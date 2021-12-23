@@ -9,10 +9,10 @@ import (
 	"go.viam.com/utils"
 	"go.viam.com/utils/rpc"
 
-	"go.viam.com/core/config"
-	"go.viam.com/core/grpc/client"
-	robotimpl "go.viam.com/core/robot/impl"
-	"go.viam.com/core/vision/segmentation"
+	"go.viam.com/rdk/config"
+	"go.viam.com/rdk/grpc/client"
+	robotimpl "go.viam.com/rdk/robot/impl"
+	"go.viam.com/rdk/vision/segmentation"
 
 	"github.com/edaniels/golog"
 )

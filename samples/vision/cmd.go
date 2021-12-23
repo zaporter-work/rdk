@@ -12,8 +12,8 @@ import (
 
 	"go.viam.com/utils"
 
-	"go.viam.com/core/rimage"
-	"go.viam.com/core/vision/segmentation"
+	"go.viam.com/rdk/rimage"
+	"go.viam.com/rdk/vision/segmentation"
 
 	"github.com/disintegration/imaging"
 	"github.com/edaniels/golog"

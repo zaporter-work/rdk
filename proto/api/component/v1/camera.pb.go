@@ -15,7 +15,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 
-	v1 "go.viam.com/core/proto/api/common/v1"
+	v1 "go.viam.com/rdk/proto/api/common/v1"
 )
 
 const (

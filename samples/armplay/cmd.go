@@ -11,14 +11,14 @@ import (
 
 	"go.viam.com/utils"
 
-	"go.viam.com/core/action"
-	"go.viam.com/core/motionplan"
-	commonpb "go.viam.com/core/proto/api/common/v1"
-	pb "go.viam.com/core/proto/api/common/v1"
-	frame "go.viam.com/core/referenceframe"
-	"go.viam.com/core/robot"
-	spatial "go.viam.com/core/spatialmath"
-	webserver "go.viam.com/core/web/server"
+	"go.viam.com/rdk/action"
+	"go.viam.com/rdk/motionplan"
+	commonpb "go.viam.com/rdk/proto/api/common/v1"
+	pb "go.viam.com/rdk/proto/api/common/v1"
+	frame "go.viam.com/rdk/referenceframe"
+	"go.viam.com/rdk/robot"
+	spatial "go.viam.com/rdk/spatialmath"
+	webserver "go.viam.com/rdk/web/server"
 
 	"github.com/edaniels/golog"
 	"github.com/golang/geo/r3"

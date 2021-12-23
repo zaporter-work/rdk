@@ -3,9 +3,9 @@ package main
 import (
 	"image"
 
-	"go.viam.com/core/rimage"
-	"go.viam.com/core/utils"
-	"go.viam.com/core/vision/chess"
+	"go.viam.com/rdk/rimage"
+	"go.viam.com/rdk/utils"
+	"go.viam.com/rdk/vision/chess"
 
 	"github.com/pkg/errors"
 	"github.com/tonyOreglia/glee/pkg/bitboard"

@@ -11,9 +11,9 @@ import (
 	"go.viam.com/utils/artifact"
 	"go.viam.com/utils/testutils"
 
-	"go.viam.com/core/rimage"
-	"go.viam.com/core/rlog"
-	"go.viam.com/core/vision/chess"
+	"go.viam.com/rdk/rimage"
+	"go.viam.com/rdk/rlog"
+	"go.viam.com/rdk/vision/chess"
 
 	"github.com/edaniels/golog"
 	"github.com/tonyOreglia/glee/pkg/position"

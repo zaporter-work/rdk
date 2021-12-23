@@ -9,15 +9,15 @@ import (
 	"go.viam.com/utils"
 	"go.viam.com/utils/rpc"
 
-	"go.viam.com/core/component/input"
-	"go.viam.com/core/config"
-	"go.viam.com/core/grpc/client"
-	"go.viam.com/core/metadata/service"
-	"go.viam.com/core/robot"
-	"go.viam.com/core/services/web"
+	"go.viam.com/rdk/component/input"
+	"go.viam.com/rdk/config"
+	"go.viam.com/rdk/grpc/client"
+	"go.viam.com/rdk/metadata/service"
+	"go.viam.com/rdk/robot"
+	"go.viam.com/rdk/services/web"
 
-	robotimpl "go.viam.com/core/robot/impl"
-	webserver "go.viam.com/core/web/server"
+	robotimpl "go.viam.com/rdk/robot/impl"
+	webserver "go.viam.com/rdk/web/server"
 
 	"github.com/edaniels/golog"
 )

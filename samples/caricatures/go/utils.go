@@ -9,7 +9,7 @@ import (
 
 	"go.viam.com/utils/artifact"
 
-	"go.viam.com/core/rlog"
+	"go.viam.com/rdk/rlog"
 )
 
 var (

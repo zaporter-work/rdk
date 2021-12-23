@@ -12,11 +12,11 @@ import (
 
 	"go.viam.com/utils"
 
-	"go.viam.com/core/action"
-	webserver "go.viam.com/core/web/server"
+	"go.viam.com/rdk/action"
+	webserver "go.viam.com/rdk/web/server"
 
-	componentpb "go.viam.com/core/proto/api/component/v1"
-	"go.viam.com/core/robot"
+	componentpb "go.viam.com/rdk/proto/api/component/v1"
+	"go.viam.com/rdk/robot"
 
 	"github.com/edaniels/golog"
 )

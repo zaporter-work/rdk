@@ -10,13 +10,13 @@ import (
 	"go.viam.com/utils"
 	"go.viam.com/utils/rpc"
 
-	"go.viam.com/core/action"
-	"go.viam.com/core/config"
-	"go.viam.com/core/grpc/client"
-	"go.viam.com/core/robot"
-	robotimpl "go.viam.com/core/robot/impl"
-	"go.viam.com/core/services/web"
-	webserver "go.viam.com/core/web/server"
+	"go.viam.com/rdk/action"
+	"go.viam.com/rdk/config"
+	"go.viam.com/rdk/grpc/client"
+	"go.viam.com/rdk/robot"
+	robotimpl "go.viam.com/rdk/robot/impl"
+	"go.viam.com/rdk/services/web"
+	webserver "go.viam.com/rdk/web/server"
 )
 
 const (
