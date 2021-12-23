@@ -32,7 +32,7 @@ import (
 	"go.viam.com/rdk/services/navigation"
 	"go.viam.com/rdk/services/web"
 	"go.viam.com/rdk/spatialmath"
-	coreutils "go.viam.com/rdk/utils"
+	rdkutils "go.viam.com/rdk/utils"
 	webserver "go.viam.com/rdk/web/server"
 
 	"github.com/edaniels/golog"
@@ -360,7 +360,7 @@ func (b *boat) Spin(ctx context.Context, angleDeg float64, degsPerSec float64, b
 				return err
 			}
 
-			left := math.Abs(angleDeg) - coreutils.AngleDiffDeg(startAngle, now.EulerAngles().Yaw)
+			left := math.Abs(angleDeg) - rdkutils.AngleDiffDeg(startAngle, now.EulerAngles().Yaw)
 			fmt.Printf("\t left %v (%#v %#v)\n", left, startAngle, now.EulerAngles().Yaw)
 			if left < 5 || left > 180 {
 				return b.Stop(ctx)
@@ -632,7 +632,7 @@ func mainWithArgs(ctx context.Context, args []string, logger golog.Logger) (err 
 	if !ok {
 		return errors.New("no base")
 	}
-	myB := coreutils.UnwrapProxy(b).(*boat)
+	myB := rdkutils.UnwrapProxy(b).(*boat)
 
 	navServiceTemp, ok := myRobot.ServiceByName("navigation")
 	if !ok {
