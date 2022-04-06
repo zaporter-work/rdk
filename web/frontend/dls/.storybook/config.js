@@ -8,6 +8,7 @@ import ViamButton from '../src/components/Button';
 import ViamIcon from '../src/components/ViamIcon';
 import Range from '../src/components/Range';
 import ViamInput from '../src/components/ViamInput';
+import Breadcrumbs from '../src/components/Breadcrumbs';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCheckSquare } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -21,6 +22,7 @@ Vue.component('ViamBadge', ViamBadge);
 Vue.component('ViamButton', ViamButton);
 Vue.component('ViamIcon', ViamIcon);
 Vue.component('ViamInput', ViamInput);
+Vue.component('Breadcrumbs', Breadcrumbs);
 
 const req = require.context('../src/stories', true, /.stories.js$/);
 function loadStories() {
