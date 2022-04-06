@@ -11,6 +11,7 @@ import ViamInput from '../src/components/ViamInput';
 import Breadcrumbs from '../src/components/Breadcrumbs';
 import Collapse from '../src/components/Collapse';
 import Container from '../src/components/Container';
+import ViamSwitch from '../src/components/Switch';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCheckSquare } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -27,6 +28,7 @@ Vue.component('ViamInput', ViamInput);
 Vue.component('Breadcrumbs', Breadcrumbs);
 Vue.component('Collapse', Collapse);
 Vue.component('Container', Container);
+Vue.component('ViamSwitch', ViamSwitch);
 
 const req = require.context('../src/stories', true, /.stories.js$/);
 function loadStories() {
