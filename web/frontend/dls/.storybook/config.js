@@ -6,7 +6,7 @@ import InputController from '../src/components/InputController';
 import ViamBadge from '../src/components/Badge';
 import ViamButton from '../src/components/Button';
 import ViamIcon from '../src/components/ViamIcon';
-
+import Range from '../src/components/Range';
 import ViamInput from '../src/components/ViamInput';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCheckSquare } from '@fortawesome/free-regular-svg-icons';
@@ -16,6 +16,7 @@ library.add(faCheckSquare)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('InputController', InputController);
+Vue.component('Range', Range);
 Vue.component('ViamBadge', ViamBadge);
 Vue.component('ViamButton', ViamButton);
 Vue.component('ViamIcon', ViamIcon);
