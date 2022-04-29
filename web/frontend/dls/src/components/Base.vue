@@ -103,30 +103,10 @@
                           Select Camera
                         </p>
                         <div class="relative">
-                          <select
-                            class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                            aria-label="Default select example"
-                            @change="$emit('show-base-camera')"
-                            v-model="selectedValue"
-                          >
-                            <option selected value="NoCamera">No Camera</option>
-                            <option value="Camera1">Camera1</option>
-                          </select>
-                          <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2"
-                          >
-                            <svg
-                              class="h-4 w-4 stroke-2"
-                              :class="['text-gray-700 dark:text-gray-300']"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              stroke-linejoin="round"
-                              stroke-linecap="round"
-                              fill="none"
-                            >
-                              <path d="M18 16L12 22L6 16" />
-                            </svg>
-                          </div>
+                          <ViamSelect :options="cameraOptions"
+                                      v-model="selectedValue"
+                                      @change="$emit('show-base-camera')">
+                          </ViamSelect>
                         </div>
                       </div>
                     </div>
@@ -309,6 +289,7 @@ export default class Base extends Vue {
   
   speed = 200;
   angle = 0
+  cameraOptions = [{value: 'NoCamera', label: 'No Camera'}, {value: 'Camera1', label: 'Camera1'}]
   beforeMount(): void {
     window.addEventListener("resize", this.resizeContent);
   }
