@@ -74,6 +74,7 @@ require (
 	github.com/urfave/cli/v2 v2.10.3
 	github.com/viam-labs/go-libjpeg v0.3.1
 	github.com/viamrobotics/evdev v0.1.3
+	github.com/viamrobotics/viam-orb-slam3 v0.2.1-0.20230327203511-d4f5c0e8450b
 	github.com/xfmoulet/qoi v0.2.0
 	go-hep.org/x/hep v0.31.1
 	go.einride.tech/vlp16 v0.7.0
@@ -83,7 +84,7 @@ require (
 	go.uber.org/multierr v1.9.0
 	go.uber.org/zap v1.24.0
 	go.viam.com/api v0.1.98
-	go.viam.com/slam v0.1.31
+	go.viam.com/slam v0.1.32-0.20230315154454-6c1e77a1e31b
 	go.viam.com/test v1.1.1-0.20220909204145-f61b7c01c33e
 	go.viam.com/utils v0.1.18-0.20230327140716-bfeb34d89117
 	goji.io v2.0.2+incompatible

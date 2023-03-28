@@ -274,7 +274,20 @@ func (m *Module) AddResource(ctx context.Context, req *pb.AddResourceRequest) (*
 	if err != nil {
 		return nil, err
 	}
-
+	cType := resource.NewSubtype(cfg.Namespace, cfg.API.ResourceType, cfg.API.ResourceSubtype)
+	conv := config.FindMapConverter(cType, cfg.Model)
+	// If no map converter for a component exists, try to find map converter for a
+	// service.
+	if conv == nil {
+		conv = config.FindServiceMapConverter(cType, cfg.Model)
+	}
+	if conv != nil {
+		converted, err := conv(cfg.Attributes)
+		if err != nil {
+			return nil, errors.Wrapf(err, "error converting attributes for resource")
+		}
+        cfg.ConvertedAttributes = converted;
+	}
 	var res interface{}
 	switch cfg.API.ResourceType {
 	case resource.ResourceTypeComponent:
